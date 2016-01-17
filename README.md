@@ -32,18 +32,18 @@ Shortcuts:
 
 Custom Menu Tutorial:
 
-  The Custom Menu is a menu that you can customize with Operators, Separators, Labels, and other
-  menus as you see fit. This is a alpha release and as such is not the easiest to use or the most
-  feature complete, but should still be useful to people. Also if it is to reach it's true potential
-  I will probably need to work closely with the blender UI team. Now onto the tutorial.
-  To add an Operator open the menu and go down to Add Custom Item, select Operator. A window will
-  come up, type the path to the operator(you can find it by turning on python tooltips and then
-  hovering your mouse over a button or menu entry in the ui) in the Path field,
-  e.g. bpy.ops.mesh.vertices_smooth(). Type something into the Name field if you want the item to
-  have a custom name. If you want the item to have an Icon simply select it from the Icon list. The
-  last field on the window controls where the item is placed in the menu; the item will be placed
-  directly under the item you specify from the list. Finally press the OK button to add the item.
-  The rest of the items are added in a similar fashion, however as far as I know there is no easy
-  way to find the path for menus if you want to add them(tooltips only show up for them in some cases).
-  If you want to remove an item simply go to Add Custom Item, select Remove Item, and then select
-  the item you wish removed and press OK.
+    The Custom Menu is a menu that you can customize with Operators, Separators, Labels, and other
+    menus as you see fit. This is a alpha release and as such is not the easiest to use or the most
+    feature complete, but should still be useful to people. Also if it is to reach it's true potential
+    I will probably need to work closely with the blender UI team. Now onto the tutorial.
+    To add an Operator open the menu and go down to Add Custom Item, select Operator. A window will
+    come up, type the path to the operator(you can find it by turning on python tooltips and then
+    hovering your mouse over a button or menu entry in the ui) in the Path field,
+    e.g. bpy.ops.mesh.vertices_smooth(). Type something into the Name field if you want the item to
+    have a custom name. If you want the item to have an Icon simply select it from the Icon list. The
+    last field on the window controls where the item is placed in the menu; the item will be placed
+    directly under the item you specify from the list. Finally press the OK button to add the item.
+    The rest of the items are added in a similar fashion, however as far as I know there is no easy
+    way to find the path for menus if you want to add them(tooltips only show up for them in some cases).
+    If you want to remove an item simply go to Add Custom Item, select Remove Item, and then select
+    the item you wish removed and press OK.
