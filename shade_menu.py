@@ -79,21 +79,33 @@ class ShadeModeMenu(bpy.types.Menu):
 
     def draw(self, context):
         modes = self.init()
-        menu = Menu(self)
+        #menu = Menu(self)
+        
+        #add = self.layout
+        #add_item = self.layout.row
+        
+        #add_item().label("haha You're a big idiot")
+        #add_item("label(\"haha You're a big idiot\")")
 
         # add the items to the menu
         for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "space_data.viewport_shade",
+            menuprop(self.layout.row(), mode[0], mode[1], "space_data.viewport_shade",
                      icon=mode[2], disable=True)
 
         # add a shading options menu if object can be shaded smooth/flat
         if bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
-            menu.add_item().separator()
-            menu.add_item().menu(MeshShadeMenu.bl_idname)
+            self.layout.row().separator()
+            self.layout.row().menu(MeshShadeMenu.bl_idname)
             
         # add a display options menu if the mode is not edit
         if get_mode() != 'EDIT':
-            menu.add_item().menu(DisplayOptionsMenu.bl_idname)
+            self.layout.row().menu(DisplayOptionsMenu.bl_idname)
+            
+            
+        # yay that works; now how do I solve operator_context for my custom menu?
+        bisect = self.layout.row()
+        bisect.operator_context = 'INVOKE_DEFAULT'
+        bisect.operator("mesh.bisect")
 
 
 class MeshShadeMenu(bpy.types.Menu):

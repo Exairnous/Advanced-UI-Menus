@@ -20,11 +20,11 @@
 """ Copyright 2011 GPL licence applies"""
 
 bl_info = {
-    "name": "Advanced UI Menus Stable Version",
+    "name": "Advanced UI Menus Development Version",
     "description": "Menus for advanced interaction with blender's UI",
     "author": "Ryan Inch",
-    "version": (1, "4a"),
-    "blender": (2, 75),
+    "version": (1, 4),
+    "blender": (2, 74),
     "location": "View3D - Multiple menus in multiple modes.",
     "warning": '',  # used for warning icon and text in addons panel
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Advanced_UI_Menus",
@@ -34,6 +34,7 @@ import sys, os
 
 from .Utils.core import *
 from .Utils import keymodes
+from .Utils import preferences
 
 from . import brush_menu
 from . import brushes
@@ -57,6 +58,7 @@ from . import view_menu
 
 addon_files = [ 
               brush_menu,
+              brushes,
               curve_menu,
               custom_menu,
               delete_menu,
@@ -66,6 +68,7 @@ addon_files = [
               manipulator_menu,
               mode_menu,
               pivot_menu,
+              preferences,
               proportional_menu,
               selection_menu,
               shade_menu,
@@ -84,14 +87,14 @@ def scene_update_post_reg(scene):
     # disable conflicting hotkeys
     keymodes.opposingkeys(False)
     
-    # register all blender classes
-    bpy.utils.register_module(__name__)
-    
     # register all files
     for addon_file in addon_files:
         addon_file.register()
 
 def register():
+    # register all blender classes
+    bpy.utils.register_module(__name__)
+    
     # add a handler so blender registers keymaps and stuff after everything has loaded
     bpy.app.handlers.scene_update_post.append(scene_update_post_reg)
  

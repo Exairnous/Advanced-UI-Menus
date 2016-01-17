@@ -2,7 +2,6 @@ import bpy
 import time
 import sys
 import os
-import re
 
 object_mode = 'OBJECT'
 edit = 'EDIT'
@@ -14,6 +13,9 @@ particle_edit = 'PARTICLE_EDIT'
 pose = 'POSE'
 
 a_props = []
+
+def add_item(item):
+    exec("self.layout.row().{0}".format(item))
 
 class Menu():
     def __init__(self, menu):
@@ -160,12 +162,25 @@ def del_props():
     
     a_props.clear()
     
+class SendReport(bpy.types.Operator):
+    bl_label = "Send Report"
+    bl_idname = "view3d.send_report"
     
-            
-
-
-
-
+    message = bpy.props.StringProperty()
+    
+    def draw(self, context):
+        self.layout.label("Error", icon='ERROR')
+        self.layout.label(self.message)
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_popup(self, width=400, height=200)
+    
+    def execute(self, context):
+        self.report({'INFO'}, self.message)
+        print(self.message)
+        return {'FINISHED'}
+    
 
 #def get_view_mode():
 #    view = bpy.context.space_data.region_3d.view_matrix

@@ -58,7 +58,7 @@ class EditorModeOperator(bpy.types.Operator):
 
 class EditorModeMenu(bpy.types.Menu):
     bl_label = "Editor Menu"
-    bl_idname = "view3d.mode_menu"
+    bl_idname = "VIEW3D_MT_mode_menu"
 
     def init(self):
         ob_type = bpy.context.object.type

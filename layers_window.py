@@ -1,19 +1,27 @@
 from .Utils.core import *
 
 class SetLayerView(bpy.types.Operator):
-    '''Visualize this Layer, Shift-Click to select multiple layers'''
-    bl_idname = "view3d.set_layer_view"
-    bl_label = "Set Layer View"
+    # Visualize this Layer, Shift-Click to select multiple layers
+    
+    tooltip = set_prop("StringProperty", 
+                    "bpy.types.Scene.layer_name", 
+                    name="layer_name",
+                    default="test")
     
     layer_num = set_prop("IntProperty", 
                     "bpy.types.Scene.layer_num_view", 
                     name="layer_num")
+    
+    bl_idname = "view3d.set_layer_view"
+    bl_label = "Set Layer View"
+    bl_description = "Layer Name ({})".format(tooltip[1]["name"])
     
     def invoke(self, context, event):
         if event.shift:
             # toggle the layer on/off
             context.scene.layers[self.layer_num] = not context.scene.layers[self.layer_num]
             bpy.types.Scene.layer_changed = True
+            print("tooltip = {}".format(self.tooltip))
         else:
             # create a boolian list of which layers on and off
             layers = [False]*20
@@ -79,7 +87,8 @@ class SetLayerViewWindow(bpy.types.Operator):
     def draw(self, context):
         ui = Menu(self)
         
-        column_flow = ui.add_item("column_flow", columns=2)
+        #column_flow = ui.add_item("column_flow", columns=2)
+        column_flow = ui.add_item()
         
         # if the layer management addon is enabled name the layers with the layer names
         try:
@@ -98,6 +107,8 @@ class SetLayerViewWindow(bpy.types.Operator):
         
         # add the menu items
         for num in range(20):
+            if num == 10:
+                column_flow = ui.add_item()
             if num == context.scene.active_layer:
                 prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='FILE_TICK')
                 
@@ -109,6 +120,7 @@ class SetLayerViewWindow(bpy.types.Operator):
             
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             prop.layer_num = num
+            prop.tooltip = layernames[num]
         
     def execute(self, context):
         wm = context.window_manager
