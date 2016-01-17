@@ -23,7 +23,7 @@ class DyntopoMenuOperator(bpy.types.Operator):
         
         # else toggle manipulator mode on/off
         elif event.value == 'RELEASE' and current_time < self.start_time + 0.3:
-            bpy.ops.view3d.dyntopo_warn_operator()
+            bpy.ops.sculpt.dynamic_topology_toggle('INVOKE_DEFAULT')
             
             return {'FINISHED'}
         
@@ -34,30 +34,6 @@ class DyntopoMenuOperator(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         
         return {'RUNNING_MODAL'}
-    
-    
-class DyntopoWarnOperator(bpy.types.Operator):
-    bl_label = "Dyntopo Warn Operator"
-    bl_idname = "view3d.dyntopo_warn_operator"
-    
-    def execute(self, context):
-        if not context.object.use_dynamic_topology_sculpting:
-            if context.active_object.data.vertex_colors.active:
-                bpy.ops.wm.call_menu(name=DynWarnMenu.bl_idname)
-            elif context.active_object.data.uv_layers.active:
-                bpy.ops.wm.call_menu(name=DynWarnMenu.bl_idname)
-            elif context.active_object.data.shape_keys:
-                bpy.ops.wm.call_menu(name=DynWarnMenu.bl_idname)
-            elif context.active_object.data.has_custom_normals:
-                bpy.ops.wm.call_menu(name=DynWarnMenu.bl_idname)
-            elif context.active_object.vertex_groups.active:
-                bpy.ops.wm.call_menu(name=DynWarnMenu.bl_idname)
-            else:
-                bpy.ops.sculpt.dynamic_topology_toggle()
-        else:
-            bpy.ops.sculpt.dynamic_topology_toggle()
-        
-        return {'FINISHED'}
 
 class DynTopoMenu(bpy.types.Menu):
     bl_label = "Dyntopo"
@@ -91,29 +67,9 @@ class DynTopoMenu(bpy.types.Menu):
             menu.add_item().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
             
         else:
-            menu.add_item().operator("view3d.dyntopo_warn_operator", "Enable Dynamic Topology")
-        
-class DynWarnMenu(bpy.types.Menu):
-    bl_label = ""
-    bl_idname = "view3d.warn_dyntopo"
-    
-    @classmethod
-    def poll(self, context):
-        if get_mode() == sculpt:
-            return True
-        else:
-            return False
-    
-    def draw(self, context):
-        menu = Menu(self)
-        
-        menu.add_item().label("Warning!", icon='ERROR')
-        menu.add_item().separator()
-        menu.add_item().label("Vertex Data Detected!", icon='INFO')
-        menu.add_item().label("Dyntopo will not preserve vertex colors, UVs, or other custom data")
-        menu.add_item().separator()
-        menu.add_item().operator("sculpt.dynamic_topology_toggle", "OK")
-            
+            menu.add_item()
+            menu.current_item.operator_context = 'INVOKE_DEFAULT'
+            menu.current_item.operator("sculpt.dynamic_topology_toggle", "Enable Dynamic Topology")
 
 class DynDetailMenu(bpy.types.Menu):
     bl_label = "Detail Size"

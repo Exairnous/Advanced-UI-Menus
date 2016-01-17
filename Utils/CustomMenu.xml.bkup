@@ -1,0 +1,183 @@
+<root>
+    <menu area="VIEW_3D" mode="OBJECT">
+        <item type="LAB">
+            <name>General</name>
+            <icon>NONE</icon>
+        </item>
+        <item type="SEP"/>
+        <item type="OP">
+            <path>object.join</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>transform.tosphere</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>transform.shear</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>transform.bend</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>transform.push_pull</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="SEP"/>
+        <item type="LAB">
+            <name>Animation</name>
+            <icon>NONE</icon>
+        </item>
+        <item type="SEP"/>
+        <item type="OP">
+            <path>anim.keyframe_insert_menu</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>anim.keyframe_delete_v3d</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>anim.keying_set_active_set</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="SEP"/>
+        <item type="MENU">
+            <path>INFO_MT_add</path>
+            <name>none</name>
+            <icon>OBJECT_DATAMODE</icon>
+        </item>
+        <item type="MENU">
+            <path>VIEW3D_MT_select_object</path>
+            <name>none</name>
+            <icon>RESTRICT_SELECT_OFF</icon>
+        </item>
+    </menu>
+    <menu area="VIEW_3D" mode="EDIT">
+        <item type="OP">
+            <path>view3d.edit_mesh_extrude_move_normal</path>
+            <name>Extrude</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.subdivide</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.loopcut_slide</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.spin</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.bisect</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.vert_connect</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="SEP"/>
+        <item type="OP">
+            <path>mesh.vertices_smooth</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>object.vertex_random</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>transform.edge_slide</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>none</arg>
+            <arg_val>none</arg_val>
+        </item>
+        <item type="OP">
+            <path>mesh.edge_rotate</path>
+            <name>none</name>
+            <icon>NONE</icon>
+            <arg>use_ccw</arg>
+            <arg_val>False</arg_val>
+        </item>
+        <item type="SEP"/>
+        <item type="MENU">
+            <path>VIEW3D_MT_edit_mesh_vertices</path>
+            <name>none</name>
+            <icon>NONE</icon>
+        </item>
+        <item type="MENU">
+            <path>VIEW3D_MT_edit_mesh_edges</path>
+            <name>none</name>
+            <icon>NONE</icon>
+        </item>
+        <item type="MENU">
+            <path>VIEW3D_MT_edit_mesh_faces</path>
+            <name>none</name>
+            <icon>NONE</icon>
+        </item>
+    </menu>
+    <menu area="VIEW_3D" mode="SCULPT">
+        <item type="MENU">
+            <path>view3d.brushes_menu</path>
+            <name>none</name>
+            <icon>BRUSH_DATA</icon>
+        </item>
+        <item type="MENU">
+            <path>view3d.dyn_detail</path>
+            <name>none</name>
+            <icon>NONE</icon>
+        </item>
+    </menu>
+</root>
