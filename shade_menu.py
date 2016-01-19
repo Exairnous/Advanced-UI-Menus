@@ -47,7 +47,7 @@ class ShadeModeOperator(bpy.types.Operator):
 
 class ShadeModeMenu(bpy.types.Menu):
     bl_label = "Shading Mode"
-    bl_idname = "view3d.shade_menu"
+    bl_idname = "VIEW3D_MT_shade_menu"
 
     def init(self):
         renderer = bpy.context.scene.render.engine
@@ -110,7 +110,7 @@ class ShadeModeMenu(bpy.types.Menu):
 
 class MeshShadeMenu(bpy.types.Menu):
     bl_label = "Mesh Shading Options"
-    bl_idname = "view3d.mesh_shade"
+    bl_idname = "VIEW3D_MT_mesh_shade"
 
     def draw(self, context):
         menu = Menu(self)
@@ -126,7 +126,7 @@ class MeshShadeMenu(bpy.types.Menu):
 
 class DisplayOptionsMenu(bpy.types.Menu):
     bl_label = "Display Options"
-    bl_idname = "view3d.display_options"
+    bl_idname = "VIEW3D_MT_display_options"
 
     def draw(self, context):
         menu = Menu(self)

@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class TextureMenu(bpy.types.Menu):
     bl_label = "Texture Options"
-    bl_idname = "view3d.texture_menu"
+    bl_idname = "VIEW3D_MT_texture_menu"
     
     @classmethod
     def poll(self, context):
@@ -130,7 +130,7 @@ class TextureMenu(bpy.types.Menu):
 
 class Textures(bpy.types.Menu):
     bl_label = "Brush Texture"
-    bl_idname = "view3d.texture_list"
+    bl_idname = "VIEW3D_MT_texture_list"
 
     def init(self):
         if get_mode() == sculpt:
@@ -176,7 +176,7 @@ class Textures(bpy.types.Menu):
             
 class TextureMapMode(bpy.types.Menu):
     bl_label = "Brush Mapping"
-    bl_idname = "view3d.texture_map_mode"
+    bl_idname = "VIEW3D_MT_texture_map_mode"
     
     def draw(self, context):
         menu = Menu(self)
@@ -228,7 +228,7 @@ class TextureMapMode(bpy.types.Menu):
             
 class MaskTextures(bpy.types.Menu):
     bl_label = "Mask Texture"
-    bl_idname = "view3d.mask_texture_list"
+    bl_idname = "VIEW3D_MT_mask_texture_list"
 
     def draw(self, context):
         menu = Menu(self)
@@ -259,7 +259,7 @@ class MaskTextures(bpy.types.Menu):
             
 class MaskMapMode(bpy.types.Menu):
     bl_label = "Mask Mapping"
-    bl_idname = "view3d.mask_map_mode"
+    bl_idname = "VIEW3D_MT_mask_map_mode"
     
     def draw(self, context):
         menu = Menu(self)
@@ -281,7 +281,7 @@ class MaskMapMode(bpy.types.Menu):
                      
 class TextureAngleSource(bpy.types.Menu):
     bl_label = "Texture Angle Source"
-    bl_idname = "view3d.texture_angle_source"
+    bl_idname = "VIEW3D_MT_texture_angle_source"
     
     def draw(self, context):
         menu = Menu(self)
@@ -315,7 +315,7 @@ def register():
     for mode in modes:
         km = wm.keyconfigs.active.keymaps[mode]
         kmi = km.keymap_items.new('wm.call_menu', 'R', 'PRESS')
-        kmi.properties.name = "view3d.texture_menu"
+        kmi.properties.name = "VIEW3D_MT_texture_menu"
         addon_keymaps.append((km, kmi))
 
 def unregister():

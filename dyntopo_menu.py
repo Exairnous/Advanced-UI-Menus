@@ -41,7 +41,7 @@ class DyntopoMenuOperator(bpy.types.Operator):
 
 class DynTopoMenu(bpy.types.Menu):
     bl_label = "Dyntopo"
-    bl_idname = "view3d.dyntopo"
+    bl_idname = "VIEW3D_MT_dyntopo"
     
     @classmethod
     def poll(self, context):
@@ -77,7 +77,7 @@ class DynTopoMenu(bpy.types.Menu):
 
 class DynDetailMenu(bpy.types.Menu):
     bl_label = "Detail Size"
-    bl_idname = "view3d.dyn_detail"
+    bl_idname = "VIEW3D_MT_dyn_detail"
 
     def init(self):
         settings = [["40", 40], ["30", 30], ["20", 20],
@@ -109,7 +109,7 @@ class DynDetailMenu(bpy.types.Menu):
             
 class DetailMethodMenu(bpy.types.Menu):
     bl_label = "Detail Method"
-    bl_idname = "view3d.detail_method_menu"
+    bl_idname = "VIEW3D_MT_detail_method_menu"
         
     def draw(self, context):
         menu = Menu(self)
@@ -144,7 +144,7 @@ class DetailMethodMenu(bpy.types.Menu):
             
 class SymmetrizeMenu(bpy.types.Menu):
     bl_label = "Symmetrize"
-    bl_idname = "view3d.symmetrize_menu"
+    bl_idname = "VIEW3D_MT_symmetrize_menu"
         
     def draw(self, context):
         menu = Menu(self)
@@ -174,7 +174,7 @@ def register():
     wm = bpy.context.window_manager
     km = wm.keyconfigs.active.keymaps['Sculpt']
     kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True)
-    kmi.properties.name = 'view3d.dyntopo'
+    kmi.properties.name = 'VIEW3D_MT_dyntopo'
     addon_keymaps.append((km, kmi))
 
 def unregister():

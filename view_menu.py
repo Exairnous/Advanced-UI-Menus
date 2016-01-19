@@ -5,7 +5,7 @@ from .Utils.core import *
 # adds a view manipulation menu
 class ViewMenu(bpy.types.Menu):
     bl_label = "View"
-    bl_idname = "view3d.view_menu"
+    bl_idname = "VIEW3D_MT_view_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -31,7 +31,7 @@ class ViewMenu(bpy.types.Menu):
 
 class OtherViewMenu(bpy.types.Menu):
     bl_label = "Other"
-    bl_idname = "view3d.other_view_menu"
+    bl_idname = "VIEW3D_MT_other_view_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -63,7 +63,7 @@ def register():
     #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
     km = wm.keyconfigs.active.keymaps['3D View']
     kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
-    kmi.properties.name = 'view3d.view_menu'
+    kmi.properties.name = 'VIEW3D_MT_view_menu'
     addon_keymaps.append((km, kmi))
 
 

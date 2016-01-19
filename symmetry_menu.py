@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class MasterSymmetryMenu(bpy.types.Menu):
     bl_label = "Symmetry Options"
-    bl_idname = "view3d.master_symmetry_menu"
+    bl_idname = "VIEW3D_MT_master_symmetry_menu"
     
     @classmethod
     def poll(self, context):
@@ -27,7 +27,7 @@ class MasterSymmetryMenu(bpy.types.Menu):
         
 class SymmetryMenu(bpy.types.Menu):
     bl_label = "Symmetry"
-    bl_idname = "view3d.symmetry_menu"
+    bl_idname = "VIEW3D_MT_symmetry_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -38,7 +38,7 @@ class SymmetryMenu(bpy.types.Menu):
         
 class SymmetryRadialMenu(bpy.types.Menu):
     bl_label = "Radial"
-    bl_idname = "view3d.symmetry_radial_menu"
+    bl_idname = "VIEW3D_MT_symmetry_radial_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -57,7 +57,7 @@ def register():
     for mode in modes:
         km = wm.keyconfigs.active.keymaps[mode]
         kmi = km.keymap_items.new('wm.call_menu', 'S', 'PRESS', alt=True)
-        kmi.properties.name = "view3d.master_symmetry_menu"
+        kmi.properties.name = "VIEW3D_MT_master_symmetry_menu"
         addon_keymaps.append((km, kmi))
 
 def unregister():

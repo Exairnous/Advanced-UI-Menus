@@ -223,7 +223,7 @@
   </menu>
   <menu area="VIEW_3D" mode="SCULPT">
     <item type="MENU">
-      <path>view3d.brush_fav_menu</path>
+      <path>VIEW3D_MT_brush_favs</path>
       <name>none</name>
       <icon>NONE</icon>
     </item>
@@ -235,12 +235,12 @@
       <arg_val>"tool_settings.sculpt.brush";"bpy.data.brushes['Flatten/Contrast']"</arg_val>
     </item>
     <item type="MENU">
-      <path>view3d.brushes_menu</path>
+      <path>VIEW3D_MT_brushes_menu</path>
       <name>none</name>
       <icon>BRUSH_DATA</icon>
     </item>
     <item type="MENU">
-      <path>view3d.dyn_detail</path>
+      <path>VIEW3D_MT_dyn_detail</path>
       <name>none</name>
       <icon>NONE</icon>
     </item>

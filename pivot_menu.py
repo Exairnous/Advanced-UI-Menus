@@ -3,7 +3,7 @@ from .Utils.core import *
 # adds a pivot point menu 
 class PivotPointMenu(bpy.types.Menu):
     bl_label = "Pivot Point"
-    bl_idname = "view3d.pivot_point"
+    bl_idname = "VIEW3D_MT_pivot_point"
     
     def draw(self, context):
         menu = Menu(self)
@@ -49,7 +49,7 @@ def register():
     #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
     km = wm.keyconfigs.active.keymaps['3D View']
     kmi = km.keymap_items.new('wm.call_menu', 'PERIOD', 'PRESS')
-    kmi.properties.name = 'view3d.pivot_point'
+    kmi.properties.name = 'VIEW3D_MT_pivot_point'
     addon_keymaps.append((km, kmi))
 
 

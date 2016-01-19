@@ -43,7 +43,7 @@ class ManipulatorMenuOperator(bpy.types.Operator):
     
 class ManipulatorMenu(bpy.types.Menu):
     bl_label = "Manipulator"
-    bl_idname = "view3d.manipulator_menu"
+    bl_idname = "VIEW3D_MT_manipulator_menu"
     
     def draw(self, context):
         menu = Menu(self)
@@ -63,7 +63,7 @@ class ManipulatorMenu(bpy.types.Menu):
 
 class ManipulatorMenu2(bpy.types.Menu):
     bl_label = "Transform Orientation"
-    bl_idname = "view3d.manipulator_menu_2"
+    bl_idname = "VIEW3D_MT_manipulator_menu_2"
     
     def draw(self, context):
         menu = Menu(self)

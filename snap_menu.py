@@ -42,7 +42,7 @@ class SnapMenuOperator(bpy.types.Operator):
 
 class SnapModeMenu(bpy.types.Menu):
     bl_label = "Snap Element"
-    bl_idname = "view3d.snap_menu"
+    bl_idname = "VIEW3D_MT_snap_menu"
 
     def init(self):
         modes = [["Increment", 'INCREMENT', "SNAP_INCREMENT"], ["Vertex", 'VERTEX', "SNAP_VERTEX"],
@@ -81,7 +81,7 @@ class SnapModeMenu(bpy.types.Menu):
 
 class SnapTargetMenu(bpy.types.Menu):
     bl_label = "Snap Target"
-    bl_idname = "view3d.snap_target_menu"
+    bl_idname = "VIEW3D_MT_snap_target_menu"
 
     def init(self):
         modes = [["Active", 'ACTIVE'], ["Median", 'MEDIAN'],

@@ -211,7 +211,7 @@ def update_args(self, context):
     
 class CustomMenu(bpy.types.Menu):
     bl_label = "Custom Menu"
-    bl_idname = "view3d.custom_menu"
+    bl_idname = "VIEW3D_MT_custom_menu"
     
     
     def draw(self, context):
@@ -682,7 +682,7 @@ def register():
     for mode in modes:
         km = wm.keyconfigs.active.keymaps[mode]
         kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
-        kmi.properties.name = 'view3d.custom_menu'
+        kmi.properties.name = 'VIEW3D_MT_custom_menu'
         addon_keymaps.append((km, kmi))
     
 def unregister():

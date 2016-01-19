@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class BrushesMenu(bpy.types.Menu):
     bl_label = "Brush"
-    bl_idname = "view3d.brushes_menu"
+    bl_idname = "VIEW3D_MT_brushes_menu"
 
     def init(self):
         if get_mode() == sculpt:
@@ -191,7 +191,7 @@ class BrushFavMenu(bpy.types.Menu):
         
         if menu.items:
             menu.add_item().separator()
-        menu.add_item().menu("view3d.brushes_menu", "All Brushes")
+        menu.add_item().menu("VIEW3D_MT_brushes_menu", "All Brushes")
         
 class SetBrushOp(bpy.types.Operator):
     '''Select brush. Shift-Click to favourite, Ctrl-Click to unfavourite'''

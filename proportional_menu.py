@@ -59,7 +59,7 @@ class ProportionalModeOperator(bpy.types.Operator):
 
 class ProportionalEditingMenu(bpy.types.Menu):
     bl_label = "Proportional"
-    bl_idname = "view3d.proportional_menu"
+    bl_idname = "VIEW3D_MT_proportional_menu"
 
     @classmethod
     def poll(self, context):
@@ -89,7 +89,7 @@ class ProportionalEditingMenu(bpy.types.Menu):
 
 class FalloffMenu(bpy.types.Menu):
     bl_label = "Falloff Menu"
-    bl_idname = "view3d.falloff_menu"
+    bl_idname = "VIEW3D_MT_falloff_menu"
 
     @classmethod
     def poll(self, context):
@@ -128,7 +128,7 @@ def register():
     addon_keymaps.append((km, kmi))
     
     kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
-    kmi.properties.name = 'view3d.falloff_menu'
+    kmi.properties.name = 'VIEW3D_MT_falloff_menu'
     addon_keymaps.append((km, kmi))
 
 

@@ -11,7 +11,7 @@ curve = 'CURVE'
 
 class StrokeOptionsMenu(bpy.types.Menu):
     bl_label = "Stroke Options"
-    bl_idname = "view3d.stroke_options"
+    bl_idname = "VIEW3D_MT_stroke_options"
     
     @classmethod
     def poll(self, context):
@@ -67,7 +67,7 @@ class StrokeOptionsMenu(bpy.types.Menu):
             
 class StrokeMethodMenu(bpy.types.Menu):
     bl_label = "Stroke Method"
-    bl_idname = "view3d.stroke_method"
+    bl_idname = "VIEW3D_MT_stroke_method"
 
     def init(self):
         if get_mode() == sculpt:
@@ -109,7 +109,7 @@ def register():
     for mode in modes:
         km = wm.keyconfigs.active.keymaps[mode]
         kmi = km.keymap_items.new('wm.call_menu', 'E', 'PRESS')
-        kmi.properties.name = "view3d.stroke_options"
+        kmi.properties.name = "VIEW3D_MT_stroke_options"
         addon_keymaps.append((km, kmi))
 
 def unregister():

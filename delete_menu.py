@@ -3,7 +3,7 @@ from .Utils.core import *
 # adds a context sensitive delete menu 
 class DeleteMenu(bpy.types.Menu):
     bl_label = "Delete"
-    bl_idname = "mesh.context_delete_menu"
+    bl_idname = "MESH_MT_context_delete_menu"
 
     @classmethod
     def poll(self, context):
@@ -113,7 +113,7 @@ def register():
     #km = wm.keyconfigs.active.keymaps.new(name='Mesh', space_type='EMPTY')
     km = wm.keyconfigs.active.keymaps['Mesh']
     kmi = km.keymap_items.new('wm.call_menu', 'X', 'PRESS')
-    kmi.properties.name = 'mesh.context_delete_menu'
+    kmi.properties.name = 'MESH_MT_context_delete_menu'
     addon_keymaps.append((km, kmi))
 
 def unregister():
