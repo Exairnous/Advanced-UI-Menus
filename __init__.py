@@ -103,14 +103,14 @@ def unregister():
     for addon_file in addon_files:
         addon_file.unregister()
         
-    # unregister all blender classes
-    bpy.utils.unregister_module(__name__)
-        
     # re-enable all the keymaps you disabled
     keymodes.opposingkeys(True)
     
     # delete all the properties you have created
     del_props()
+    
+    # unregister all blender classes
+    bpy.utils.unregister_module(__name__)
     
 if __name__ == "__main__":
     register()

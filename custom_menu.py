@@ -666,11 +666,6 @@ def register():
                     name="FullEvent")
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropExpand", 
-                    default=False, 
-                    name="Expand")
-    
-    set_prop("BoolProperty", 
                     "bpy.types.Scene.CustomMenuPropEmboss", 
                     default=True, 
                     name="Emboss")
