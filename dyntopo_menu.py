@@ -68,7 +68,6 @@ class DynTopoMenu(bpy.types.Menu):
                 menu.add_item().operator("sculpt.detail_flood_fill")
             
             menu.add_item().menu(SymmetrizeMenu.bl_idname)
-            menu.add_item().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
             
         else:
             menu.add_item()

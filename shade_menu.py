@@ -95,7 +95,12 @@ class ShadeModeMenu(bpy.types.Menu):
         # add a shading options menu if object can be shaded smooth/flat
         if bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
             self.layout.row().separator()
-            self.layout.row().menu(MeshShadeMenu.bl_idname)
+            
+            if not context.object.use_dynamic_topology_sculpting:
+                self.layout.row().menu(MeshShadeMenu.bl_idname)
+            else:
+                self.layout.row().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
+                self.layout.row().separator()
             
         # add a display options menu if the mode is not edit
         if get_mode() != 'EDIT':
