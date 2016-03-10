@@ -23,7 +23,7 @@ bl_info = {
     "name": "Advanced UI Menus Development Version",
     "description": "Menus for advanced interaction with blender's UI",
     "author": "Ryan Inch",
-    "version": (1, 4),
+    "version": ("dev"),
     "blender": (2, 74),
     "location": "View3D - Multiple menus in multiple modes.",
     "warning": '',  # used for warning icon and text in addons panel
