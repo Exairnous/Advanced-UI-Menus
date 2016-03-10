@@ -87,8 +87,8 @@ class SetLayerViewWindow(bpy.types.Operator):
     def draw(self, context):
         ui = Menu(self)
         
-        #column_flow = ui.add_item("column_flow", columns=2)
-        column_flow = ui.add_item()
+        column_flow = ui.add_item("column_flow", columns=2)
+        #column_flow = ui.add_item()
         
         # if the layer management addon is enabled name the layers with the layer names
         try:
@@ -107,8 +107,8 @@ class SetLayerViewWindow(bpy.types.Operator):
         
         # add the menu items
         for num in range(20):
-            if num == 10:
-                column_flow = ui.add_item()
+            #if num == 10:
+                #column_flow = ui.add_item()
             if num == context.scene.active_layer:
                 prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='FILE_TICK')
                 
@@ -116,7 +116,7 @@ class SetLayerViewWindow(bpy.types.Operator):
                 prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='RESTRICT_VIEW_OFF')
                 
             else:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num])
+                prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='BLANK1')
             
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             prop.layer_num = num
@@ -163,7 +163,7 @@ class SetObjectLayerWindow(bpy.types.Operator):
                 prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", layernames[num], icon='RESTRICT_VIEW_OFF')
                 
             else:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", layernames[num])
+                prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", layernames[num], icon='BLANK1')
             
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             prop.layer_num = num
