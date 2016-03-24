@@ -56,28 +56,27 @@ from . import symmetry_menu
 from . import texture_menu
 from . import view_menu
 
-addon_files = [ 
-              brush_menu,
-              brushes,
-              curve_menu,
-              custom_menu,
-              delete_menu,
-              dyntopo_menu,
-              extrude_menu,
-              layers_window,
-              manipulator_menu,
-              mode_menu,
-              pivot_menu,
-              preferences,
-              proportional_menu,
-              selection_menu,
-              shade_menu,
-              snap_menu,
-              stroke_menu,
-              symmetry_menu,
-              texture_menu,
-              view_menu
-              ]
+addon_files = \
+[preferences,
+ brush_menu,
+ brushes,
+ curve_menu,
+ custom_menu,
+ delete_menu,
+ dyntopo_menu,
+ extrude_menu,
+ layers_window,
+ manipulator_menu,
+ mode_menu,
+ pivot_menu,
+ proportional_menu,
+ selection_menu,
+ shade_menu,
+ snap_menu,
+ stroke_menu,
+ symmetry_menu,
+ texture_menu,
+ view_menu]
 
 @bpy.app.handlers.persistent
 def scene_update_post_reg(scene):
@@ -85,7 +84,7 @@ def scene_update_post_reg(scene):
     bpy.app.handlers.scene_update_post.remove(scene_update_post_reg)
     
     # disable conflicting hotkeys
-    keymodes.opposingkeys(False)
+    #keymodes.opposingkeys(False)
     
     # register all files
     for addon_file in addon_files:
@@ -96,7 +95,11 @@ def register():
     bpy.utils.register_module(__name__)
     
     # add a handler so blender registers keymaps and stuff after everything has loaded
-    bpy.app.handlers.scene_update_post.append(scene_update_post_reg)
+    #bpy.app.handlers.scene_update_post.append(scene_update_post_reg)
+    
+    # register all files
+    for addon_file in addon_files:
+        addon_file.register()
  
 def unregister():
     # unregister all files
@@ -104,7 +107,7 @@ def unregister():
         addon_file.unregister()
         
     # re-enable all the keymaps you disabled
-    keymodes.opposingkeys(True)
+    #keymodes.opposingkeys(True)
     
     # delete all the properties you have created
     del_props()

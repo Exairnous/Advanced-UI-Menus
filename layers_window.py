@@ -206,19 +206,33 @@ class LayersWindowOperator(bpy.types.Operator):
 
 addon_keymaps = []
 
+def set_keybind(value):
+    wm = bpy.context.window_manager
+    
+    if value in ("off", "menu", "pie"):
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+        addon_keymaps.clear()
+    else:
+        print("invalid value")
+        return
+        
+    if value in ("menu","pie"):
+        print("got here")
+        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
+        kmi = km.keymap_items.new('view3d.layers_window_operator', 'M', 'PRESS')
+        addon_keymaps.append((km, kmi))
+
 def register():
                     
     set_prop("BoolProperty", "bpy.types.Scene.layer_changed", name="layer_changed")
 
-    # create the global menu hotkey
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('view3d.layers_window_operator', 'M', 'PRESS')
-    addon_keymaps.append((km, kmi))
+    # create the global hotkey
+    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
+    setting = Aum_Settings.get("3DView - Layers Window")
+    set_keybind(setting.value)
 
 
 def unregister():
     # remove keymaps when add-on is deactivated
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    set_keybind("off")

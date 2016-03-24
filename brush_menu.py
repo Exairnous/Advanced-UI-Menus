@@ -449,18 +449,36 @@ class ColorPickerPopup(bpy.types.Operator):
 
 addon_keymaps = []
 
-def register():
-    
+def set_keybind(value):
     wm = bpy.context.window_manager
-    modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
     
-    for mode in modes:
-        km = wm.keyconfigs.active.keymaps[mode]
-        kmi = km.keymap_items.new('wm.call_menu', 'V', 'PRESS')
-        kmi.properties.name = "VIEW3D_MT_brush_options"
-        addon_keymaps.append((km, kmi))
+    if value in ("off", "menu", "pie"):
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+        addon_keymaps.clear()
+    else:
+        print("invalid value")
+        return
+        
+    if value == "menu":
+        modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
+        
+        for mode in modes:
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('wm.call_menu', 'V', 'PRESS')
+            kmi.properties.name = "VIEW3D_MT_brush_options"
+            addon_keymaps.append((km, kmi))
+        
+    elif value == "pie":
+        ### Pie Code Goes Here ###
+        pass
+
+def register():
+    # create the global menu hotkey
+    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
+    setting = Aum_Settings.get("Paint - Brush Options")
+    set_keybind(setting.value)
 
 def unregister():
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    # remove keymaps when add-on is deactivated
+    set_keybind("off")

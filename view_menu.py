@@ -57,18 +57,34 @@ class OtherViewMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def register():
-    # create the global menu hotkey
+def set_keybind(value):
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
-    kmi.properties.name = 'VIEW3D_MT_view_menu'
-    addon_keymaps.append((km, kmi))
+    
+    if value in ("off", "menu", "pie"):
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+        addon_keymaps.clear()
+    else:
+        print("invalid value")
+        return
+        
+    if value == "menu":   
+        km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
+        kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
+        kmi.properties.name = 'VIEW3D_MT_view_menu'
+        addon_keymaps.append((km, kmi))
+        
+    elif value == "pie":
+        ### Pie Code Goes Here ###
+        pass
+
+def register():
+    # create the global hotkey
+    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
+    setting = Aum_Settings.get("3DView - View Menu")
+    set_keybind(setting.value)
 
 
 def unregister():  
     # remove keymaps when add-on is deactivated
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    set_keybind("off")

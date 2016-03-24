@@ -106,18 +106,33 @@ class DeleteMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def register():
-
-    # create the global menu hotkey
+def set_keybind(value):
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='Mesh', space_type='EMPTY')
-    km = wm.keyconfigs.active.keymaps['Mesh']
-    kmi = km.keymap_items.new('wm.call_menu', 'X', 'PRESS')
-    kmi.properties.name = 'MESH_MT_context_delete_menu'
-    addon_keymaps.append((km, kmi))
+    
+    if value in ("off", "menu", "pie"):
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+        addon_keymaps.clear()
+    else:
+        print("invalid value")
+        return
+        
+    if value == "menu":   
+        km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
+        kmi = km.keymap_items.new('wm.call_menu', 'X', 'PRESS')
+        kmi.properties.name = 'MESH_MT_context_delete_menu'
+        addon_keymaps.append((km, kmi))
+        
+    elif value == "pie":
+        ### Pie Code Goes Here ###
+        pass
+
+def register():
+    # create the global menu hotkey
+    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
+    setting = Aum_Settings.get("Edit - Delete Menu")
+    set_keybind(setting.value)
 
 def unregister():
-     # remove keymaps when add-on is deactivated
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    # remove keymaps when add-on is deactivated
+    set_keybind("off")

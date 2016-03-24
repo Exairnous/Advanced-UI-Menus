@@ -602,6 +602,31 @@ class SearchableMenuListMenu(bpy.types.Operator):
 
 addon_keymaps = []
 
+def set_keybind(value):
+    wm = bpy.context.window_manager
+    
+    if value in ("off", "menu", "pie"):
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+        addon_keymaps.clear()
+    else:
+        print("invalid value")
+        return
+        
+    if value == "menu":
+        modes = ['3D View', 'Timeline', 'Graph Editor', 'Dopesheet', 'NLA Editor',
+                 'Image', 'Sequencer', 'Clip', 'Node Editor', 'Logic Editor', 'Console']
+        
+        for mode in modes:
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
+            kmi.properties.name = 'VIEW3D_MT_custom_menu'
+            addon_keymaps.append((km, kmi))
+        
+    elif value == "pie":
+        ### Pie Code Goes Here ###
+        pass
+
 def register(): 
     read_xml()
     
@@ -671,17 +696,10 @@ def register():
                     name="Emboss")
     
     # create the global hotkey
-    wm = bpy.context.window_manager
-    modes = ['3D View', 'Timeline', 'Graph Editor', 'Dopesheet', 'NLA Editor',
-             'Image', 'Sequencer', 'Clip', 'Node Editor', 'Logic Editor', 'Console']
-    for mode in modes:
-        km = wm.keyconfigs.active.keymaps[mode]
-        kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
-        kmi.properties.name = 'VIEW3D_MT_custom_menu'
-        addon_keymaps.append((km, kmi))
+    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
+    setting = Aum_Settings.get("3DView - Custom Menu")
+    set_keybind(setting.value)
     
 def unregister():
     # remove keymaps when add-on is deactivated
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    set_keybind("off")
