@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class TextureMenu(bpy.types.Menu):
     bl_label = "Texture Options"
-    bl_idname = "view3d.texture_menu"
+    bl_idname = "VIEW3D_MT_texture_menu"
     
     @classmethod
     def poll(self, context):
@@ -71,47 +71,52 @@ class TextureMenu(bpy.types.Menu):
             
 
     def texpaint(self, menu, context):
+        tex_slot = context.tool_settings.image_paint.brush.texture_slot
+        
         menu.add_item().label(text="Texture", icon='TEXTURE')
         
-        menu.add_item().separator()
+        #menu.add_item().separator()
         
         menu.add_item().menu(Textures.bl_idname)
         menu.add_item().menu(TextureMapMode.bl_idname)
+        
+        #menu.add_item().separator()
 
-        if context.tool_settings.image_paint.brush.texture_slot.tex_paint_map_mode != '3D':
-            menu.add_item().separator()
-            menu.add_item().prop(context.tool_settings.image_paint.brush.texture_slot, "angle", slider=True)
-            
-            if context.tool_settings.image_paint.brush.texture_slot.tex_paint_map_mode in ['RANDOM', 'VIEW_PLANE']:
+        if tex_slot.tex_paint_map_mode != '3D':
+            if tex_slot.tex_paint_map_mode in ['RANDOM', 'VIEW_PLANE']:
                 if bpy.app.version >= (2, 75):
-                    menu.add_item().prop(context.tool_settings.image_paint.brush.texture_slot, 
+                    menu.add_item().prop(tex_slot, 
                                          "use_rake", toggle=True)
-                    menu.add_item().prop(context.tool_settings.image_paint.brush.texture_slot, 
+                    menu.add_item().prop(tex_slot, 
                                          "use_random", toggle=True)
                 else:
                     menu.add_item().menu(TextureAngleSource.bl_idname)
+            
+            #menu.add_item().separator()
+            menu.add_item().prop(tex_slot, "angle", text=PIW+"Angle", slider=True)
                     
-                if context.tool_settings.image_paint.brush.texture_slot.use_random:
-                    menu.add_item().prop(context.tool_settings.image_paint.brush.texture_slot, "random_angle", slider=True)
+            if tex_slot.tex_paint_map_mode in ['RANDOM', 'VIEW_PLANE'] and tex_slot.use_random:
+                menu.add_item().prop(tex_slot, "random_angle", text=PIW+"Random Angle", slider=True)
                                        
-            if context.tool_settings.image_paint.brush.texture_slot.tex_paint_map_mode == 'STENCIL':
-                menu.add_item().separator()
+            if tex_slot.tex_paint_map_mode == 'STENCIL':
+                #menu.add_item().separator()
                 menu.add_item().operator("brush.stencil_reset_transform")
 
             
         
         menu.add_item().separator()
+        #menu.add_item().label()
 
         menu.add_item().label(text="Texture Mask", icon='MOD_MASK')
         
-        menu.add_item().separator()
+        #menu.add_item().separator()
 
         menu.add_item().menu(MaskTextures.bl_idname)
         menu.add_item().menu(MaskMapMode.bl_idname)
         
-        menu.add_item().separator()
+        #menu.add_item().separator()
         
-        menu.add_item().prop(context.tool_settings.image_paint.brush.mask_texture_slot, "angle", slider=True)
+        menu.add_item().prop(context.tool_settings.image_paint.brush.mask_texture_slot, "angle", text=PIW+"Angle", icon_value=5, slider=True)
         if context.tool_settings.image_paint.brush.mask_texture_slot.mask_map_mode in ['RANDOM', 'VIEW_PLANE']:
             if bpy.app.version >= (2, 75):
                 menu.add_item().prop(context.tool_settings.image_paint.brush.mask_texture_slot, 
@@ -122,7 +127,7 @@ class TextureMenu(bpy.types.Menu):
                 menu.add_item().menu(TextureAngleSource.bl_idname)
                 
             if context.tool_settings.image_paint.brush.mask_texture_slot.use_random:
-                menu.add_item().prop(context.tool_settings.image_paint.brush.mask_texture_slot, "random_angle", slider=True)
+                menu.add_item().prop(context.tool_settings.image_paint.brush.mask_texture_slot, "random_angle", text=PIW+"Random Angle", slider=True)
               
         if context.tool_settings.image_paint.brush.mask_texture_slot.mask_map_mode == 'STENCIL':
             prop = menu.add_item().operator("brush.stencil_reset_transform")
@@ -130,7 +135,7 @@ class TextureMenu(bpy.types.Menu):
 
 class Textures(bpy.types.Menu):
     bl_label = "Brush Texture"
-    bl_idname = "view3d.texture_list"
+    bl_idname = "VIEW3D_MT_texture_list"
 
     def init(self):
         if get_mode() == sculpt:
@@ -176,7 +181,7 @@ class Textures(bpy.types.Menu):
             
 class TextureMapMode(bpy.types.Menu):
     bl_label = "Brush Mapping"
-    bl_idname = "view3d.texture_map_mode"
+    bl_idname = "VIEW3D_MT_texture_map_mode"
     
     def draw(self, context):
         menu = Menu(self)
@@ -228,7 +233,7 @@ class TextureMapMode(bpy.types.Menu):
             
 class MaskTextures(bpy.types.Menu):
     bl_label = "Mask Texture"
-    bl_idname = "view3d.mask_texture_list"
+    bl_idname = "VIEW3D_MT_mask_texture_list"
 
     def draw(self, context):
         menu = Menu(self)
@@ -259,7 +264,7 @@ class MaskTextures(bpy.types.Menu):
             
 class MaskMapMode(bpy.types.Menu):
     bl_label = "Mask Mapping"
-    bl_idname = "view3d.mask_map_mode"
+    bl_idname = "VIEW3D_MT_mask_map_mode"
     
     def draw(self, context):
         menu = Menu(self)
@@ -281,7 +286,7 @@ class MaskMapMode(bpy.types.Menu):
                      
 class TextureAngleSource(bpy.types.Menu):
     bl_label = "Texture Angle Source"
-    bl_idname = "view3d.texture_angle_source"
+    bl_idname = "VIEW3D_MT_texture_angle_source"
     
     def draw(self, context):
         menu = Menu(self)
@@ -313,9 +318,9 @@ def register():
     modes = ['Sculpt', 'Vertex Paint', 'Image Paint']
     
     for mode in modes:
-        km = wm.keyconfigs.active.keymaps[mode]
+        km = wm.keyconfigs.addon.keymaps.new(name=mode)
         kmi = km.keymap_items.new('wm.call_menu', 'R', 'PRESS')
-        kmi.properties.name = "view3d.texture_menu"
+        kmi.properties.name = "VIEW3D_MT_texture_menu"
         addon_keymaps.append((km, kmi))
 
 def unregister():

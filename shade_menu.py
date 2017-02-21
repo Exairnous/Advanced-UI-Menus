@@ -47,7 +47,7 @@ class ShadeModeOperator(bpy.types.Operator):
 
 class ShadeModeMenu(bpy.types.Menu):
     bl_label = "Shading Mode"
-    bl_idname = "view3d.shade_menu"
+    bl_idname = "VIEW3D_MT_shade_menu"
 
     def init(self):
         renderer = bpy.context.scene.render.engine
@@ -89,16 +89,17 @@ class ShadeModeMenu(bpy.types.Menu):
         # add a shading options menu if object can be shaded smooth/flat
         if bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
             menu.add_item().separator()
-            menu.add_item().menu(MeshShadeMenu.bl_idname)
-            
-        # add a display options menu if the mode is not edit
-        if get_mode() != 'EDIT':
-            menu.add_item().menu(DisplayOptionsMenu.bl_idname)
+            if context.object.use_dynamic_topology_sculpting:
+                menu.add_item().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
+            else:
+                menu.add_item().menu(MeshShadeMenu.bl_idname)
 
+            if get_mode() != 'EDIT':
+                menu.add_item().menu(DisplayOptionsMenu.bl_idname)
 
 class MeshShadeMenu(bpy.types.Menu):
     bl_label = "Mesh Shading Options"
-    bl_idname = "view3d.mesh_shade"
+    bl_idname = "VIEW3D_MT_mesh_shade"
 
     def draw(self, context):
         menu = Menu(self)
@@ -114,7 +115,7 @@ class MeshShadeMenu(bpy.types.Menu):
 
 class DisplayOptionsMenu(bpy.types.Menu):
     bl_label = "Display Options"
-    bl_idname = "view3d.display_options"
+    bl_idname = "VIEW3D_MT_display_options"
 
     def draw(self, context):
         menu = Menu(self)
@@ -132,8 +133,7 @@ addon_keymaps = []
 def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
+    km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
     kmi = km.keymap_items.new('view3d.shading_menu_operator', 'Z', 'PRESS')
     addon_keymaps.append((km, kmi))
 

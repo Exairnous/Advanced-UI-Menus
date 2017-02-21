@@ -43,7 +43,7 @@ class ManipulatorMenuOperator(bpy.types.Operator):
     
 class ManipulatorMenu(bpy.types.Menu):
     bl_label = "Manipulator"
-    bl_idname = "view3d.manipulator_menu"
+    bl_idname = "VIEW3D_MT_manipulator_menu"
     
     def draw(self, context):
         menu = Menu(self)
@@ -63,7 +63,7 @@ class ManipulatorMenu(bpy.types.Menu):
 
 class ManipulatorMenu2(bpy.types.Menu):
     bl_label = "Transform Orientation"
-    bl_idname = "view3d.manipulator_menu_2"
+    bl_idname = "VIEW3D_MT_manipulator_menu_2"
     
     def draw(self, context):
         menu = Menu(self)
@@ -76,8 +76,7 @@ addon_keymaps = []
 def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
+    km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
     kmi = km.keymap_items.new('view3d.manipulator_operator', 'SPACE', 'PRESS', ctrl=True)
     addon_keymaps.append((km, kmi))
 

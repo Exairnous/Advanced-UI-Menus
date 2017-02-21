@@ -2,7 +2,7 @@ from .Utils.core import *
 
 class BrushCurveMenu(bpy.types.Menu):
     bl_label = "Curve"
-    bl_idname = "view3d.brush_curve_menu"
+    bl_idname = "VIEW3D_MT_brush_curve_menu"
     
     @classmethod
     def poll(self, context):
@@ -63,9 +63,9 @@ def register():
     modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint']
     
     for mode in modes:
-        km = wm.keyconfigs.active.keymaps[mode]
+        km = wm.keyconfigs.addon.keymaps.new(name=mode)
         kmi = km.keymap_items.new('wm.call_menu', 'W', 'PRESS')
-        kmi.properties.name = "view3d.brush_curve_menu"
+        kmi.properties.name = "VIEW3D_MT_brush_curve_menu"
         addon_keymaps.append((km, kmi))
 
 def unregister():

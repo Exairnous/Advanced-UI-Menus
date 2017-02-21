@@ -42,56 +42,72 @@ class SnapMenuOperator(bpy.types.Operator):
 
 class SnapModeMenu(bpy.types.Menu):
     bl_label = "Snap Element"
-    bl_idname = "view3d.snap_menu"
-
-    def init(self):
-        modes = [["Increment", 'INCREMENT', "SNAP_INCREMENT"], ["Vertex", 'VERTEX', "SNAP_VERTEX"],
-                 ["Edge", 'EDGE', "SNAP_EDGE"], ["Face", 'FACE', "SNAP_FACE"],
-                 ["Volume", 'VOLUME', "SNAP_VOLUME"]]
-
-        return modes
+    bl_idname = "VIEW3D_MT_snap_menu"
 
     def draw(self, context):
-        modes = self.init()
         menu = Menu(self)
+        snap_element = bpy.context.tool_settings.snap_element
+        
+        # menu for node editor
+        if context.space_data.type == 'NODE_EDITOR':
+            modes = [["Grid", 'GRID', "SNAP_GRID"],
+                     ["Node X", 'NODE_X', "SNAP_EDGE"],
+                     ["Node Y", 'NODE_Y', "SNAP_EDGE"],
+                     ["Node X/Y", 'NODE_XY', "SNAP_EDGE"]]
+                     
+            # add the menu items
+            for mode in modes:
+                menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_node_element",
+                         icon=mode[2], disable=True)
+                
+            if snap_element != "INCREMENT":
+                menu.add_item().separator()
+                menu.add_item().menu(SnapTargetMenu.bl_idname)
+        
+        # menu for 3d view
+        if context.space_data.type == 'VIEW_3D':
+            modes = [["Increment", 'INCREMENT', "SNAP_INCREMENT"],
+                     ["Vertex", 'VERTEX', "SNAP_VERTEX"],
+                     ["Edge", 'EDGE', "SNAP_EDGE"],
+                     ["Face", 'FACE', "SNAP_FACE"],
+                     ["Volume", 'VOLUME', "SNAP_VOLUME"]]
 
-        # add the menu items
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_element",
-                     icon=mode[2], disable=True)
+            # add the menu items
+            for mode in modes:
+                menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_element",
+                         icon=mode[2], disable=True)
 
-        if bpy.context.tool_settings.snap_element != "INCREMENT":
+            if snap_element != "INCREMENT":
+                menu.add_item().separator()
+                menu.add_item().menu(SnapTargetMenu.bl_idname)
+                
             menu.add_item().separator()
-            
-            menu.add_item().menu(SnapTargetMenu.bl_idname)
-            
-            menu.add_item().separator()
 
-        if bpy.context.tool_settings.snap_element not in ["INCREMENT", "VOLUME"]:
-            menu.add_item().prop(bpy.context.tool_settings, "use_snap_align_rotation", toggle=True)
+            if snap_element == "INCREMENT":
+                menu.add_item().prop(bpy.context.tool_settings, "use_snap_grid_absolute", toggle=True)
 
-        if bpy.context.tool_settings.snap_element == "FACE":
-            menu.add_item().prop(bpy.context.tool_settings, "use_snap_project", toggle=True)
+            if snap_element not in ["INCREMENT", "VOLUME"]:
+                menu.add_item().prop(bpy.context.tool_settings, "use_snap_align_rotation", toggle=True)
 
-        if bpy.context.tool_settings.snap_element == "VOLUME":
-            menu.add_item().prop(bpy.context.tool_settings, "use_snap_peel_object", toggle=True)
+            if snap_element == "FACE":
+                menu.add_item().prop(bpy.context.tool_settings, "use_snap_project", toggle=True)
+
+            if snap_element == "VOLUME":
+                menu.add_item().prop(bpy.context.tool_settings, "use_snap_peel_object", toggle=True)
 
 
 
 
 class SnapTargetMenu(bpy.types.Menu):
     bl_label = "Snap Target"
-    bl_idname = "view3d.snap_target_menu"
-
-    def init(self):
-        modes = [["Active", 'ACTIVE'], ["Median", 'MEDIAN'],
-                 ["Center", 'CENTER'], ["Closest", 'CLOSEST']]
-
-        return modes
+    bl_idname = "VIEW3D_MT_snap_target_menu"
 
     def draw(self, context):
-        modes = self.init()
         menu = Menu(self)
+        modes = [["Active", 'ACTIVE'],
+                 ["Median", 'MEDIAN'],
+                 ["Center", 'CENTER'],
+                 ["Closest", 'CLOSEST']]
 
         # add the menu items
         for mode in modes:
@@ -105,10 +121,12 @@ addon_keymaps = []
 def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('view3d.snap_menu_operator', 'TAB', 'PRESS', shift=True)
-    addon_keymaps.append((km, kmi))
+    modes = {'Object Non-modal':'EMPTY', 'Node Editor':'NODE_EDITOR'}
+    
+    for mode, space in modes.items():
+        km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+        kmi = km.keymap_items.new('view3d.snap_menu_operator', 'TAB', 'PRESS', shift=True)
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():

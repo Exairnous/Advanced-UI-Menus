@@ -36,8 +36,7 @@ addon_keymaps = []
 def register():
     # create the global hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='Mesh', space_type='EMPTY')
-    km = wm.keyconfigs.active.keymaps['Mesh']
+    km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
     kmi = km.keymap_items.new('view3d.extrude_menu_operator', 'E', 'PRESS')
     addon_keymaps.append((km, kmi))
 

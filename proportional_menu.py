@@ -10,7 +10,35 @@ class ProportionalModeOperator(bpy.types.Operator):
 
     def init(self, context):
         self.start_time = 0
+        
+        if context.space_data.type == 'DOPESHEET_EDITOR':
+            if context.tool_settings.use_proportional_action == False:
+                context.tool_settings.use_proportional_action = True
+                
+            else:
+                context.tool_settings.use_proportional_action = False
+                
+            return {'FINISHED'}
 
+        if context.space_data.type == 'GRAPH_EDITOR':
+            if context.tool_settings.use_proportional_fcurve == False:
+                context.tool_settings.use_proportional_fcurve = True
+                
+            else:
+                context.tool_settings.use_proportional_fcurve = False
+                
+            return {'FINISHED'}
+            
+        if context.space_data.type == 'IMAGE_EDITOR':
+            if context.space_data.show_maskedit:
+                if context.tool_settings.use_proportional_edit_mask == False:
+                    context.tool_settings.use_proportional_edit_mask = True
+                
+                else:
+                    context.tool_settings.use_proportional_edit_mask = False
+                
+                return {'FINISHED'}
+                
         if get_mode() == 'OBJECT':
             if context.tool_settings.use_proportional_edit_objects == False:
                 context.tool_settings.use_proportional_edit_objects = True
@@ -59,7 +87,7 @@ class ProportionalModeOperator(bpy.types.Operator):
 
 class ProportionalEditingMenu(bpy.types.Menu):
     bl_label = "Proportional"
-    bl_idname = "view3d.proportional_menu"
+    bl_idname = "VIEW3D_MT_proportional_menu"
 
     @classmethod
     def poll(self, context):
@@ -89,7 +117,7 @@ class ProportionalEditingMenu(bpy.types.Menu):
 
 class FalloffMenu(bpy.types.Menu):
     bl_label = "Falloff Menu"
-    bl_idname = "view3d.falloff_menu"
+    bl_idname = "VIEW3D_MT_falloff_menu"
 
     @classmethod
     def poll(self, context):
@@ -122,14 +150,16 @@ addon_keymaps = []
 def register():
     # create the global menu hotkeys
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
-    addon_keymaps.append((km, kmi))
+    modes = {'Grease Pencil Stroke Edit Mode':'EMPTY', 'Object Mode':'EMPTY', 'Curve':'EMPTY', 'Mesh':'EMPTY', 'Metaball':'EMPTY', 'Lattice':'EMPTY', 'Particle':'EMPTY', 'UV Editor':'EMPTY', 'Mask Editing':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Dopesheet':'DOPESHEET_EDITOR'}
     
-    kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
-    kmi.properties.name = 'view3d.falloff_menu'
-    addon_keymaps.append((km, kmi))
+    for mode, space in modes.items():
+        km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+        kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
+        addon_keymaps.append((km, kmi))
+    
+        kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
+        kmi.properties.name = 'VIEW3D_MT_falloff_menu'
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():

@@ -3,15 +3,28 @@ from .Utils.core import *
 # adds a pivot point menu 
 class PivotPointMenu(bpy.types.Menu):
     bl_label = "Pivot Point"
-    bl_idname = "view3d.pivot_point"
+    bl_idname = "VIEW3D_MT_pivot_point"
     
     def draw(self, context):
         menu = Menu(self)
-        pivot_modes = [["Median Point", "'MEDIAN_POINT'", "ROTATECENTER"], 
-                                     ["3D Cursor", "'CURSOR'", "CURSOR"],
-                                     ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
-                                     ["Active Element", "'ACTIVE_ELEMENT'", "ROTACTIVE"],
-                                     ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "ROTATE"]]
+        # get set pivot modes based on spacetype
+        if context.space_data.type == 'VIEW_3D':
+            pivot_modes = [["Median Point", "'MEDIAN_POINT'", "ROTATECENTER"], 
+                           ["3D Cursor", "'CURSOR'", "CURSOR"],
+                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
+                           ["Active Element", "'ACTIVE_ELEMENT'", "ROTACTIVE"],
+                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "ROTATE"]]
+                           
+        if context.space_data.type == 'GRAPH_EDITOR':
+            pivot_modes = [["2D Cursor", "'CURSOR'", "CURSOR"],
+                           ["Individual Centers", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
+                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "ROTATE"]]
+        
+        if context.space_data.type == 'IMAGE_EDITOR':
+            pivot_modes = [["Median Point", "'MEDIAN'", "ROTATECENTER"], 
+                           ["2D Cursor", "'CURSOR'", "CURSOR"],
+                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
+                           ["Bounding Box Center", "'CENTER'", "ROTATE"]]
             
             # create menu
         for mode in pivot_modes:
@@ -46,11 +59,13 @@ addon_keymaps = []
 def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('wm.call_menu', 'PERIOD', 'PRESS')
-    kmi.properties.name = 'view3d.pivot_point'
-    addon_keymaps.append((km, kmi))
+    modes = {'Object Non-modal':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Image':'IMAGE_EDITOR'}
+    
+    for mode, space in modes.items():
+        km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+        kmi = km.keymap_items.new('wm.call_menu', 'PERIOD', 'PRESS')
+        kmi.properties.name = 'VIEW3D_MT_pivot_point'
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():

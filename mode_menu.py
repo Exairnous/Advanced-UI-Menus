@@ -37,49 +37,50 @@ class EditorModeOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if not bpy.context.object:
+        if not context.object or context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
             return {'FINISHED'}
-        
-        if bpy.context.object.type in ['MESH', 'ARMATURE']:
-            self.init()
-            self.start_time = time.time()
-            context.window_manager.modal_handler_add(self)
+
+        self.init()
+        self.start_time = time.time()
+        context.window_manager.modal_handler_add(self)
             
-            return {'RUNNING_MODAL'}
-        
-        elif bpy.context.object.type in ['CURVE', 'SURFACE', 'META', 'FONT', 'LATTICE']:
-            bpy.ops.object.editmode_toggle()
-            
-            return {'FINISHED'}
-        
-        else:
-            return {'FINISHED'}
+        return {'RUNNING_MODAL'}
 
 
 class EditorModeMenu(bpy.types.Menu):
     bl_label = "Editor Menu"
-    bl_idname = "view3d.mode_menu"
+    bl_idname = "VIEW3D_MT_mode_menu"
 
     def init(self):
         ob_type = bpy.context.object.type
+        gpd = bpy.context.gpencil_data
         self.mode = get_mode()
 
         if ob_type == 'MESH':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
-                              ["Edit", edit, "EDITMODE_HLT"],
-                              ["Sculpt", sculpt, "SCULPTMODE_HLT"],
-                              ["Vertex Paint", vertex_paint, "VPAINT_HLT"],
-                              ["Weight Paint", weight_paint, "WPAINT_HLT"],
-                              ["Texture Paint", texture_paint, "TPAINT_HLT"],
-                              ["Particle Edit", particle_edit, "PARTICLEMODE"]]
+                     ["Edit", edit, "EDITMODE_HLT"],
+                     ["Sculpt", sculpt, "SCULPTMODE_HLT"],
+                     ["Vertex Paint", vertex_paint, "VPAINT_HLT"],
+                     ["Weight Paint", weight_paint, "WPAINT_HLT"],
+                     ["Texture Paint", texture_paint, "TPAINT_HLT"]]
+
+            if len(bpy.context.object.particle_systems.items()) > 0: \
+            modes.append(["Particle Edit", particle_edit, "PARTICLEMODE"])
             
-            if len(bpy.context.object.particle_systems.items()) == 0:
-                del modes[6]
+            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
                 
         elif ob_type == 'ARMATURE':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
-                             ["Edit", edit, "EDITMODE_HLT"],
-                             ["Pose", pose, "POSE_HLT"]]
+                     ["Edit", edit, "EDITMODE_HLT"],
+                     ["Pose", pose, "POSE_HLT"]]
+            
+            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
+        
+        else:
+            modes = [["Object", object_mode, "OBJECT_DATAMODE"],
+                     ["Edit", edit, "EDITMODE_HLT"]]
+            
+            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
             
         return modes
 
@@ -89,12 +90,13 @@ class EditorModeMenu(bpy.types.Menu):
 
         # add the menu items
         for mode in modes:
-            prop = menu.add_item().operator("object.mode_set", mode[0], icon=mode[2])
+            prop = menu.add_item(name=mode[0]).operator("object.mode_set", mode[0], icon=mode[2])
             prop.mode = mode[1]
             
             # disable the rows that need it
             if self.mode == mode[1]:
                 menu.current_item.enabled = False
+        
 
 ### ------------ New hotkeys and registration ------------ ###
 
@@ -103,11 +105,13 @@ addon_keymaps = []
 def register():
     # create the global hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
+    km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
     kmi = km.keymap_items.new('view3d.editor_mode_operator', 'TAB', 'PRESS')
     addon_keymaps.append((km, kmi))
-
+    
+    km = wm.keyconfigs.addon.keymaps.new(name='Grease Pencil Stroke Edit Mode')
+    kmi = km.keymap_items.new('view3d.editor_mode_operator', 'TAB', 'PRESS')
+    addon_keymaps.append((km, kmi))
 
 
 def unregister():

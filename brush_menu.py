@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class BrushOptionsMenu(bpy.types.Menu):
     bl_label = "Brush Options"
-    bl_idname = "view3d.brush_options"
+    bl_idname = "VIEW3D_MT_brush_options"
     
     @classmethod
     def poll(self, context):
@@ -28,38 +28,51 @@ class BrushOptionsMenu(bpy.types.Menu):
             self.particle(menu, context)
 
     def sculpt(self, menu, context):
-        menu.add_item().menu("view3d.brushes_menu")
+        menu.add_item().menu("VIEW3D_MT_brushes_menu")
+        menu.add_item().separator()
         menu.add_item().menu(BrushRadiusMenu.bl_idname)
         menu.add_item().menu(BrushStrengthMenu.bl_idname)
+        if context.object.use_dynamic_topology_sculpting:
+            menu.add_item().menu(DynDetailMenu.bl_idname)
         menu.add_item().menu(BrushAutosmoothMenu.bl_idname)
+        menu.add_item().separator()
         menu.add_item().menu(BrushModeMenu.bl_idname)
-
+        if context.object.use_dynamic_topology_sculpting:
+            menu.add_item().menu(DetailMethodMenu.bl_idname)
+            
     def vw_paint(self, menu, context):
-        if get_mode() == vertex_paint:
-            menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
-            menu.add_item().separator()
-        menu.add_item().menu("view3d.brushes_menu")
+        menu.add_item().menu("VIEW3D_MT_brushes_menu")
+        menu.add_item().separator()
         if get_mode() == weight_paint:
             menu.add_item().menu(BrushWeightMenu.bl_idname)
+        if get_mode() == vertex_paint:
+            menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
         menu.add_item().menu(BrushRadiusMenu.bl_idname)
         menu.add_item().menu(BrushStrengthMenu.bl_idname)
+        menu.add_item().separator()
         menu.add_item().menu(BrushModeMenu.bl_idname)
 
     def texpaint(self, menu, context):
-        menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
-        menu.add_item().separator()
+        toolsettings = context.tool_settings.image_paint
         
-        menu.add_item().menu("view3d.brushes_menu")
-        menu.add_item().menu(BrushRadiusMenu.bl_idname)
-        menu.add_item().menu(BrushStrengthMenu.bl_idname)
-        menu.add_item().menu(BrushModeMenu.bl_idname)
+        if context.image_paint_object and not toolsettings.detect_data():
+            menu.add_item().label("Missing Data", icon='ERROR')
+            menu.add_item().label("See Tool Shelf")
+        else:
+            menu.add_item().menu("VIEW3D_MT_brushes_menu")
+            menu.add_item().separator()
+            menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
+            menu.add_item().menu(BrushRadiusMenu.bl_idname)
+            menu.add_item().menu(BrushStrengthMenu.bl_idname)
+            menu.add_item().separator()
+            menu.add_item().menu(BrushModeMenu.bl_idname)
 
     def particle(self, menu, context):
         if context.tool_settings.particle_edit.tool == 'NONE':
             menu.add_item().label("No Brush Selected")
-            menu.add_item().menu("view3d.brushes_menu", text="Select Brush")
+            menu.add_item().menu("VIEW3D_MT_brushes_menu", text="Select Brush")
         else:
-            menu.add_item().menu("view3d.brushes_menu")
+            menu.add_item().menu("VIEW3D_MT_brushes_menu")
             menu.add_item().menu(BrushRadiusMenu.bl_idname)
             if context.tool_settings.particle_edit.tool != 'ADD':
                 menu.add_item().menu(BrushStrengthMenu.bl_idname)
@@ -89,7 +102,7 @@ class BrushOptionsMenu(bpy.types.Menu):
 
 class BrushRadiusMenu(bpy.types.Menu):
     bl_label = "Radius"
-    bl_idname = "view3d.brush_radius_menu"
+    bl_idname = "VIEW3D_MT_brush_radius_menu"
 
     def init(self, context):
         if get_mode() == particle_edit:
@@ -122,7 +135,7 @@ class BrushRadiusMenu(bpy.types.Menu):
 
 class BrushStrengthMenu(bpy.types.Menu):
     bl_label = "Strength"
-    bl_idname = "view3d.brush_strength_menu"
+    bl_idname = "VIEW3D_MT_brush_strength_menu"
 
     def init(self, context):
         settings = [["1.0", 1.0], ["0.7", 0.7], ["0.5", 0.5],
@@ -163,10 +176,77 @@ class BrushStrengthMenu(bpy.types.Menu):
             menuprop(menu.add_item(), settings[i][0], settings[i][1],
                      datapath, icon='RADIOBUT_OFF', disable=True, 
                      disable_icon='RADIOBUT_ON')
+            
+class DynDetailMenu(bpy.types.Menu):
+    bl_label = "Detail Size"
+    bl_idname = "VIEW3D_MT_dyn_detail"
+
+    def init(self):
+        settings = [["40", 40], ["30", 30], ["20", 20],
+                             ["10", 10], ["5", 5], ["1", 1]]
+        
+        if bpy.context.tool_settings.sculpt.detail_type_method == 'RELATIVE':
+            datapath = "tool_settings.sculpt.detail_size"
+            slider_setting = "detail_size"
+            
+        else:
+            datapath = "tool_settings.sculpt.constant_detail"
+            slider_setting = "constant_detail"
+
+        return settings, datapath, slider_setting
+
+    def draw(self, context):
+        settings, datapath, slider_setting = self.init()
+        menu = Menu(self)
+        
+        # add the top slider
+        menu.add_item().prop(context.tool_settings.sculpt, slider_setting, slider=True)
+        menu.add_item().separator()
+
+        # add the rest of the menu items
+        for i in range(len(settings)):
+            menuprop(menu.add_item(), settings[i][0], settings[i][1], datapath, 
+                               icon='RADIOBUT_OFF', disable=True,
+                               disable_icon='RADIOBUT_ON')
+            
+class DetailMethodMenu(bpy.types.Menu):
+    bl_label = "Detail Method"
+    bl_idname = "VIEW3D_MT_detail_method_menu"
+        
+    def draw(self, context):
+        menu = Menu(self)
+        refine_path = "tool_settings.sculpt.detail_refine_method"
+        type_path = "tool_settings.sculpt.detail_type_method"
+        
+        refine_items = [["Subdivide Edges", 'SUBDIVIDE'],
+                        ["Collapse Edges", 'COLLAPSE'],
+                        ["Subdivide Collapse", 'SUBDIVIDE_COLLAPSE']]
+        
+        type_items = [["Relative Detail", 'RELATIVE'],
+                        ["Constant Detail", 'CONSTANT']]
+        
+        
+        menu.add_item().label("Refine")
+        menu.add_item().separator()
+        
+        # add the refine menu items
+        for item in refine_items:
+            menuprop(menu.add_item(), item[0], item[1], refine_path, disable=True, 
+                               icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
+        
+        menu.add_item().label("")
+        
+        menu.add_item().label("Type")
+        menu.add_item().separator()
+        
+        # add the type menu items
+        for item in type_items:
+            menuprop(menu.add_item(), item[0], item[1], type_path, disable=True, 
+                               icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
 
 class BrushModeMenu(bpy.types.Menu):
     bl_label = "Brush Mode"
-    bl_idname = "view3d.brush_mode_menu"
+    bl_idname = "VIEW3D_MT_brush_mode_menu"
 
     def init(self):
         if get_mode() == sculpt:
@@ -242,7 +322,7 @@ class BrushModeMenu(bpy.types.Menu):
 
 class BrushAutosmoothMenu(bpy.types.Menu):
     bl_label = "Autosmooth"
-    bl_idname = "view3d.brush_autosmooth_menu"
+    bl_idname = "VIEW3D_MT_brush_autosmooth_menu"
 
     def init(self):
         settings = [["1.0", 1.0], ["0.7", 0.7], ["0.5", 0.5], ["0.3", 0.3], ["0.2", 0.2],
@@ -268,7 +348,7 @@ class BrushAutosmoothMenu(bpy.types.Menu):
             
 class BrushWeightMenu(bpy.types.Menu):
     bl_label = "Weight"
-    bl_idname = "view3d.brush_weight_menu"
+    bl_idname = "VIEW3D_MT_brush_weight_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -290,7 +370,7 @@ class BrushWeightMenu(bpy.types.Menu):
                                
 class ParticleCountMenu(bpy.types.Menu):
     bl_label = "Count"
-    bl_idname = "view3d.particle_count_menu"
+    bl_idname = "VIEW3D_MT_particle_count_menu"
 
     def init(self):
         settings = [["50", 50], ["25", 25], ["10", 10], ["5", 5], ["3", 3],
@@ -316,7 +396,7 @@ class ParticleCountMenu(bpy.types.Menu):
             
 class ParticleLengthMenu(bpy.types.Menu):
     bl_label = "Length Mode"
-    bl_idname = "view3d.particle_length_menu"
+    bl_idname = "VIEW3D_MT_particle_length_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -333,7 +413,7 @@ class ParticleLengthMenu(bpy.types.Menu):
         
 class ParticlePuffMenu(bpy.types.Menu):
     bl_label = "Puff Mode"
-    bl_idname = "view3d.particle_puff_menu"
+    bl_idname = "VIEW3D_MT_particle_puff_menu"
 
     def draw(self, context):
         menu = Menu(self)
@@ -349,24 +429,35 @@ class ParticlePuffMenu(bpy.types.Menu):
                            disable=True, disable_icon='RADIOBUT_ON')
                            
 class ColorPickerPopup(bpy.types.Operator):
-    bl_label = "Color Picker"
+    bl_label = "Color"
     bl_idname = "view3d.color_picker_popup"
     bl_options = {'REGISTER'}
+    
+    def check(self, context):
+        return True
     
     def draw(self, context):
         menu = Menu(self)
         
         if get_mode() == texture_paint:
-            brush = context.tool_settings.image_paint.brush
+            settings = context.tool_settings.image_paint
+            brush = settings.brush
             
         else:
-            brush = context.tool_settings.vertex_paint.brush
+            settings = context.tool_settings.vertex_paint
+            brush = settings.brush
         
         menu.add_item().template_color_picker(brush, "color", value_slider=True)
         menu.add_item().prop(brush, "color", text="")
         
+        if settings.palette:
+            menu.add_item("column").template_palette(settings, "palette", color=True)
+        
+        menu.add_item().template_ID(settings, "palette", new="palette.new")
+        
     def execute(self, context):
         return context.window_manager.invoke_popup(self, width=180)
+
 
 ### ------------ New hotkeys and registration ------------ ###
 
@@ -377,9 +468,9 @@ def register():
     modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
     
     for mode in modes:
-        km = wm.keyconfigs.active.keymaps[mode]
+        km = wm.keyconfigs.addon.keymaps.new(name=mode)
         kmi = km.keymap_items.new('wm.call_menu', 'V', 'PRESS')
-        kmi.properties.name = "view3d.brush_options"
+        kmi.properties.name = "VIEW3D_MT_brush_options"
         addon_keymaps.append((km, kmi))
 
 def unregister():

@@ -3,7 +3,7 @@ from .Utils.core import *
 
 class SelectionModeMenu(bpy.types.Menu):
     bl_label = "Select Mode"
-    bl_idname = "view3d.selection_menu"
+    bl_idname = "VIEW3D_MT_selection_menu"
 
     @classmethod
     def poll(self, context):
@@ -56,11 +56,13 @@ addon_keymaps = []
 def register():
     # create the global hotkey
     wm = bpy.context.window_manager
-    #km = wm.keyconfigs.active.keymaps.new(name='3D View', space_type='VIEW_3D')
-    km = wm.keyconfigs.active.keymaps['3D View']
-    kmi = km.keymap_items.new('wm.call_menu', 'TAB', 'PRESS', ctrl=True)
-    kmi.properties.name = 'view3d.selection_menu'
-    addon_keymaps.append((km, kmi))
+    modes = ['Mesh', 'Particle']
+    
+    for mode in modes:
+        km = wm.keyconfigs.addon.keymaps.new(name=mode)
+        kmi = km.keymap_items.new('wm.call_menu', 'TAB', 'PRESS', ctrl=True)
+        kmi.properties.name = 'VIEW3D_MT_selection_menu'
+        addon_keymaps.append((km, kmi))
 
 def unregister():
 
