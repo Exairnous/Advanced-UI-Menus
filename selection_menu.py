@@ -15,19 +15,19 @@ class SelectionModeMenu(bpy.types.Menu):
     def init(self):
         if get_mode() == edit:
             modes = [["Vertex Select", (True, False, False), 'VERTEXSEL'],
-                              ["Edge Select", (False, True, False), 'EDGESEL'],
-                              ["Face Select", (False, False, True), 'FACESEL'],
-                              ["Vertex & Edge Select", (True, True, False), 'EDIT'],
-                              ["Vertex & Face Select", (True, False, True), 'EDITMODE_HLT'],
-                              ["Edge & Face Select", (False, True, True), 'SPACE2'],
-                              ["Vertex, Edge & Face Select", (True, True, True), 'OBJECT_DATAMODE']]
+                     ["Edge Select", (False, True, False), 'EDGESEL'],
+                     ["Face Select", (False, False, True), 'FACESEL'],
+                     ["Vertex & Edge Select", (True, True, False), 'EDIT'],
+                     ["Vertex & Face Select", (True, False, True), 'EDITMODE_HLT'],
+                     ["Edge & Face Select", (False, True, True), 'SPACE2'],
+                     ["Vertex, Edge & Face Select", (True, True, True), 'OBJECT_DATAMODE']]
             
             datapath = "tool_settings.mesh_select_mode[0:3]"
             
         else:
             modes = [["Path", 'PATH', 'PARTICLE_PATH'],
-                             ["Point", 'POINT', 'PARTICLE_POINT'],
-                             ["Tip", 'TIP', 'PARTICLE_TIP']]
+                     ["Point", 'POINT', 'PARTICLE_POINT'],
+                     ["Tip", 'TIP', 'PARTICLE_TIP']]
             
             datapath = "tool_settings.particle_edit.select_mode"
             

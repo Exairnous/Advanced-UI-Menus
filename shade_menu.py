@@ -46,7 +46,7 @@ class ShadeModeOperator(bpy.types.Operator):
 
 
 class ShadeModeMenu(bpy.types.Menu):
-    bl_label = "Shading Mode"
+    bl_label = "Viewport Shading"
     bl_idname = "VIEW3D_MT_shade_menu"
 
     def init(self):
@@ -54,26 +54,26 @@ class ShadeModeMenu(bpy.types.Menu):
 
         if renderer == 'BLENDER_RENDER':
             modes = [["Solid", 'SOLID', "SOLID"],
-                              ["Wireframe", 'WIREFRAME', "WIRE"],
-                              ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                              ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                              ["Rendered", 'RENDERED', "SMOOTH"],
-                              ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                     ["Wireframe", 'WIREFRAME', "WIRE"],
+                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                     ["Rendered", 'RENDERED', "SMOOTH"],
+                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         elif renderer == 'CYCLES':
             modes = [["Solid", 'SOLID', "SOLID"],
-                             ["Wireframe", 'WIREFRAME', "WIRE"],
-                             ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                             ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                             ["Rendered", 'RENDERED', "SMOOTH"],
-                             ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                      ["Wireframe", 'WIREFRAME', "WIRE"],
+                      ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                      ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                      ["Rendered", 'RENDERED', "SMOOTH"],
+                      ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         else:
             modes = [["Solid", 'SOLID', "SOLID"],
-                             ["Wireframe", 'WIREFRAME', "WIRE"],
-                             ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                             ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                             ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                     ["Wireframe", 'WIREFRAME', "WIRE"],
+                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         return modes
 
@@ -98,11 +98,14 @@ class ShadeModeMenu(bpy.types.Menu):
                 menu.add_item().menu(DisplayOptionsMenu.bl_idname)
 
 class MeshShadeMenu(bpy.types.Menu):
-    bl_label = "Mesh Shading Options"
+    bl_label = "Object Shading"
     bl_idname = "VIEW3D_MT_mesh_shade"
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Object Shading")
+        menu.add_item().separator()
         
         if bpy.context.mode == 'EDIT_MESH':
             menu.add_item().operator("mesh.faces_shade_flat", "Shade Flat", icon="MESH_ICOSPHERE")
@@ -119,6 +122,9 @@ class DisplayOptionsMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Display Options")
+        menu.add_item().separator()
 
         menu.add_item().prop(context.object, 'show_name', toggle=True)
         menu.add_item().prop(context.object, 'show_axis', toggle=True)

@@ -7,7 +7,7 @@ class SnapMenuOperator(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        if get_mode() in [object_mode, edit, particle_edit]:
+        if get_mode() in [object_mode, edit, particle_edit, gpencil_edit]:
             return True
         else:
             return False
@@ -108,6 +108,9 @@ class SnapTargetMenu(bpy.types.Menu):
                  ["Median", 'MEDIAN'],
                  ["Center", 'CENTER'],
                  ["Closest", 'CLOSEST']]
+                 
+        menu.add_item().label(text="Snap Target")
+        menu.add_item().separator()
 
         # add the menu items
         for mode in modes:
@@ -121,7 +124,7 @@ addon_keymaps = []
 def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    modes = {'Object Non-modal':'EMPTY', 'Node Editor':'NODE_EDITOR'}
+    modes = {'Object Non-modal':'EMPTY', 'Grease Pencil Stroke Edit Mode':'EMPTY', 'Node Editor':'NODE_EDITOR'}
     
     for mode, space in modes.items():
         km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)

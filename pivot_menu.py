@@ -34,23 +34,26 @@ class PivotPointMenu(bpy.types.Menu):
             if bpy.context.space_data.pivot_point == mode[1][1:-1]:
                 menu.current_item.enabled = False
 
-        # if your in object or pose mode add the manip center points
+        # if your in 3D View and in object or pose mode add the manip center points
         # menu
-        if get_mode() in [object, pose]:
-            menu.add_item().separator()
-            if not bpy.context.space_data.use_pivot_point_align:
-                prop = menu.add_item().operator("wm.context_set_value",
-                                                "Enable Manipulate center points", icon="ALIGN")
+        if context.space_data.type == 'VIEW_3D':
+            if get_mode() in [object_mode, pose]:
+                menu.add_item().separator()
+                if not bpy.context.space_data.use_pivot_point_align:
+                    prop = menu.add_item().operator("wm.context_set_value",
+                                                    "Enable Manipulate center points",
+                                                    icon="ALIGN")
                 
-                prop.value = "True"
-                prop.data_path = "space_data.use_pivot_point_align"
+                    prop.value = "True"
+                    prop.data_path = "space_data.use_pivot_point_align"
                 
-            else:
-                prop = menu.add_item().operator("wm.context_set_value",
-                                                "Disable Manipulate center points", icon="ALIGN")
+                else:
+                    prop = menu.add_item().operator("wm.context_set_value",
+                                                    "Disable Manipulate center points",
+                                                    icon="ALIGN")
                 
-                prop.value = "False"
-                prop.data_path = "space_data.use_pivot_point_align"
+                    prop.value = "False"
+                    prop.data_path = "space_data.use_pivot_point_align"
         
 ### ------------ New hotkeys and registration ------------ ###
 

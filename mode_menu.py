@@ -37,8 +37,14 @@ class EditorModeOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if not context.object or context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
+        if not context.object:
             return {'FINISHED'}
+        
+        if context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
+            if bpy.context.gpencil_data:
+                self.last_mode = ['GPENCIL_EDIT', 'OBJECT']
+            else:
+                return {'FINISHED'}
 
         self.init()
         self.start_time = time.time()
@@ -66,21 +72,20 @@ class EditorModeMenu(bpy.types.Menu):
 
             if len(bpy.context.object.particle_systems.items()) > 0: \
             modes.append(["Particle Edit", particle_edit, "PARTICLEMODE"])
-            
-            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
                 
         elif ob_type == 'ARMATURE':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
                      ["Edit", edit, "EDITMODE_HLT"],
                      ["Pose", pose, "POSE_HLT"]]
-            
-            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
         
         else:
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
                      ["Edit", edit, "EDITMODE_HLT"]]
+        
+            # remove edit mode if object does not have it
+            if ob_type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]: del modes[1]
             
-            if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
+        if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
             
         return modes
 

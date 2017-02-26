@@ -31,6 +31,9 @@ class SymmetryMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Symmetry")
+        menu.add_item().separator()
 
         menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_x", toggle=True)
         menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_y", toggle=True)
@@ -42,6 +45,9 @@ class SymmetryRadialMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Radial")
+        menu.add_item().separator()
         
         menu.add_item("column").prop(context.tool_settings.sculpt, "radial_symmetry", text="", slider=True)
     

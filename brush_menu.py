@@ -81,24 +81,24 @@ class BrushOptionsMenu(bpy.types.Menu):
                 menu.add_item().menu(ParticleCountMenu.bl_idname)
                 menu.add_item().separator()
                 menu.add_item().prop(context.tool_settings.particle_edit, 
-                                                        "use_default_interpolate", toggle=True)
+                                     "use_default_interpolate", toggle=True)
 
                 menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                                        "steps", slider=True)
+                                     "steps", slider=True)
                 menu.add_item().prop(context.tool_settings.particle_edit, 
-                                                        "default_key_count", slider=True)
+                                     "default_key_count", slider=True)
 
             if context.tool_settings.particle_edit.tool == 'LENGTH':
                 menu.add_item().separator()
                 menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                                       "length_mode", text="")
+                                     "length_mode", text="")
 
             if context.tool_settings.particle_edit.tool == 'PUFF':
                 menu.add_item().separator()
                 menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                                       "puff_mode", text="")
+                                     "puff_mode", text="")
                 menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                                       "use_puff_volume", toggle=True)
+                                     "use_puff_volume", toggle=True)
 
 class BrushRadiusMenu(bpy.types.Menu):
     bl_label = "Radius"
@@ -106,14 +106,24 @@ class BrushRadiusMenu(bpy.types.Menu):
 
     def init(self, context):
         if get_mode() == particle_edit:
-            settings = [["100", 100], ["70", 70], ["50", 50],
-                                 ["30", 30], ["20", 20], ["10", 10]]
+            settings = [["100", 100],
+                        ["70", 70],
+                        ["50", 50],
+                        ["30", 30],
+                        ["20", 20],
+                        ["10", 10]]
+                        
             datapath = "tool_settings.particle_edit.brush.size"
             proppath = context.tool_settings.particle_edit.brush
 
         else:
-            settings = [["200", 200], ["150", 150], ["100", 100], 
-                               ["50", 50], ["35", 35], ["10", 10]]
+            settings = [["200", 200],
+                        ["150", 150],
+                        ["100", 100],
+                        ["50", 50],
+                        ["35", 35],
+                        ["10", 10]]
+                        
             datapath = "tool_settings.unified_paint_settings.size"
             proppath = context.tool_settings.unified_paint_settings
 
@@ -138,8 +148,12 @@ class BrushStrengthMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_brush_strength_menu"
 
     def init(self, context):
-        settings = [["1.0", 1.0], ["0.7", 0.7], ["0.5", 0.5],
-                             ["0.3", 0.3], ["0.2", 0.2], ["0.1", 0.1]]
+        settings = [["1.0", 1.0],
+                    ["0.7", 0.7],
+                    ["0.5", 0.5],
+                    ["0.3", 0.3],
+                    ["0.2", 0.2],
+                    ["0.1", 0.1]]
 
         if get_mode() == sculpt:
             datapath = "tool_settings.sculpt.brush.strength"
@@ -182,8 +196,12 @@ class DynDetailMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_dyn_detail"
 
     def init(self):
-        settings = [["40", 40], ["30", 30], ["20", 20],
-                             ["10", 10], ["5", 5], ["1", 1]]
+        settings = [["40", 40],
+                    ["30", 30],
+                    ["20", 20],
+                    ["10", 10],
+                    ["5", 5],
+                    ["1", 1]]
         
         if bpy.context.tool_settings.sculpt.detail_type_method == 'RELATIVE':
             datapath = "tool_settings.sculpt.detail_size"
@@ -206,8 +224,8 @@ class DynDetailMenu(bpy.types.Menu):
         # add the rest of the menu items
         for i in range(len(settings)):
             menuprop(menu.add_item(), settings[i][0], settings[i][1], datapath, 
-                               icon='RADIOBUT_OFF', disable=True,
-                               disable_icon='RADIOBUT_ON')
+                     icon='RADIOBUT_OFF', disable=True,
+                     disable_icon='RADIOBUT_ON')
             
 class DetailMethodMenu(bpy.types.Menu):
     bl_label = "Detail Method"
@@ -223,7 +241,7 @@ class DetailMethodMenu(bpy.types.Menu):
                         ["Subdivide Collapse", 'SUBDIVIDE_COLLAPSE']]
         
         type_items = [["Relative Detail", 'RELATIVE'],
-                        ["Constant Detail", 'CONSTANT']]
+                      ["Constant Detail", 'CONSTANT']]
         
         
         menu.add_item().label("Refine")
@@ -232,7 +250,7 @@ class DetailMethodMenu(bpy.types.Menu):
         # add the refine menu items
         for item in refine_items:
             menuprop(menu.add_item(), item[0], item[1], refine_path, disable=True, 
-                               icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
+                     icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
         
         menu.add_item().label("")
         
@@ -242,7 +260,7 @@ class DetailMethodMenu(bpy.types.Menu):
         # add the type menu items
         for item in type_items:
             menuprop(menu.add_item(), item[0], item[1], type_path, disable=True, 
-                               icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
+                     icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
 
 class BrushModeMenu(bpy.types.Menu):
     bl_label = "Brush Mode"
@@ -325,7 +343,11 @@ class BrushAutosmoothMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_brush_autosmooth_menu"
 
     def init(self):
-        settings = [["1.0", 1.0], ["0.7", 0.7], ["0.5", 0.5], ["0.3", 0.3], ["0.2", 0.2],
+        settings = [["1.0", 1.0],
+                    ["0.7", 0.7],
+                    ["0.5", 0.5],
+                    ["0.3", 0.3],
+                    ["0.2", 0.2],
                     ["0.1", 0.1]]
 
         return settings
@@ -336,15 +358,15 @@ class BrushAutosmoothMenu(bpy.types.Menu):
 
         # add the top slider
         menu.add_item().prop(context.tool_settings.sculpt.brush, 
-                                               "auto_smooth_factor", slider=True)
+                             "auto_smooth_factor", slider=True)
         menu.add_item().separator()
 
         # add the rest of the menu items
         for i in range(len(settings)):
             menuprop(menu.add_item(), settings[i][0], settings[i][1],
-                               "tool_settings.sculpt.brush.auto_smooth_factor",
-                               icon='RADIOBUT_OFF', disable=True,
-                               disable_icon='RADIOBUT_ON')
+                     "tool_settings.sculpt.brush.auto_smooth_factor",
+                     icon='RADIOBUT_OFF', disable=True,
+                     disable_icon='RADIOBUT_ON')
             
 class BrushWeightMenu(bpy.types.Menu):
     bl_label = "Weight"
@@ -352,28 +374,35 @@ class BrushWeightMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-        settings = [["1.0", 1.0], ["0.7", 0.7],
-                           ["0.5", 0.5], ["0.3", 0.3],
-                           ["0.2", 0.2], ["0.1", 0.1]]
+        settings = [["1.0", 1.0],
+                    ["0.7", 0.7],
+                    ["0.5", 0.5],
+                    ["0.3", 0.3],
+                    ["0.2", 0.2],
+                    ["0.1", 0.1]]
 
         # add the top slider
         menu.add_item().prop(context.tool_settings.unified_paint_settings,
-                                               "weight", slider=True)
+                             "weight", slider=True)
         menu.add_item().separator()
 
         # add the rest of the menu items
         for i in range(len(settings)):
             menuprop(menu.add_item(), settings[i][0], settings[i][1],
-                               "tool_settings.unified_paint_settings.weight",
-                               icon='RADIOBUT_OFF', disable=True,
-                               disable_icon='RADIOBUT_ON')
+                     "tool_settings.unified_paint_settings.weight",
+                     icon='RADIOBUT_OFF', disable=True,
+                     disable_icon='RADIOBUT_ON')
                                
 class ParticleCountMenu(bpy.types.Menu):
     bl_label = "Count"
     bl_idname = "VIEW3D_MT_particle_count_menu"
 
     def init(self):
-        settings = [["50", 50], ["25", 25], ["10", 10], ["5", 5], ["3", 3],
+        settings = [["50", 50],
+                    ["25", 25],
+                    ["10", 10],
+                    ["5", 5],
+                    ["3", 3],
                     ["1", 1]]
 
         return settings
@@ -384,15 +413,15 @@ class ParticleCountMenu(bpy.types.Menu):
 
         # add the top slider
         menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                               "count", slider=True)
+                             "count", slider=True)
         menu.add_item().separator()
 
         # add the rest of the menu items
         for i in range(len(settings)):
             menuprop(menu.add_item(), settings[i][0], settings[i][1],
-                               "tool_settings.particle_edit.brush.count",
-                               icon='RADIOBUT_OFF', disable=True,
-                               disable_icon='RADIOBUT_ON')
+                     "tool_settings.particle_edit.brush.count",
+                     icon='RADIOBUT_OFF', disable=True,
+                     disable_icon='RADIOBUT_ON')
             
 class ParticleLengthMenu(bpy.types.Menu):
     bl_label = "Length Mode"
@@ -404,12 +433,12 @@ class ParticleLengthMenu(bpy.types.Menu):
 
         # add the menu items
         menuprop(menu.add_item(), "Grow", "GROW",
-                           datapath, icon='RADIOBUT_OFF', 
-                           disable=True, disable_icon='RADIOBUT_ON')
+                 datapath, icon='RADIOBUT_OFF', 
+                 disable=True, disable_icon='RADIOBUT_ON')
         
         menuprop(menu.add_item(), "Shrink", "SHRINK",
-                           datapath, icon='RADIOBUT_OFF', 
-                           disable=True, disable_icon='RADIOBUT_ON')
+                 datapath, icon='RADIOBUT_OFF', 
+                 disable=True, disable_icon='RADIOBUT_ON')
         
 class ParticlePuffMenu(bpy.types.Menu):
     bl_label = "Puff Mode"
@@ -421,12 +450,12 @@ class ParticlePuffMenu(bpy.types.Menu):
 
         # add the menu items
         menuprop(menu.add_item(), "Add", "ADD",
-                           datapath, icon='RADIOBUT_OFF', 
-                           disable=True, disable_icon='RADIOBUT_ON')
+                 datapath, icon='RADIOBUT_OFF',
+                 disable=True, disable_icon='RADIOBUT_ON')
         
         menuprop(menu.add_item(), "Sub", "SUB",
-                           datapath, icon='RADIOBUT_OFF', 
-                           disable=True, disable_icon='RADIOBUT_ON')
+                 datapath, icon='RADIOBUT_OFF',
+                 disable=True, disable_icon='RADIOBUT_ON')
                            
 class ColorPickerPopup(bpy.types.Operator):
     bl_label = "Color"

@@ -1,5 +1,103 @@
 <root>
   <menu area="VIEW_3D" mode="OBJECT">
+    <item type="OP">
+      <path>object.duplicate_move</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="PROP">
+      <path>context.object.rotation_mode</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>True</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.object.rotation_mode</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="OP">
+      <path>object.duplicate_move</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>OBJECT_OT_duplicate;TRANSFORM_OT_translate</arg>
+      <arg_val>{"linked":False, "mode":'TRANSLATION'};{"value":(0, 0, 0), "constraint_axis":(False, False, False), "constraint_orientation":'GLOBAL', "mirror":False, "proportional":'DISABLED', "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "snap":False, "snap_target":'CLOSEST', "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "gpencil_strokes":False, "texture_space":False, "remove_on_cancel":False,"release_confirm":False}</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.duplicate</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>linked;mode</arg>
+      <arg_val>False;'TRANSLATION'</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.duplicate</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>True</menu>
+      <arg>linked;mode</arg>
+      <arg_val>False;'TRANSLATION'</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.bake</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>True</menu>
+      <arg>type;pass_filter;filepath;width;height;margin;use_selected_to_active;cage_extrusion;cage_object;normal_space;normal_r;normal_g;normal_b;save_mode;use_clear;use_cage;use_split_materials;use_automatic_name;uv_layer</arg>
+      <arg_val>'COMBINED';set();"";512;512;16;False;0;"";'TANGENT';'POS_X';'POS_Y';'POS_Z';'INTERNAL';False;False;False;False;""</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.metaball_add</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>type;radius;view_align;enter_editmode;location;rotation;layers</arg>
+      <arg_val>'BALL';1;False;False;(0, 0, 0);(0, 0, 0);(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False,False)</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.metaball_add</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>True</menu>
+      <arg>type;radius;view_align;enter_editmode;location;rotation;layers</arg>
+      <arg_val>'BALL';1;False;False;(0, 0, 0);(0, 0, 0);(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False,False)</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.origin_set</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>True</menu>
+      <arg>type;center</arg>
+      <arg_val>'GEOMETRY_ORIGIN';'MEDIAN'</arg_val>
+    </item>
+    <item type="OP">
+      <path>object.origin_set</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>type;center</arg>
+      <arg_val>'GEOMETRY_ORIGIN';'MEDIAN'</arg_val>
+    </item>
     <item type="MENU">
       <path>VIEW3D_MT_view</path>
       <name>View</name>
@@ -14,6 +112,7 @@
       <path>context.scene.render.resolution_percentage</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <expand>False</expand>
       <slider>False</slider>
       <toggle>False</toggle>
@@ -26,6 +125,7 @@
       <path>context.tool_settings.sculpt.constant_detail</path>
       <name>Macguilicuty</name>
       <icon>PREVIEW_RANGE</icon>
+      <menu>False</menu>
       <expand>False</expand>
       <slider>False</slider>
       <toggle>False</toggle>
@@ -38,6 +138,7 @@
       <path>context.tool_settings.sculpt.detail_size</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <expand>False</expand>
       <slider>True</slider>
       <toggle>False</toggle>
@@ -55,6 +156,7 @@
       <path>object.join</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -62,6 +164,7 @@
       <path>transform.tosphere</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -69,6 +172,7 @@
       <path>transform.shear</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -76,6 +180,7 @@
       <path>transform.bend</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -83,6 +188,7 @@
       <path>transform.push_pull</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -91,6 +197,7 @@
       <path>context.tool_settings.sculpt.detail_size</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <expand>False</expand>
       <slider>False</slider>
       <toggle>False</toggle>
@@ -108,6 +215,7 @@
       <path>anim.keyframe_insert_menu</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -115,6 +223,7 @@
       <path>anim.keyframe_delete_v3d</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -122,6 +231,7 @@
       <path>anim.keying_set_active_set</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -142,6 +252,7 @@
       <path>view3d.edit_mesh_extrude_move_normal</path>
       <name>Extrude</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -149,6 +260,7 @@
       <path>mesh.subdivide</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -156,6 +268,7 @@
       <path>mesh.loopcut_slide</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -163,6 +276,7 @@
       <path>mesh.spin</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -170,6 +284,7 @@
       <path>mesh.bisect</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -177,6 +292,7 @@
       <path>mesh.vert_connect</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -185,6 +301,7 @@
       <path>mesh.vertices_smooth</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -192,6 +309,7 @@
       <path>object.vertex_random</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -199,6 +317,7 @@
       <path>transform.edge_slide</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -206,6 +325,7 @@
       <path>mesh.edge_rotate</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>use_ccw</arg>
       <arg_val>False</arg_val>
     </item>
@@ -227,6 +347,72 @@
     </item>
   </menu>
   <menu area="VIEW_3D" mode="SCULPT">
+    <item type="PROP">
+      <path>context.space_data.matcap_icon</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.use_matcap</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.lens</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.region_3d.view_distance</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item />
+    <item type="PROP">
+      <path>context.space_data.camera.field.strength</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
     <item type="MENU">
       <path>VIEW3D_MT_brush_favs</path>
       <name>none</name>
@@ -236,6 +422,7 @@
       <path>wm.context_set_value</path>
       <name>Flatten/Contrast</name>
       <icon>BRUSH_FLATTEN</icon>
+      <menu>False</menu>
       <arg>data_path;value</arg>
       <arg_val>"tool_settings.sculpt.brush";"bpy.data.brushes['Flatten/Contrast']"</arg_val>
     </item>
@@ -267,6 +454,7 @@
       <path>text.find</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -274,6 +462,7 @@
       <path>text.comment</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -281,6 +470,7 @@
       <path>text.uncomment</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>

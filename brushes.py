@@ -8,54 +8,54 @@ class BrushesMenu(bpy.types.Menu):
     def init(self):
         if get_mode() == sculpt:
             datapath = "tool_settings.sculpt.brush"
-            icon = { "BLOB":'BRUSH_BLOB',  
-                           "CLAY":'BRUSH_CLAY', 
-                           "CLAY_STRIPS":'BRUSH_CLAY_STRIPS', 
-                           "CREASE":'BRUSH_CREASE',
-                           "DRAW":'BRUSH_SCULPT_DRAW',
-                           "FILL":'BRUSH_FILL', 
-                           "FLATTEN":'BRUSH_FLATTEN', 
-                           "GRAB":'BRUSH_GRAB', 
-                           "INFLATE":'BRUSH_INFLATE', 
-                           "LAYER":'BRUSH_LAYER', 
-                           "MASK":'BRUSH_MASK',  
-                           "NUDGE":'BRUSH_NUDGE', 
-                           "PINCH":'BRUSH_PINCH',
-                           "ROTATE":'BRUSH_ROTATE',
-                           "SCRAPE":'BRUSH_SCRAPE',
-                           "SIMPLIFY":'BRUSH_SUBTRACT',
-                           "SMOOTH":'BRUSH_SMOOTH', 
-                           "SNAKE_HOOK":'BRUSH_SNAKE_HOOK',
-                           "THUMB":'BRUSH_THUMB'}
+            icon = {"BLOB":'BRUSH_BLOB',
+                    "CLAY":'BRUSH_CLAY',
+                    "CLAY_STRIPS":'BRUSH_CLAY_STRIPS',
+                    "CREASE":'BRUSH_CREASE',
+                    "DRAW":'BRUSH_SCULPT_DRAW',
+                    "FILL":'BRUSH_FILL',
+                    "FLATTEN":'BRUSH_FLATTEN',
+                    "GRAB":'BRUSH_GRAB',
+                    "INFLATE":'BRUSH_INFLATE',
+                    "LAYER":'BRUSH_LAYER',
+                    "MASK":'BRUSH_MASK',
+                    "NUDGE":'BRUSH_NUDGE',
+                    "PINCH":'BRUSH_PINCH',
+                    "ROTATE":'BRUSH_ROTATE',
+                    "SCRAPE":'BRUSH_SCRAPE',
+                    "SIMPLIFY":'BRUSH_SUBTRACT',
+                    "SMOOTH":'BRUSH_SMOOTH',
+                    "SNAKE_HOOK":'BRUSH_SNAKE_HOOK',
+                    "THUMB":'BRUSH_THUMB'}
 
         elif get_mode() == vertex_paint:
             datapath = "tool_settings.vertex_paint.brush"
             icon = {"ADD":'BRUSH_ADD',
-                          "BLUR":'BRUSH_BLUR',
-                          "DARKEN":'BRUSH_DARKEN',
-                          "LIGHTEN":'BRUSH_LIGHTEN',
-                          "MIX":'BRUSH_MIX',
-                          "MUL":'BRUSH_MULTIPLY',
-                          "SUB":'BRUSH_SUBTRACT'}
+                    "BLUR":'BRUSH_BLUR',
+                    "DARKEN":'BRUSH_DARKEN',
+                    "LIGHTEN":'BRUSH_LIGHTEN',
+                    "MIX":'BRUSH_MIX',
+                    "MUL":'BRUSH_MULTIPLY',
+                    "SUB":'BRUSH_SUBTRACT'}
 
         elif get_mode() == weight_paint:
             datapath = "tool_settings.weight_paint.brush"
             icon = {"ADD":'BRUSH_ADD',
-                          "BLUR":'BRUSH_BLUR',
-                          "DARKEN":'BRUSH_DARKEN',
-                          "LIGHTEN":'BRUSH_LIGHTEN',
-                          "MIX":'BRUSH_MIX',
-                          "MUL":'BRUSH_MULTIPLY',
-                          "SUB":'BRUSH_SUBTRACT'}
+                    "BLUR":'BRUSH_BLUR',
+                    "DARKEN":'BRUSH_DARKEN',
+                    "LIGHTEN":'BRUSH_LIGHTEN',
+                    "MIX":'BRUSH_MIX',
+                    "MUL":'BRUSH_MULTIPLY',
+                    "SUB":'BRUSH_SUBTRACT'}
 
         elif get_mode() == texture_paint:
             datapath = "tool_settings.image_paint.brush"
             icon = {"CLONE":'BRUSH_CLONE',
-                          "DRAW":'BRUSH_TEXDRAW',
-                          "FILL":'BRUSH_TEXFILL',
-                          "MASK":'BRUSH_TEXMASK',
-                          "SMEAR":'BRUSH_SMEAR',
-                          "SOFTEN":'BRUSH_SOFTEN'}
+                    "DRAW":'BRUSH_TEXDRAW',
+                    "FILL":'BRUSH_TEXFILL',
+                    "MASK":'BRUSH_TEXMASK',
+                    "SMEAR":'BRUSH_SMEAR',
+                    "SOFTEN":'BRUSH_SOFTEN'}
 
         elif get_mode() == particle_edit:
             datapath = "tool_settings.particle_edit.tool"
@@ -81,19 +81,19 @@ class BrushesMenu(bpy.types.Menu):
 
         if get_mode() == particle_edit:
             particle_tools = [["None", 'NONE'],
-                                       ["Comb", 'COMB'],
-                                       ["Smooth", 'SMOOTH'],
-                                       ["Add", 'ADD'],
-                                       ["Length", 'LENGTH'],
-                                       ["Puff", 'PUFF'],
-                                       ["Cut", 'CUT'],
-                                       ["Weight", 'WEIGHT']]
+                              ["Comb", 'COMB'],
+                              ["Smooth", 'SMOOTH'],
+                              ["Add", 'ADD'],
+                              ["Length", 'LENGTH'],
+                              ["Puff", 'PUFF'],
+                              ["Cut", 'CUT'],
+                              ["Weight", 'WEIGHT']]
             
             # if you are in particle edit mode add the menu items for particle mode
             for tool in particle_tools:
                 menuprop(menu.add_item(), tool[0], tool[1], datapath,
-                                   icon='RADIOBUT_OFF', disable=True,
-                                   disable_icon='RADIOBUT_ON')
+                         icon='RADIOBUT_OFF', disable=True,
+                         disable_icon='RADIOBUT_ON')
 
         else:
             # iterate over all the brushes

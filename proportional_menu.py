@@ -9,15 +9,13 @@ class ProportionalModeOperator(bpy.types.Operator):
     last_mode = ['DISABLED', 'ENABLED']
 
     def init(self, context):
-        self.start_time = 0
-        
         if context.space_data.type == 'DOPESHEET_EDITOR':
             if context.tool_settings.use_proportional_action == False:
                 context.tool_settings.use_proportional_action = True
                 
             else:
                 context.tool_settings.use_proportional_action = False
-                
+            
             return {'FINISHED'}
 
         if context.space_data.type == 'GRAPH_EDITOR':
@@ -26,7 +24,7 @@ class ProportionalModeOperator(bpy.types.Operator):
                 
             else:
                 context.tool_settings.use_proportional_fcurve = False
-                
+            
             return {'FINISHED'}
             
         if context.space_data.type == 'IMAGE_EDITOR':
@@ -45,7 +43,7 @@ class ProportionalModeOperator(bpy.types.Operator):
                 
             else:
                 context.tool_settings.use_proportional_edit_objects = False
-                
+            
             return {'FINISHED'}
 
         # populate the list of last modes
@@ -72,7 +70,7 @@ class ProportionalModeOperator(bpy.types.Operator):
                 
             else:
                 context.tool_settings.proportional_edit = self.last_mode[1]
-                
+            
             return {'FINISHED'}
         
         return {'RUNNING_MODAL'}
@@ -91,16 +89,16 @@ class ProportionalEditingMenu(bpy.types.Menu):
 
     @classmethod
     def poll(self, context):
-        if get_mode() in ['EDIT', 'PARTICLE_EDIT']:
+        if get_mode() in [edit, particle_edit, gpencil_edit]:
             return True
         else:
             return False
 
     def init(self):
         modes = [["Disabled", 'DISABLED', "PROP_OFF"],
-                         ["Enabled", 'ENABLED', "PROP_ON"],
-                         ["Projected(2D)", 'PROJECTED', "PROP_ON"],
-                         ["Connected", 'CONNECTED', "PROP_CON"]]
+                 ["Enabled", 'ENABLED', "PROP_ON"],
+                 ["Projected(2D)", 'PROJECTED', "PROP_ON"],
+                 ["Connected", 'CONNECTED', "PROP_CON"]]
         
         datapath = "tool_settings.proportional_edit"
         
@@ -121,7 +119,7 @@ class FalloffMenu(bpy.types.Menu):
 
     @classmethod
     def poll(self, context):
-        if get_mode() in [object_mode, edit, particle_edit]:
+        if get_mode() in [object_mode, edit, particle_edit, gpencil_edit]:
             return True
         else:
             return False
@@ -130,12 +128,12 @@ class FalloffMenu(bpy.types.Menu):
         menu = Menu(self)
 
         modes = [["Smooth", 'SMOOTH', "SMOOTHCURVE"],
-                         ["Sphere", 'SPHERE', "SPHERECURVE"],
-                         ["Root", 'ROOT', "ROOTCURVE"],
-                         ["Sharp", 'SHARP', "SHARPCURVE"],
-                         ["Linear", 'LINEAR', "LINCURVE"],
-                         ["Constant", 'CONSTANT', "NOCURVE"],
-                         ["Random", 'RANDOM', "RNDCURVE"]]
+                 ["Sphere", 'SPHERE', "SPHERECURVE"],
+                 ["Root", 'ROOT', "ROOTCURVE"],
+                 ["Sharp", 'SHARP', "SHARPCURVE"],
+                 ["Linear", 'LINEAR', "LINCURVE"],
+                 ["Constant", 'CONSTANT', "NOCURVE"],
+                 ["Random", 'RANDOM', "RNDCURVE"]]
         
         # add the items to the menu
         for mode in modes:
@@ -150,7 +148,19 @@ addon_keymaps = []
 def register():
     # create the global menu hotkeys
     wm = bpy.context.window_manager
-    modes = {'Grease Pencil Stroke Edit Mode':'EMPTY', 'Object Mode':'EMPTY', 'Curve':'EMPTY', 'Mesh':'EMPTY', 'Metaball':'EMPTY', 'Lattice':'EMPTY', 'Particle':'EMPTY', 'UV Editor':'EMPTY', 'Mask Editing':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Dopesheet':'DOPESHEET_EDITOR'}
+    modes = {'Object Mode':'EMPTY',
+             'Mesh':'EMPTY',
+             'Curve':'EMPTY',
+             'Armature':'EMPTY',
+             'Metaball':'EMPTY',
+             'Lattice':'EMPTY',
+             'Particle':'EMPTY',
+             'Object Non-modal':'EMPTY',
+             'Graph Editor':'GRAPH_EDITOR',
+             'Dopesheet':'DOPESHEET_EDITOR',
+             'UV Editor':'EMPTY',
+             'Grease Pencil Stroke Edit Mode':'EMPTY',
+             'Mask Editing':'EMPTY'}
     
     for mode, space in modes.items():
         km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)

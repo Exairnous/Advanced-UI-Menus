@@ -97,10 +97,9 @@ def get_mode():
     else:
         return bpy.context.object.mode
 
-def menuprop(item, name, value, data_path, icon='NONE',
-                          disable=False, disable_icon=None,
-                          custom_disable_exp=None,
-                          method=None, path=False):
+def menuprop(item, name, value, data_path,
+             icon='NONE', disable=False, disable_icon=None,
+             custom_disable_exp=None, method=None, path=False):
     
     # disable the ui
     if disable:
@@ -195,3 +194,10 @@ class SendReport(bpy.types.Operator):
         self.report({'INFO'}, self.message)
         print(self.message)
         return {'FINISHED'}
+    
+def send_report(message):
+    def report(scene):
+        bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
+        bpy.app.handlers.scene_update_pre.remove(report)
+        
+    bpy.app.handlers.scene_update_pre.append(report)

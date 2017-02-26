@@ -72,16 +72,29 @@ class StrokeMethodMenu(bpy.types.Menu):
     def init(self):
         if get_mode() == sculpt:
             path = "tool_settings.sculpt.brush.stroke_method"
-            tools = [["Airbrush", airbrush], ["Anchored", anchored], ["Space", space],
-                     ["Drag Dot", drag_dot], ["Dots", dots], ["Line", line], ["Curve", curve]]
+            tools = [["Airbrush", airbrush],
+                     ["Anchored", anchored],
+                     ["Space", space],
+                     ["Drag Dot", drag_dot],
+                     ["Dots", dots],
+                     ["Line", line],
+                     ["Curve", curve]]
 
         elif get_mode() == texture_paint:
             path = "tool_settings.image_paint.brush.stroke_method"
-            tools = [["Airbrush", airbrush], ["Space", space], ["Dots", dots], ["Line", line], ["Curve", curve]]
+            tools = [["Airbrush", airbrush],
+                     ["Space", space],
+                     ["Dots", dots],
+                     ["Line", line],
+                     ["Curve", curve]]
 
         else:
             path = "tool_settings.vertex_paint.brush.stroke_method"
-            tools = [["Airbrush", airbrush], ["Space", space], ["Dots", dots], ["Line", line], ["Curve", curve]]
+            tools = [["Airbrush", airbrush],
+                     ["Space", space],
+                     ["Dots", dots],
+                     ["Line", line],
+                     ["Curve", curve]]
 
         return path, tools
 
@@ -95,8 +108,8 @@ class StrokeMethodMenu(bpy.types.Menu):
         # add the menu items
         for tool in tools:
             menuprop(menu.add_item(), tool[0], tool[1], path,
-                               icon='RADIOBUT_OFF', disable=True,
-                               disable_icon='RADIOBUT_ON')
+                     icon='RADIOBUT_OFF', disable=True,
+                     disable_icon='RADIOBUT_ON')
     
 ### ------------ New hotkeys and registration ------------ ###
 
