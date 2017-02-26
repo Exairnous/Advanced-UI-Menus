@@ -1,38 +1,30 @@
 <root>
   <menu area="VIEW_3D" mode="OBJECT">
+    <item type="PROP">
+      <path>asdffdsafasdfasdfprop</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="MENU">
+      <path>asdffdsa</path>
+      <name>none</name>
+      <icon>NONE</icon>
+    </item>
     <item type="OP">
-      <path>object.duplicate_move</path>
+      <path>object.duplicate_moves</path>
       <name>none</name>
       <icon>NONE</icon>
       <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
-    </item>
-    <item type="PROP">
-      <path>context.object.rotation_mode</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <menu>True</menu>
-      <expand>False</expand>
-      <slider>False</slider>
-      <toggle>False</toggle>
-      <icononly>False</icononly>
-      <event>False</event>
-      <fullevent>False</fullevent>
-      <emboss>True</emboss>
-    </item>
-    <item type="PROP">
-      <path>context.object.rotation_mode</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <menu>False</menu>
-      <expand>False</expand>
-      <slider>False</slider>
-      <toggle>False</toggle>
-      <icononly>False</icononly>
-      <event>False</event>
-      <fullevent>False</fullevent>
-      <emboss>True</emboss>
     </item>
     <item type="OP">
       <path>object.duplicate_move</path>
@@ -109,6 +101,19 @@
       <icon>NONE</icon>
     </item>
     <item type="PROP">
+      <path>klasjdflk;;;</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
       <path>context.scene.render.resolution_percentage</path>
       <name>none</name>
       <icon>NONE</icon>
@@ -160,6 +165,19 @@
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
+    <item type="PROP">
+      <path>ui79507jlfj))(</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
     <item type="OP">
       <path>transform.tosphere</path>
       <name>none</name>
@@ -175,6 +193,11 @@
       <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
+    </item>
+    <item type="MENU">
+      <path>menulol</path>
+      <name>none</name>
+      <icon>NONE</icon>
     </item>
     <item type="OP">
       <path>transform.bend</path>
@@ -226,6 +249,20 @@
       <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>fsdfsdfdsfsdf</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>action.clean</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
     </item>
     <item type="OP">
       <path>anim.keying_set_active_set</path>
@@ -481,4 +518,5 @@
   <menu area="VIEW_3D" mode="VERTEX_PAINT" />
   <menu area="VIEW_3D" mode="WEIGHT_PAINT" />
   <menu area="VIEW_3D" mode="PARTICLE_EDIT" />
+  <menu area="VIEW_3D" mode="POSE" />
 </root>
