@@ -50,15 +50,11 @@ class SnapModeMenu(bpy.types.Menu):
         
         # menu for node editor
         if context.space_data.type == 'NODE_EDITOR':
-            modes = [["Grid", 'GRID', "SNAP_GRID"],
-                     ["Node X", 'NODE_X', "SNAP_EDGE"],
-                     ["Node Y", 'NODE_Y', "SNAP_EDGE"],
-                     ["Node X/Y", 'NODE_XY', "SNAP_EDGE"]]
                      
             # add the menu items
-            for mode in modes:
-                menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_node_element",
-                         icon=mode[2], disable=True)
+            for mode in context.tool_settings.bl_rna.properties['snap_node_element'].enum_items:
+                menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.snap_node_element",
+                         icon=mode.icon, disable=True)
                 
             if snap_element != "INCREMENT":
                 menu.add_item().separator()
@@ -66,16 +62,11 @@ class SnapModeMenu(bpy.types.Menu):
         
         # menu for 3d view
         if context.space_data.type == 'VIEW_3D':
-            modes = [["Increment", 'INCREMENT', "SNAP_INCREMENT"],
-                     ["Vertex", 'VERTEX', "SNAP_VERTEX"],
-                     ["Edge", 'EDGE', "SNAP_EDGE"],
-                     ["Face", 'FACE', "SNAP_FACE"],
-                     ["Volume", 'VOLUME', "SNAP_VOLUME"]]
 
             # add the menu items
-            for mode in modes:
-                menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_element",
-                         icon=mode[2], disable=True)
+            for mode in context.tool_settings.bl_rna.properties['snap_element'].enum_items:
+                menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.snap_element",
+                         icon=mode.icon, disable=True)
 
             if snap_element != "INCREMENT":
                 menu.add_item().separator()
@@ -104,17 +95,13 @@ class SnapTargetMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-        modes = [["Active", 'ACTIVE'],
-                 ["Median", 'MEDIAN'],
-                 ["Center", 'CENTER'],
-                 ["Closest", 'CLOSEST']]
                  
         menu.add_item().label(text="Snap Target")
         menu.add_item().separator()
 
         # add the menu items
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.snap_target", disable=True)
+        for mode in context.tool_settings.bl_rna.properties['snap_target'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.snap_target", disable=True)
 
 
 ### ------------ New hotkeys and registration ------------ ###

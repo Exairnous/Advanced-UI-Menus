@@ -70,8 +70,8 @@ class EditorModeMenu(bpy.types.Menu):
                      ["Weight Paint", weight_paint, "WPAINT_HLT"],
                      ["Texture Paint", texture_paint, "TPAINT_HLT"]]
 
-            if len(bpy.context.object.particle_systems.items()) > 0: \
-            modes.append(["Particle Edit", particle_edit, "PARTICLEMODE"])
+            if len(bpy.context.object.particle_systems.items()) > 0:
+                modes.append(["Particle Edit", particle_edit, "PARTICLEMODE"])
                 
         elif ob_type == 'ARMATURE':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],

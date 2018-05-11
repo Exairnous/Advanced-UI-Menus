@@ -132,9 +132,12 @@ def fill_operator_list():
             ent_op = text.split("\n")[1]
             op_path = ent_op[8:str.find(ent_op, "(")]
             if ent_op.startswith("bpy.ops.") and not "import." in ent_op:
-                op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
-                op_name = op.bl_rna.name
-                operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                try:
+                    op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
+                    op_name = op.bl_rna.name
+                    operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                except:
+                    print("\nError could not parse operator: {0}\n".format(ent_op[:str.find(ent_op, "(")]))
 
     op_list = operators
 
@@ -899,7 +902,7 @@ def register():
              default=True, 
              name="Emboss"
             )
-    
+            
     # create the global hotkey
     wm = bpy.context.window_manager
     modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],

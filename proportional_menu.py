@@ -94,24 +94,13 @@ class ProportionalEditingMenu(bpy.types.Menu):
         else:
             return False
 
-    def init(self):
-        modes = [["Disabled", 'DISABLED', "PROP_OFF"],
-                 ["Enabled", 'ENABLED', "PROP_ON"],
-                 ["Projected(2D)", 'PROJECTED', "PROP_ON"],
-                 ["Connected", 'CONNECTED', "PROP_CON"]]
-        
-        datapath = "tool_settings.proportional_edit"
-        
-        return modes, datapath
-
     def draw(self, context):
-        modes, datapath = self.init()
         menu = Menu(self)
 
         # add the items to the menu
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], datapath,
-                     icon=mode[2], disable=True)
+        for mode in context.tool_settings.bl_rna.properties['proportional_edit'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.proportional_edit",
+                     icon=mode.icon, disable=True)
 
 class FalloffMenu(bpy.types.Menu):
     bl_label = "Falloff Menu"
@@ -126,19 +115,11 @@ class FalloffMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-
-        modes = [["Smooth", 'SMOOTH', "SMOOTHCURVE"],
-                 ["Sphere", 'SPHERE', "SPHERECURVE"],
-                 ["Root", 'ROOT', "ROOTCURVE"],
-                 ["Sharp", 'SHARP', "SHARPCURVE"],
-                 ["Linear", 'LINEAR', "LINCURVE"],
-                 ["Constant", 'CONSTANT', "NOCURVE"],
-                 ["Random", 'RANDOM', "RNDCURVE"]]
         
         # add the items to the menu
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.proportional_edit_falloff",
-                     icon=mode[2], disable=True)
+        for mode in context.tool_settings.bl_rna.properties['proportional_edit_falloff'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.proportional_edit_falloff",
+                     icon=mode.icon, disable=True)
 
         
 ### ------------ New hotkeys and registration ------------ ###
