@@ -1,6 +1,58 @@
 from bpy.props import *
 from .Utils.core import *
 
+def get_current_brush_icon(tool):
+    if get_mode() == sculpt:
+        icons = {"BLOB":'BRUSH_BLOB',
+                "CLAY":'BRUSH_CLAY',
+                "CLAY_STRIPS":'BRUSH_CLAY_STRIPS',
+                "CREASE":'BRUSH_CREASE',
+                "DRAW":'BRUSH_SCULPT_DRAW',
+                "FILL":'BRUSH_FILL',
+                "FLATTEN":'BRUSH_FLATTEN',
+                "GRAB":'BRUSH_GRAB',
+                "INFLATE":'BRUSH_INFLATE',
+                "LAYER":'BRUSH_LAYER',
+                "MASK":'BRUSH_MASK',
+                "NUDGE":'BRUSH_NUDGE',
+                "PINCH":'BRUSH_PINCH',
+                "ROTATE":'BRUSH_ROTATE',
+                "SCRAPE":'BRUSH_SCRAPE',
+                "SIMPLIFY":'BRUSH_SUBTRACT',
+                "SMOOTH":'BRUSH_SMOOTH',
+                "SNAKE_HOOK":'BRUSH_SNAKE_HOOK',
+                "THUMB":'BRUSH_THUMB'}
+
+    elif get_mode() == vertex_paint:
+        icons = {"ADD":'BRUSH_ADD',
+                "BLUR":'BRUSH_BLUR',
+                "DARKEN":'BRUSH_DARKEN',
+                "LIGHTEN":'BRUSH_LIGHTEN',
+                "MIX":'BRUSH_MIX',
+                "MUL":'BRUSH_MULTIPLY',
+                "SUB":'BRUSH_SUBTRACT'}
+
+    elif get_mode() == weight_paint:
+        icons = {"ADD":'BRUSH_ADD',
+                "BLUR":'BRUSH_BLUR',
+                "DARKEN":'BRUSH_DARKEN',
+                "LIGHTEN":'BRUSH_LIGHTEN',
+                "MIX":'BRUSH_MIX',
+                "MUL":'BRUSH_MULTIPLY',
+                "SUB":'BRUSH_SUBTRACT'}
+
+    elif get_mode() == texture_paint:
+        icons = {"CLONE":'BRUSH_CLONE',
+                "DRAW":'BRUSH_TEXDRAW',
+                "FILL":'BRUSH_TEXFILL',
+                "MASK":'BRUSH_TEXMASK',
+                "SMEAR":'BRUSH_SMEAR',
+                "SOFTEN":'BRUSH_SOFTEN'}
+                
+    icon = icons[tool]
+
+    return icon
+
 class BrushOptionsMenu(bpy.types.Menu):
     bl_label = "Brush Options"
     bl_idname = "VIEW3D_MT_brush_options"
@@ -28,20 +80,58 @@ class BrushOptionsMenu(bpy.types.Menu):
             self.particle(menu, context)
 
     def sculpt(self, menu, context):
-        menu.add_item().menu("VIEW3D_MT_brushes_menu")
+        brush = context.tool_settings.sculpt.brush
+        capabilities = brush.sculpt_capabilities
+        
+        menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(brush.sculpt_tool))
         menu.add_item().separator()
+        
         menu.add_item().menu(BrushRadiusMenu.bl_idname)
         menu.add_item().menu(BrushStrengthMenu.bl_idname)
-        if context.object.use_dynamic_topology_sculpting:
+        
+        if context.object.use_dynamic_topology_sculpting and brush.sculpt_tool != 'MASK':
             menu.add_item().menu(DynDetailMenu.bl_idname)
-        menu.add_item().menu(BrushAutosmoothMenu.bl_idname)
+        
+        if capabilities.has_auto_smooth:
+            menu.add_item().menu(BrushAutosmoothMenu.bl_idname)
+        
+        if capabilities.has_normal_weight:
+            menu.add_item().prop(brush, "normal_weight", slider=True)
+        
+        if capabilities.has_pinch_factor:
+            menu.add_item().prop(brush, "crease_pinch_factor", text ="Pinch", slider=True)
+        
+        if capabilities.has_rake_factor:
+            menu.add_item().prop(brush, "rake_factor", slider=True)
+        
+        if brush.sculpt_tool == 'MASK':
+            menu.add_item().prop_menu_enum(brush, "mask_tool")
+        
+        if capabilities.has_plane_offset:
+            menu.add_item().prop(brush, "plane_offset", slider=True)
+            menu.add_item().prop(brush, "use_plane_trim", text="Trim")
+            if brush.use_plane_trim:
+                menu.add_item().prop(brush, "plane_trim", slider=True, text="Distance")
+        
+        if capabilities.has_height:
+            menu.add_item().prop(brush, "height", slider=True)
+        
         menu.add_item().separator()
+        
         menu.add_item().menu(BrushModeMenu.bl_idname)
-        if context.object.use_dynamic_topology_sculpting:
+        menu.add_item().menu(DirectionMenu.bl_idname)
+        
+        if context.object.use_dynamic_topology_sculpting and brush.sculpt_tool != 'MASK':
             menu.add_item().menu(DetailMethodMenu.bl_idname)
+        
+        menu.add_item().prop(brush, "use_frontface", toggle=True)
+        
+        if capabilities.has_accumulate:
+            menu.add_item().prop(brush, "use_accumulate")
+        #menu.add_item().prop(context.tool_settings.sculpt.brush, "use_front_face", toggle=True)
             
     def vw_paint(self, menu, context):
-        menu.add_item().menu("VIEW3D_MT_brushes_menu")
+        menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(context.tool_settings.vertex_paint.brush.vertex_tool))
         menu.add_item().separator()
         if get_mode() == weight_paint:
             menu.add_item().menu(BrushWeightMenu.bl_idname)
@@ -59,13 +149,40 @@ class BrushOptionsMenu(bpy.types.Menu):
             menu.add_item().label("Missing Data", icon='ERROR')
             menu.add_item().label("See Tool Shelf")
         else:
-            menu.add_item().menu("VIEW3D_MT_brushes_menu")
+            menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(toolsettings.brush.image_tool))
+            
             menu.add_item().separator()
-            menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
-            menu.add_item().menu(BrushRadiusMenu.bl_idname)
+            
+            if toolsettings.brush.image_tool in {'DRAW', 'FILL'} and \
+               toolsettings.brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
+                menu.add_item().operator(ColorPickerPopup.bl_idname, icon="COLOR")
+            
+            if toolsettings.brush.image_tool not in {'FILL'}:
+                menu.add_item().menu(BrushRadiusMenu.bl_idname)
+                
             menu.add_item().menu(BrushStrengthMenu.bl_idname)
+            
+            if toolsettings.brush.image_tool in {'MASK'}:
+                menu.add_item().menu(BrushWeightMenu.bl_idname, text="Mask Value")
+                
+            if toolsettings.brush.image_tool in {'SOFTEN'}:
+                menu.add_item().prop(toolsettings.brush, "sharp_threshold", text=PIW+"Sharp Threshold")
+            
             menu.add_item().separator()
-            menu.add_item().menu(BrushModeMenu.bl_idname)
+            
+            if toolsettings.brush.image_tool in {'DRAW'}:
+                menu.add_item().menu(BrushModeMenu.bl_idname)
+                
+            if toolsettings.brush.image_tool in {'SOFTEN'}:
+                menu.add_item().menu(DirectionMenu.bl_idname)
+                menu.add_item().menu(BlurMode.bl_idname)
+                
+            if toolsettings.brush.image_tool in {'DRAW', 'CLONE', 'MASK'}:
+                menu.add_item().prop(toolsettings.brush, "use_accumulate")
+                
+            menu.add_item().prop(toolsettings.brush, "use_alpha")
+            menu.add_item().prop(toolsettings.brush, "use_gradient")
+                
 
     def particle(self, menu, context):
         if context.tool_settings.particle_edit.tool == 'NONE':
@@ -90,13 +207,11 @@ class BrushOptionsMenu(bpy.types.Menu):
 
             if context.tool_settings.particle_edit.tool == 'LENGTH':
                 menu.add_item().separator()
-                menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                     "length_mode", text="")
+                menu.add_item().menu(ParticleLengthMenu.bl_idname)
 
             if context.tool_settings.particle_edit.tool == 'PUFF':
                 menu.add_item().separator()
-                menu.add_item().prop(context.tool_settings.particle_edit.brush, 
-                                     "puff_mode", text="")
+                menu.add_item().menu(ParticlePuffMenu.bl_idname)
                 menu.add_item().prop(context.tool_settings.particle_edit.brush, 
                                      "use_puff_volume", toggle=True)
 
@@ -207,9 +322,13 @@ class DynDetailMenu(bpy.types.Menu):
             datapath = "tool_settings.sculpt.detail_size"
             slider_setting = "detail_size"
             
-        else:
+        elif bpy.context.tool_settings.sculpt.detail_type_method == 'CONSTANT':
             datapath = "tool_settings.sculpt.constant_detail"
             slider_setting = "constant_detail"
+        
+        elif bpy.context.tool_settings.sculpt.detail_type_method == 'BRUSH':
+            datapath = "tool_settings.sculpt.detail_percent"
+            slider_setting = "detail_percent"
 
         return settings, datapath, slider_setting
 
@@ -236,20 +355,12 @@ class DetailMethodMenu(bpy.types.Menu):
         refine_path = "tool_settings.sculpt.detail_refine_method"
         type_path = "tool_settings.sculpt.detail_type_method"
         
-        refine_items = [["Subdivide Edges", 'SUBDIVIDE'],
-                        ["Collapse Edges", 'COLLAPSE'],
-                        ["Subdivide Collapse", 'SUBDIVIDE_COLLAPSE']]
-        
-        type_items = [["Relative Detail", 'RELATIVE'],
-                      ["Constant Detail", 'CONSTANT']]
-        
-        
         menu.add_item().label("Refine")
         menu.add_item().separator()
         
         # add the refine menu items
-        for item in refine_items:
-            menuprop(menu.add_item(), item[0], item[1], refine_path, disable=True, 
+        for item in context.tool_settings.sculpt.bl_rna.properties['detail_refine_method'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, refine_path, disable=True, 
                      icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
         
         menu.add_item().label("")
@@ -258,84 +369,50 @@ class DetailMethodMenu(bpy.types.Menu):
         menu.add_item().separator()
         
         # add the type menu items
-        for item in type_items:
-            menuprop(menu.add_item(), item[0], item[1], type_path, disable=True, 
+        for item in context.tool_settings.sculpt.bl_rna.properties['detail_type_method'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, type_path, disable=True, 
                      icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
 
 class BrushModeMenu(bpy.types.Menu):
-    bl_label = "Brush Mode"
+    bl_label = "Mode"
     bl_idname = "VIEW3D_MT_brush_mode_menu"
 
     def init(self):
         if get_mode() == sculpt:
+            enum = bpy.context.tool_settings.sculpt.brush.bl_rna.properties['sculpt_plane'].enum_items
             path = "tool_settings.sculpt.brush.sculpt_plane"
-            brushmodes = [["Area Plane", 'AREA'],
-                          ["View Plane", 'VIEW'],
-                          ["X Plane", 'X'],
-                          ["Y Plane", 'Y'],
-                          ["Z Plane", 'Z']]
 
         elif get_mode() == texture_paint:
+            enum = bpy.context.tool_settings.image_paint.brush.bl_rna.properties['blend'].enum_items
             path = "tool_settings.image_paint.brush.blend"
-            brushmodes = [["Mix", 'MIX'],
-                          ["Add", 'ADD'],
-                          ["Subtract", 'SUB'],
-                          ["Multiply", 'MUL'],
-                          ["Lighten", 'LIGHTEN'],
-                          ["Darken", 'DARKEN'],
-                          ["Erase Alpha", 'ERASE_ALPHA'],
-                          ["Add Alpha", 'ADD_ALPHA'],
-                          ["Overlay", 'OVERLAY'],
-                          ["Hard Light", 'HARDLIGHT'],
-                          ["Color Burn", 'COLORBURN'],
-                          ["Linear Burn", 'LINEARBURN'],
-                          ["Color Dodge", 'COLORDODGE'],
-                          ["Screen", 'SCREEN'],
-                          ["Soft Light", 'SOFTLIGHT'],
-                          ["Pin Light", 'PINLIGHT'],
-                          ["Vivid Light", 'VIVIDLIGHT'],
-                          ["Linear Light", 'LINEARLIGHT'],
-                          ["Difference", 'DIFFERENCE'],
-                          ["Exclusion", 'EXCLUSION'],
-                          ["Hue", 'HUE'],
-                          ["Saturation", 'SATURATION'],
-                          ["Luminosity", 'LUMINOSITY'],
-                          ["Color", 'COLOR'],
-                          ]
 
         else:
+            enum = bpy.context.tool_settings.vertex_paint.brush.bl_rna.properties['vertex_tool'].enum_items
             path = "tool_settings.vertex_paint.brush.vertex_tool"
-            brushmodes = [["Mix", 'MIX'],
-                          ["Add", 'ADD'],
-                          ["Subtract", 'SUB'],
-                          ["Multiply", 'MUL'],
-                          ["Blur", 'BLUR'],
-                          ["Lighten", 'LIGHTEN'],
-                          ["Darken", 'DARKEN']]
 
-        return path, brushmodes
+        return enum, path
 
     def draw(self, context):
-        path, brushmodes = self.init()
+        enum, path = self.init()
         menu = Menu(self)
         
-        menu.add_item().label(text="Brush Mode")
+        menu.add_item().label(text="Mode")
         menu.add_item().separator()
         
         if get_mode() == texture_paint:
             column_flow = menu.add_item("column_flow", columns=2)
             
             # add all the brush modes to the menu
-            for brush in brushmodes:
-                menuprop(menu.add_item(parent=column_flow), brush[0],
-                         brush[1], path, icon='RADIOBUT_OFF',
+            for brush in enum:
+                menuprop(menu.add_item(parent=column_flow), brush.name,
+                         brush.identifier, path, icon='RADIOBUT_OFF',
                          disable=True, disable_icon='RADIOBUT_ON')
             
         else:
             # add all the brush modes to the menu
-            for brush in brushmodes:
-                menuprop(menu.add_item(), brush[0],
-                         brush[1], path, icon='RADIOBUT_OFF',
+            for brush in enum:
+                menuprop(menu.add_item(), brush.name,
+                         brush.identifier, path, icon='RADIOBUT_OFF',
                          disable=True, disable_icon='RADIOBUT_ON')
 
 class BrushAutosmoothMenu(bpy.types.Menu):
@@ -373,6 +450,15 @@ class BrushWeightMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_brush_weight_menu"
 
     def draw(self, context):
+        if get_mode() == weight_paint:
+            brush = context.tool_settings.unified_paint_settings
+            brushstr = "tool_settings.unified_paint_settings.weight"
+            name = "Weight"
+        else:
+            brush = context.tool_settings.image_paint.brush
+            brushstr = "tool_settings.image_paint.brush.weight"
+            name = "Mask Value"
+        
         menu = Menu(self)
         settings = [["1.0", 1.0],
                     ["0.7", 0.7],
@@ -382,14 +468,14 @@ class BrushWeightMenu(bpy.types.Menu):
                     ["0.1", 0.1]]
 
         # add the top slider
-        menu.add_item().prop(context.tool_settings.unified_paint_settings,
-                             "weight", slider=True)
+        menu.add_item().prop(brush,
+                             "weight", text=name, slider=True)
         menu.add_item().separator()
 
         # add the rest of the menu items
         for i in range(len(settings)):
             menuprop(menu.add_item(), settings[i][0], settings[i][1],
-                     "tool_settings.unified_paint_settings.weight",
+                     brushstr,
                      icon='RADIOBUT_OFF', disable=True,
                      disable_icon='RADIOBUT_ON')
                                
@@ -422,6 +508,41 @@ class ParticleCountMenu(bpy.types.Menu):
                      "tool_settings.particle_edit.brush.count",
                      icon='RADIOBUT_OFF', disable=True,
                      disable_icon='RADIOBUT_ON')
+                     
+class DirectionMenu(bpy.types.Menu):
+    bl_label = "Direction"
+    bl_idname = "VIEW3D_MT_direction_menu"
+    
+    def draw(self, context):
+        menu = Menu(self)
+        if get_mode() == sculpt:
+            path = context.tool_settings.sculpt.brush
+        else:
+            path = context.tool_settings.image_paint.brush
+        
+        menu.add_item().label(text="Direction")
+        menu.add_item().separator()
+        
+        # add the menu items
+        menu.add_item().props_enum(path, "direction")
+
+class BlurMode(bpy.types.Menu):
+    bl_label = "Blur Mode"
+    bl_idname = "VIEW3D_MT_blur_mode"
+    
+    def draw(self, context):
+        menu = Menu(self)
+        path = "tool_settings.image_paint.brush.blur_mode"
+        
+        menu.add_item().label(text="Blur Mode")
+        menu.add_item().separator()
+        
+        # add the menu items
+        for item in context.tool_settings.image_paint.brush.bl_rna.properties['blur_mode'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, path,
+                     icon='RADIOBUT_OFF',
+                     disable=True, 
+                     disable_icon='RADIOBUT_ON')
             
 class ParticleLengthMenu(bpy.types.Menu):
     bl_label = "Length Mode"
@@ -429,16 +550,14 @@ class ParticleLengthMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-        datapath = "tool_settings.particle_edit.brush.length_mode"
+        path = "tool_settings.particle_edit.brush.length_mode"
 
         # add the menu items
-        menuprop(menu.add_item(), "Grow", "GROW",
-                 datapath, icon='RADIOBUT_OFF', 
-                 disable=True, disable_icon='RADIOBUT_ON')
-        
-        menuprop(menu.add_item(), "Shrink", "SHRINK",
-                 datapath, icon='RADIOBUT_OFF', 
-                 disable=True, disable_icon='RADIOBUT_ON')
+        for item in context.tool_settings.particle_edit.brush.bl_rna.properties['length_mode'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, path,
+                     icon='RADIOBUT_OFF',
+                     disable=True, 
+                     disable_icon='RADIOBUT_ON')
         
 class ParticlePuffMenu(bpy.types.Menu):
     bl_label = "Puff Mode"
@@ -446,17 +565,43 @@ class ParticlePuffMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-        datapath = "tool_settings.particle_edit.brush.puff_mode"
+        path = "tool_settings.particle_edit.brush.puff_mode"
 
         # add the menu items
-        menuprop(menu.add_item(), "Add", "ADD",
-                 datapath, icon='RADIOBUT_OFF',
-                 disable=True, disable_icon='RADIOBUT_ON')
+        for item in context.tool_settings.particle_edit.brush.bl_rna.properties['puff_mode'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, path,
+                     icon='RADIOBUT_OFF',
+                     disable=True, 
+                     disable_icon='RADIOBUT_ON')
+
+class FlipColorsTex(bpy.types.Operator):
+    bl_label = "Flip Colors"
+    bl_idname = "view3d.flip_colors_tex"
+    
+    def execute(self, context):
+        try:
+            bpy.ops.paint.brush_colors_flip()
+        except:
+            pass
         
-        menuprop(menu.add_item(), "Sub", "SUB",
-                 datapath, icon='RADIOBUT_OFF',
-                 disable=True, disable_icon='RADIOBUT_ON')
-                           
+        return {'FINISHED'}
+    
+class FlipColorsVert(bpy.types.Operator):
+    bl_label = "Flip Colors"
+    bl_idname = "view3d.flip_colors_vert"
+    
+    def execute(self, context):
+        color = context.tool_settings.vertex_paint.brush.color
+        secondary_color = context.tool_settings.vertex_paint.brush.secondary_color
+        
+        orig_prim = color.hsv
+        orig_sec = secondary_color.hsv
+        
+        color.hsv = orig_sec
+        secondary_color.hsv = orig_prim
+        
+        return {'FINISHED'}
+
 class ColorPickerPopup(bpy.types.Operator):
     bl_label = "Color"
     bl_idname = "view3d.color_picker_popup"
@@ -478,6 +623,11 @@ class ColorPickerPopup(bpy.types.Operator):
         
         menu.add_item().template_color_picker(brush, "color", value_slider=True)
         menu.add_item().prop(brush, "color", text="")
+        menu.current_item.prop(brush, "secondary_color", text="")
+        if get_mode() == vertex_paint:
+            menu.current_item.operator("view3d.flip_colors_vert", icon='FILE_REFRESH', text="")
+        else:
+            menu.current_item.operator("view3d.flip_colors_tex", icon='FILE_REFRESH', text="")
         
         if settings.palette:
             menu.add_item("column").template_palette(settings, "palette", color=True)

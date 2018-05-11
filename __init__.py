@@ -23,11 +23,11 @@ bl_info = {
     "name": "Advanced UI Menus Stable Version",
     "description": "Menus for advanced interaction with blender's UI",
     "author": "Ryan Inch",
-    "version": (1, 5),
-    "blender": (2, 77),
+    "version": (1, "5b"),
+    "blender": (2, 79),
     "location": "View3D - Multiple menus in multiple modes.",
     "warning": '',  # used for warning icon and text in addons panel
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Advanced_UI_Menus",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Advanced_UI_Menus_Full",
     "category": "User Interface"}
 
 import sys, os

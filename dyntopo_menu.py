@@ -39,20 +39,14 @@ class SymmetrizeMenu(bpy.types.Menu):
     def draw(self, context):
         menu = Menu(self)
         path = "tool_settings.sculpt.symmetrize_direction"
-        items = [["-X to +X", 'NEGATIVE_X'],
-                 ["+X to -X", 'POSITIVE_X'],
-                 ["-Y to +Y", 'NEGATIVE_Y'],
-                 ["+Y to -Y", 'POSITIVE_Y'],
-                 ["-Z to +Z", 'NEGATIVE_Z'],
-                 ["+Z to -Z", 'POSITIVE_Z']]
         
         # add the the symmetrize operator to the menu
         menu.add_item().operator("sculpt.symmetrize")
         menu.add_item().separator()
         
         # add the rest of the menu items
-        for item in items:
-            menuprop(menu.add_item(), item[0], item[1], path, disable=True, 
+        for item in context.tool_settings.sculpt.bl_rna.properties['symmetrize_direction'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, path, disable=True, 
                      icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
             
             

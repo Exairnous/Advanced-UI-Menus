@@ -199,46 +199,30 @@ class TextureMapMode(bpy.types.Menu):
         
         if get_mode() == sculpt:
             path = "tool_settings.sculpt.brush.texture_slot.map_mode"
-            items = [["View Plane", 'VIEW_PLANE'],
-                     ["Area Plane", 'AREA_PLANE'],
-                     ["Tiled", 'TILED'],
-                     ["3D", '3D'],
-                     ["Random", 'RANDOM'],
-                     ["Stencil", 'STENCIL']]
             
             # add the menu items
-            for item in items:
-                menuprop(menu.add_item(), item[0], item[1], path,
+            for item in context.tool_settings.sculpt.brush.texture_slot.bl_rna.properties['map_mode'].enum_items:
+                menuprop(menu.add_item(), item.name, item.identifier, path,
                          icon='RADIOBUT_OFF',
                          disable=True,
                          disable_icon='RADIOBUT_ON')
                 
         elif get_mode() == vertex_paint:
             path = "tool_settings.vertex_paint.brush.texture_slot.tex_paint_map_mode"
-            items = [["View Plane", 'VIEW_PLANE'],
-                     ["Tiled", 'TILED'],
-                     ["3D", '3D'],
-                     ["Random", 'RANDOM'],
-                     ["Stencil", 'STENCIL']]
             
             # add the menu items
-            for item in items:
-                menuprop(menu.add_item(), item[0], item[1], path,
+            for item in context.tool_settings.vertex_paint.brush.texture_slot.bl_rna.properties['tex_paint_map_mode'].enum_items:
+                menuprop(menu.add_item(), item.name, item.identifier, path,
                          icon='RADIOBUT_OFF',
                          disable=True,
                          disable_icon='RADIOBUT_ON')
                 
         else:
             path = "tool_settings.image_paint.brush.texture_slot.tex_paint_map_mode"
-            items = [["View Plane", 'VIEW_PLANE'],
-                     ["Tiled", 'TILED'],
-                     ["3D", '3D'],
-                     ["Random", 'RANDOM'],
-                     ["Stencil", 'STENCIL']]
             
             # add the menu items
-            for item in items:
-                menuprop(menu.add_item(), item[0], item[1], path,
+            for item in context.tool_settings.image_paint.brush.texture_slot.bl_rna.properties['tex_paint_map_mode'].enum_items:
+                menuprop(menu.add_item(), item.name, item.identifier, path,
                          icon='RADIOBUT_OFF',
                          disable=True,
                          disable_icon='RADIOBUT_ON')
@@ -282,17 +266,13 @@ class MaskMapMode(bpy.types.Menu):
         menu = Menu(self)
 
         path = "tool_settings.image_paint.brush.mask_texture_slot.mask_map_mode"
-        items = [["View Plane", 'VIEW_PLANE'],
-                 ["Tiled", 'TILED'],
-                 ["Random", 'RANDOM'],
-                 ["Stencil", 'STENCIL']]
         
         menu.add_item().label(text="Mask Mapping")
         menu.add_item().separator()
         
         # add the menu items
-        for item in items:
-            menuprop(menu.add_item(), item[0], item[1], path,
+        for item in context.tool_settings.image_paint.brush.mask_texture_slot.bl_rna.properties['mask_map_mode'].enum_items:
+            menuprop(menu.add_item(), item.name, item.identifier, path,
                      icon='RADIOBUT_OFF',
                      disable=True, 
                      disable_icon='RADIOBUT_ON')
@@ -303,17 +283,17 @@ class TextureAngleSource(bpy.types.Menu):
     
     def draw(self, context):
         menu = Menu(self)
-        items = [["User", 'USER'],
-                 ["Rake", 'RAKE'],
-                 ["Random", 'RANDOM']]
 
         if get_mode() == sculpt:
+            items = context.tool_settings.sculpt.brush.bl_rna.properties['texture_angle_source_random'].enum_items
             path = "tool_settings.sculpt.brush.texture_angle_source_random"
             
         elif get_mode() == vertex_paint:
+            items = context.tool_settings.vertex_paint.brush.bl_rna.properties['texture_angle_source_random'].enum_items
             path = "tool_settings.vertex_paint.brush.texture_angle_source_random"
             
         else:
+            items = context.tool_settings.image_paint.brush.bl_rna.properties['texture_angle_source_random'].enum_items
             path = "tool_settings.image_paint.brush.texture_angle_source_random"
         
         # add the menu items

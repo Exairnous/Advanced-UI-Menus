@@ -66,7 +66,7 @@ class ManipulatorMenu(bpy.types.Menu):
 
 class TransformOrientationMenu(bpy.types.Menu):
     bl_label = "Transform Orientation"
-    bl_idname = "VIEW3D_MT_manipulator_menu_2"
+    bl_idname = "VIEW3D_MT_transf_orient_menu"
     
     hotkey = True
     
@@ -77,7 +77,10 @@ class TransformOrientationMenu(bpy.types.Menu):
             menu.add_item().label(text="Transform Orientation")
             menu.add_item().separator()
         
-        menu.add_item().props_enum(bpy.context.space_data, "transform_orientation")
+        #menu.add_item().props_enum(bpy.context.space_data, "transform_orientation")
+        for mode in context.space_data.bl_rna.properties['transform_orientation'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "space_data.transform_orientation",
+            icon='RADIOBUT_OFF', disable=True, disable_icon='RADIOBUT_ON')
 
 ### ------------ New hotkeys and registration ------------ ###
 
