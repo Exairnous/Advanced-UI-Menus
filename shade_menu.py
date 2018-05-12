@@ -46,7 +46,7 @@ class ShadeModeOperator(bpy.types.Operator):
 
 
 class ShadeModeMenu(bpy.types.Menu):
-    bl_label = "Shading Mode"
+    bl_label = "Viewport Shading"
     bl_idname = "VIEW3D_MT_shade_menu"
 
     def init(self):
@@ -54,68 +54,58 @@ class ShadeModeMenu(bpy.types.Menu):
 
         if renderer == 'BLENDER_RENDER':
             modes = [["Solid", 'SOLID', "SOLID"],
-                              ["Wireframe", 'WIREFRAME', "WIRE"],
-                              ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                              ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                              ["Rendered", 'RENDERED', "SMOOTH"],
-                              ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                     ["Wireframe", 'WIREFRAME', "WIRE"],
+                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                     ["Rendered", 'RENDERED', "SMOOTH"],
+                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         elif renderer == 'CYCLES':
             modes = [["Solid", 'SOLID', "SOLID"],
-                             ["Wireframe", 'WIREFRAME', "WIRE"],
-                             ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                             ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                             ["Rendered", 'RENDERED', "SMOOTH"],
-                             ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                      ["Wireframe", 'WIREFRAME', "WIRE"],
+                      ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                      ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                      ["Rendered", 'RENDERED', "SMOOTH"],
+                      ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         else:
             modes = [["Solid", 'SOLID', "SOLID"],
-                             ["Wireframe", 'WIREFRAME', "WIRE"],
-                             ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                             ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                             ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+                     ["Wireframe", 'WIREFRAME', "WIRE"],
+                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
+                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
+                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
             
         return modes
 
     def draw(self, context):
         modes = self.init()
-        #menu = Menu(self)
-        
-        #add = self.layout
-        #add_item = self.layout.row
+        menu = Menu(self)
 
         # add the items to the menu
         for mode in modes:
-            menuprop(self.layout.row(), mode[0], mode[1], "space_data.viewport_shade",
+            menuprop(menu.add_item(), mode[0], mode[1], "space_data.viewport_shade",
                      icon=mode[2], disable=True)
 
         # add a shading options menu if object can be shaded smooth/flat
-        if bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
-            self.layout.row().separator()
-            
-            if not context.object.use_dynamic_topology_sculpting:
-                self.layout.row().menu(MeshShadeMenu.bl_idname)
+        if bpy.context.object and bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
+            menu.add_item().separator()
+            if context.object.use_dynamic_topology_sculpting:
+                menu.add_item().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
             else:
-                self.layout.row().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
-                self.layout.row().separator()
-            
-        # add a display options menu if the mode is not edit
-        if get_mode() != 'EDIT':
-            self.layout.row().menu(DisplayOptionsMenu.bl_idname)
-            
-            
-        # yay that works; now how do I solve operator_context for my custom menu?
-        bisect = self.layout.row()
-        bisect.operator_context = 'INVOKE_DEFAULT'
-        bisect.operator("mesh.bisect")
+                menu.add_item().menu(MeshShadeMenu.bl_idname)
 
+            if get_mode() != 'EDIT':
+                menu.add_item().menu(DisplayOptionsMenu.bl_idname)
 
 class MeshShadeMenu(bpy.types.Menu):
-    bl_label = "Mesh Shading Options"
+    bl_label = "Object Shading"
     bl_idname = "VIEW3D_MT_mesh_shade"
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Object Shading")
+        menu.add_item().separator()
         
         if bpy.context.mode == 'EDIT_MESH':
             menu.add_item().operator("mesh.faces_shade_flat", "Shade Flat", icon="MESH_ICOSPHERE")
@@ -132,6 +122,9 @@ class DisplayOptionsMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
+        
+        menu.add_item().label(text="Display Options")
+        menu.add_item().separator()
 
         menu.add_item().prop(context.object, 'show_name', toggle=True)
         menu.add_item().prop(context.object, 'show_axis', toggle=True)

@@ -17,9 +17,11 @@ class ManipulatorMenuOperator(bpy.types.Operator):
         # if key has been held for more than 0.3 seconds call the menu
         if event.value == 'RELEASE' and current_time > self.start_time + 0.3:
             if bpy.context.space_data.show_manipulator == True:
+                TransformOrientationMenu.hotkey = False
                 bpy.ops.wm.call_menu(name=ManipulatorMenu.bl_idname)
             else:
-                bpy.ops.wm.call_menu(name=ManipulatorMenu2.bl_idname)
+                TransformOrientationMenu.hotkey = True
+                bpy.ops.wm.call_menu(name=TransformOrientationMenu.bl_idname)
             
             return {'FINISHED'}
         
@@ -59,15 +61,26 @@ class ManipulatorMenu(bpy.types.Menu):
         menuprop(menu.add_item(), "Scale", {'SCALE'},
         "space_data.transform_manipulators", 
         icon="MAN_SCALE", disable=True)
-        menu.add_item().prop_menu_enum(bpy.context.space_data, "transform_orientation")
+        
+        menu.add_item().menu(TransformOrientationMenu.bl_idname)
 
-class ManipulatorMenu2(bpy.types.Menu):
+class TransformOrientationMenu(bpy.types.Menu):
     bl_label = "Transform Orientation"
-    bl_idname = "VIEW3D_MT_manipulator_menu_2"
+    bl_idname = "VIEW3D_MT_transf_orient_menu"
+    
+    hotkey = True
     
     def draw(self, context):
         menu = Menu(self)
-        menu.add_item().props_enum(bpy.context.space_data, "transform_orientation")
+        
+        if not self.hotkey:
+            menu.add_item().label(text="Transform Orientation")
+            menu.add_item().separator()
+        
+        #menu.add_item().props_enum(bpy.context.space_data, "transform_orientation")
+        for mode in context.space_data.bl_rna.properties['transform_orientation'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "space_data.transform_orientation",
+            icon='RADIOBUT_OFF', disable=True, disable_icon='RADIOBUT_ON')
 
 ### ------------ New hotkeys and registration ------------ ###
 

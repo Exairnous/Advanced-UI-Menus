@@ -10,7 +10,12 @@ tree = None
 root = None
 cur_menu = None
 
+item_list = []
+rem_item_list = []
+
 op_list = []
+prop_list = []
+prop_cat = ""
 menu_list = []
 
 def read_xml():
@@ -50,10 +55,14 @@ def get_menu(context):
     
     return menu[0]
 
+#TODO add support for insert after last item
 def get_custom_item_list():
     global cur_menu
-    item_list = []
-    rem_item_list = []
+    global item_list
+    global rem_item_list
+    
+    item_list.clear()
+    rem_item_list.clear()
 
     item_list.append(("0", "Start", "Start"))
 
@@ -66,8 +75,11 @@ def get_custom_item_list():
                 desc = item[0].text
             else:   
                 ent_op = "bpy.ops.{0}()".format(item[0].text)
-                op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
-                name = "OP: {0}".format(op.bl_rna.name)
+                try:
+                    op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
+                    name = "OP: {0}".format(op.bl_rna.name)
+                except:
+                    name = "OP: {0}".format(item[0].text)
                 desc = item[0].text
                 
         elif item_type == "MENU":
@@ -77,6 +89,14 @@ def get_custom_item_list():
             else:
                 name = "MENU: {0}".format(item[0].text)
                 desc = item[0].text
+        
+        elif item_type == "PROP":
+            if item[1].text != "none":
+                name = "PROP: {0}".format(item[1].text)
+                desc = item[1].text
+            else:
+                name = "PROP: {0}".format(item[0].text)
+                desc = item[0].text
                 
         elif item_type == "LAB":
             name = "LAB: {0}".format(item[0].text)
@@ -85,17 +105,20 @@ def get_custom_item_list():
             name = "SEP: Separator"
             desc = "Separator"
 
-        item_list.append((str(place+1), name, desc))
-        rem_item_list.append((str(place), name, desc))
+        item_list.append((str(place+1), "item ({0}) {1}".format(place+1, name), desc))
+        rem_item_list.append((str(place), "item ({0}) {1}".format(place+1, name), desc))
 
     set_prop("EnumProperty", 
-            "bpy.types.Scene.CustomMenuItemList",
-            name = "",
-            items=item_list)
+             "bpy.types.Scene.CustomMenuItemList",
+             name = "",
+             items=item_list
+            )
+            
     set_prop("EnumProperty", 
-            "bpy.types.Scene.CustomMenuItemRemList",
-            name = "",
-            items=rem_item_list)
+             "bpy.types.Scene.CustomMenuItemRemList",
+             name = "",
+             items=rem_item_list
+            )
             
 def fill_operator_list():
     global op_list
@@ -109,9 +132,12 @@ def fill_operator_list():
             ent_op = text.split("\n")[1]
             op_path = ent_op[8:str.find(ent_op, "(")]
             if ent_op.startswith("bpy.ops.") and not "import." in ent_op:
-                op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
-                op_name = op.bl_rna.name
-                operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                try:
+                    op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
+                    op_name = op.bl_rna.name
+                    operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                except:
+                    print("\nError could not parse operator: {0}\n".format(ent_op[:str.find(ent_op, "(")]))
 
     op_list = operators
 
@@ -119,6 +145,61 @@ def get_operator_list(self, context):
     global op_list
 
     return op_list
+
+def create_property_list():
+    global prop_list
+    
+    prop_list.clear()
+    fill_property_list()
+    print(len(prop_list))
+    prop_list = sorted(prop_list, key=lambda prop: prop[1])
+    print(len(prop_list))
+
+def fill_property_list(loc="bpy.context", prev_property_name=""):
+    global prop_list
+    global prop_cat
+    #print(loc)
+    loc_ob = eval(loc)
+    
+    for property_name in dir(loc_ob):
+        try:
+            if prop_cat != loc_ob.bl_rna.name:
+                prop_cat = loc_ob.bl_rna.name
+        except:
+            pass
+        
+        try:
+            prop = getattr(loc_ob, property_name)
+        except:
+            return
+        
+        propstr = "{}".format(type(prop))
+        #print(propstr)
+        if not '__' in property_name:
+            
+            if ('screen' in loc and property_name == 'scene') or ('window' in loc and property_name == 'screen') or ('scene' in loc and property_name == 'tool_settings') or 'active_base' in loc or 'active_object' in loc:
+                       continue
+                       
+            if 'bool' in propstr or 'collection' in propstr or \
+               'enum' in propstr or 'float' in propstr or \
+               'int' in propstr or 'pointer' in propstr or \
+               'str' in propstr:
+                   prop_path = loc[4:]+'.'+property_name
+                   prop_list.append((prop_path, prop_cat+' - '+prev_property_name+'.'+property_name, prop_path))
+                   #print(prop_cat+' - '+property_name+' ', loc+'.'+property_name)
+            else:
+                if not '__' in property_name and not 'NoneType' in propstr and not 'func' in propstr and not 'Vector' in propstr and not 'Matrix' in propstr and not 'Color' in propstr and not 'rna' in property_name and not 'children' in property_name and not 'owner' in property_name:
+                    #print(property_name)
+                    #print(propstr)
+                    fill_property_list(loc+'.'+property_name, property_name)
+                #print(dir(prop))
+                
+
+def get_property_list(self, context):
+    global prop_list
+
+    return prop_list
+               
 
 def fill_menu_list():
     global menu_list
@@ -156,10 +237,11 @@ def format_xml(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
     
-def errmsg(self, errlst):
-        for entry in errlst:
-            self.layout.row().label(entry)
-        return None
+#def errmsg(self, context, errlst):
+#    def draw(self, context):
+#        for entry in errlst:
+#            self.layout.row().label(entry)
+#    return draw
     
 def get_arg_list(argstring):
     opkwarg_string = argstring
@@ -208,79 +290,150 @@ def update_args(self, context):
     fill_operator_list()
     if context.scene.CustomMenuItemPath in [x[0] for x in get_operator_list(self, context)]:
         context.scene.CustomMenuOperatorArgs = get_arg_string(context.scene.CustomMenuItemPath)
+        
+class AddItemListMenu(bpy.types.Menu):
+    bl_label = "Add Item List"
+    bl_idname = "VIEW3D_MT_add_item_list_menu"
     
+    def draw(self, context):
+        menu = Menu(self)
+        menu.add_item().props_enum(bpy.context.scene, "CustomMenuItemList")
+
+class RemItemListMenu(bpy.types.Menu):
+    bl_label = "Remove Item List"
+    bl_idname = "VIEW3D_MT_rem_item_list_menu"
+    
+    def draw(self, context):
+        menu = Menu(self)
+        menu.add_item().props_enum(bpy.context.scene, "CustomMenuItemRemList")
+        
+class ArgErrorListMenu(bpy.types.Menu):
+    bl_label = "Invalid Arguments for Item(s):"
+    bl_idname = "VIEW3D_MT_arg_error_list_menu"
+    
+    errlst = []
+    
+    def draw(self, context):
+        for entry in self.errlst:
+            self.layout.row().label(entry, icon='ERROR')
+
 class CustomMenu(bpy.types.Menu):
     bl_label = "Custom Menu"
     bl_idname = "VIEW3D_MT_custom_menu"
     
-    
     def draw(self, context):
+        #global prop_list
+        #create_property_list()
+        #for x in prop_list:
+            #print(x[1], " ", x[2])
         menu = Menu(self)
         global tree
         global root
         global cur_menu
+        num = 0
        
         cur_menu = get_menu(context)
         
         error_str = "Invalid Arguments for Item(s):"
         errors = []
-
+        
+        split = menu.add_item("split", align=True)
+        master_column = menu.add_item("column", parent=split)
+        
         for item in cur_menu:
+            num += 1
             if item.get("type") == "SEP":
-                menu.add_item().separator()
+                menu.add_item(parent=master_column).separator()
             elif item.get("type") == "LAB":
-                menu.add_item().label(item[0].text, icon=item[1].text)
+                menu.add_item(parent=master_column).label(item[0].text, icon=item[1].text)
             elif item.get("type") == "OP":
-                op_row = menu.add_item()
+                op_row = menu.add_item(parent=master_column)
                 #print(op_row.operator_context)
                 op_row.operator_context = 'INVOKE_DEFAULT'
                 
                 if item[1].text != "none":
-                    op = op_row.operator(item[0].text, text=item[1].text, icon=item[2].text)
+                    if item[3].text == "True":
+                        op_row.operator_menu_enum(item[0].text, item[4].text.split(";")[0], text=item[1].text, icon=item[2].text)
+                    else:
+                        op = op_row.operator(item[0].text, text=item[1].text, icon=item[2].text)
                 else:
-                    op = op_row.operator(item[0].text, icon=item[2].text)
+                    if item[3].text == "True":
+                        op_row.operator_menu_enum(item[0].text, item[4].text.split(";")[0], icon=item[2].text)
+                    else:
+                        op = op_row.operator(item[0].text, icon=item[2].text)
+                
+                try:
+                    eval("bpy.ops.{0}.poll()".format(item[0].text))
+                except:
+                    menu.add_item(parent=master_column).label("OP: "+item[0].text, icon='ERROR')
                 
                 #print(item[3].text)
-                if item[3].text != "none":
-                    if ";" in item[3].text:
-                        args = item[3].text.split(";")
-                        arg_vals = item[4].text.split(";")
-                    else:
-                        args = [item[3].text]
-                        arg_vals = [item[4].text]
+                if item[3].text == "False":
                     try:
-                        #print(args, " ", arg_vals)
-                        for int, arg in enumerate(args):
-                            exec("op.{0} = {1}".format(arg, arg_vals[int]))
+                        if item[4].text != "none":
+                            if ";" in item[4].text:
+                                args = item[4].text.split(";")
+                                arg_vals = item[5].text.split(";")
+                            else:
+                                args = [item[4].text]
+                                arg_vals = [item[5].text]
+                            
+                            #print(args, " ", arg_vals)
+                            for int, arg in enumerate(args):
+                                exec("op.{0} = {1}".format(arg, arg_vals[int]))
                     except:
-                        errors.append("{0}".format(item[0].text))
+                        errors.append("item ({0}) {1}".format(num, item[0].text))
                             
             elif item.get("type") == "MENU":
                 if item[1].text != "none":
-                    menu.add_item().menu(item[0].text, text=item[1].text, icon=item[2].text)
+                    menu.add_item(parent=master_column).menu(item[0].text, text=item[1].text, icon=item[2].text)
                 else:
-                    menu.add_item().menu(item[0].text, icon=item[2].text)
+                    menu.add_item(parent=master_column).menu(item[0].text, icon=item[2].text)
+                    
+                #print(eval("bpy.types."+item[0].text))
+                try:
+                    eval("bpy.types."+item[0].text)
+                except:
+                    menu.add_item(parent=master_column).label("MENU: "+item[0].text, icon='ERROR')
             
             elif item.get("type") == "PROP":
                 path = item[0].text
                 
                 #print(path[path.rfind(".")+1:])
-                
-                if item[1].text != "none":
-                    menu.add_item().prop(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], text=item[1].text, icon=item[2].text, expand=eval(item[3].text), slider=eval(item[4].text), toggle=eval(item[5].text), icon_only=eval(item[6].text), event=eval(item[7].text), full_event=eval(item[8].text), emboss=eval(item[9].text))
-                else:
-                    menu.add_item().prop(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], icon=item[2].text, expand=eval(item[3].text), slider=eval(item[4].text), toggle=eval(item[5].text), icon_only=eval(item[6].text), event=eval(item[7].text), full_event=eval(item[8].text), emboss=eval(item[9].text))
-        
-        menu.add_item().separator()
+                try:
+                    if item[1].text != "none":
+                        if item[3].text == "True":
+                            menu.add_item(parent=master_column).prop_menu_enum(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], text=item[1].text, icon=item[2].text)
+                        else:
+                            menu.add_item(parent=master_column).prop(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], text=item[1].text, icon=item[2].text, expand=eval(item[4].text), slider=eval(item[5].text), toggle=eval(item[6].text), icon_only=eval(item[7].text), event=eval(item[8].text), full_event=eval(item[9].text), emboss=eval(item[10].text))
+                    else:
+                        if item[3].text == "True":
+                            menu.add_item(parent=master_column).prop_menu_enum(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], icon=item[2].text)
+                        #print(path[:path.rfind(".")], path[path.rfind(".")+1:])
+                        else:
+                            menu.add_item(parent=master_column).prop(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], icon=item[2].text, expand=eval(item[4].text), slider=eval(item[5].text), toggle=eval(item[6].text), icon_only=eval(item[7].text), event=eval(item[8].text), full_event=eval(item[9].text), emboss=eval(item[10].text))
+                except:
+                    menu.add_item(parent=master_column).label("PROP: "+item[0].text, icon='ERROR')
+                    
+        menu.add_item(parent=master_column).separator()
 
-        op = menu.add_item()
+        op = menu.add_item(parent=master_column)
         op.operator_context = 'INVOKE_DEFAULT'
         op.operator("view3d.custom_menu_editor", text="Edit Custom Menu")
         
-        #message = lambda x, y: errmsg(x, errors)
+        #message = lambda x, y : errmsg(x, errors)
         
         if errors:
-            context.window_manager.popup_menu(message, title=error_str, icon='ERROR')
+            menu.add_item(parent=master_column).menu(ArgErrorListMenu.bl_idname, icon='ERROR')
+            bpy.types.VIEW3D_MT_arg_error_list_menu.errlst = errors
+            #error_column = menu.add_item("column", parent=split)
+            #report = menu.add_item().operator(SendReport.bl_idname, text="Errors Occurred, click for more information", icon='ERROR')
+            #report.message = "\n".join(errors)
+            #menu.add_item(parent=error_column).label(error_str, icon='ERROR')
+            #for error in errors:
+                #menu.add_item(parent=error_column).label(error)
+            #send_report("".format(errors))
+            #context.window_manager.popup_menu(errmsg(self, context, errors), title=error_str, icon='ERROR')
         
 class CustomMenuEditor(bpy.types.Operator):
     bl_label = "Custom Menu Editor"
@@ -291,6 +444,11 @@ class CustomMenuEditor(bpy.types.Operator):
         return True       
     
     def draw(self, context):
+        global item_list
+        global rem_item_list
+        
+        #print(rem_item_list)
+        
         ui = Menu(self)
         scn = context.scene
         
@@ -307,20 +465,26 @@ class CustomMenuEditor(bpy.types.Operator):
             ui.add_item().prop(scn, "CustomMenuOperatorArgs")
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
+            ui.add_item()
+            ui.current_item.label("Menu:")
+            ui.current_item.prop(scn, "CustomMenuPropMenu", text="")
             ui.add_item().label("Insert After:")
-            ui.current_item.prop(scn, "CustomMenuItemList")
+            #ui.current_item.prop(scn, "CustomMenuItemList")
+            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "SEP":
             ui.add_item().label("Insert After:")
-            ui.current_item.prop(scn, "CustomMenuItemList")
+            #ui.current_item.prop(scn, "CustomMenuItemList")
+            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "LAB":
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
             ui.add_item().label("Insert After:")
-            ui.current_item.prop(scn, "CustomMenuItemList")
+            #ui.current_item.prop(scn, "CustomMenuItemList")
+            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "MENU":
@@ -333,28 +497,38 @@ class CustomMenuEditor(bpy.types.Operator):
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
             ui.add_item().label("Insert After:")
-            ui.current_item.prop(scn, "CustomMenuItemList")
+            #ui.current_item.prop(scn, "CustomMenuItemList")
+            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "PROP":
             ui.add_item().prop(scn, "CustomMenuItemPath")
+            ui.current_item.operator_context = 'INVOKE_DEFAULT'
+            ui.current_item.operator("view3d.search_prop_list_menu", text="", icon="LONGDISPLAY")
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
             ui.add_item()
-            ui.current_item.prop(scn, "CustomMenuPropExpand")
-            ui.current_item.prop(scn, "CustomMenuPropSlider")
-            ui.current_item.prop(scn, "CustomMenuPropToggle")
-            ui.current_item.prop(scn, "CustomMenuPropIconOnly")
-            ui.add_item()
-            ui.current_item.prop(scn, "CustomMenuPropEvent")
-            ui.current_item.prop(scn, "CustomMenuPropFullEvent")
-            ui.current_item.prop(scn, "CustomMenuPropEmboss")
-            ui.add_item().prop(scn, "CustomMenuItemList")
+            ui.current_item.prop(scn, "CustomMenuPropMenu")
+            if not context.scene.CustomMenuPropMenu:
+                ui.current_item.prop(scn, "CustomMenuPropExpand")
+                ui.current_item.prop(scn, "CustomMenuPropSlider")
+                ui.add_item()
+                ui.current_item.prop(scn, "CustomMenuPropToggle")
+                ui.current_item.prop(scn, "CustomMenuPropIconOnly")
+                ui.current_item.prop(scn, "CustomMenuPropEmboss")
+                ui.add_item()
+                ui.current_item.prop(scn, "CustomMenuPropEvent")
+                ui.current_item.prop(scn, "CustomMenuPropFullEvent")
+                ui.current_item.label("")
+            #ui.add_item().prop(scn, "CustomMenuItemList")
+            ui.add_item().label("Insert After:")
+            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
              
         elif scn.CustomMenuItemType == "REM":
             ui.add_item().label("Remove Item:")
-            ui.current_item.prop(scn, "CustomMenuItemRemList")
+            #ui.current_item.prop(scn, "CustomMenuItemRemList")
+            ui.current_item.menu(RemItemListMenu.bl_idname, rem_item_list[int(scn.CustomMenuItemRemList)][1])
             ui.add_item().separator()
             
         if scn.CustomMenuItemType != "REM":
@@ -411,6 +585,8 @@ class SaveCustomItem(bpy.types.Operator):
             name.text = scn.CustomMenuItemName if scn.CustomMenuItemName else "none"
             icon = ET.SubElement(new_item, "icon")
             icon.text = scn.CustomMenuItemIcon if scn.CustomMenuItemIcon else "none"
+            menu = ET.SubElement(new_item, "menu")
+            menu.text = str(scn.CustomMenuPropMenu)
             
             op_args = scn.CustomMenuOperatorArgs
             if op_args != '':
@@ -423,7 +599,7 @@ class SaveCustomItem(bpy.types.Operator):
                         
                     return {'CANCELLED'}
                 
-                for key, val in custom_args.items():
+                for key, val in list(custom_args.items()):
                     if not key in def_args:
                         bpy.ops.view3d.send_report('INVOKE_DEFAULT', \
                         message="Invalid Arguments for Item {0}".format(path.text))
@@ -515,6 +691,8 @@ class SaveCustomItem(bpy.types.Operator):
             icon = ET.SubElement(new_item, "icon")
             icon.text = scn.CustomMenuItemIcon if scn.CustomMenuItemIcon else "none"
             
+            menu = ET.SubElement(new_item, "menu")
+            menu.text = str(scn.CustomMenuPropMenu)
             expand = ET.SubElement(new_item, "expand")
             expand.text = str(scn.CustomMenuPropExpand)
             slider = ET.SubElement(new_item, "slider")
@@ -539,12 +717,13 @@ class SaveCustomItem(bpy.types.Operator):
         
         scn.CustomMenuItemName = ""
         scn.CustomMenuItemIcon = "NONE"
-        scn.CustomMenuItemPath = ""
+        scn.CustomMenuItemPath = "__required__"
         scn.CustomMenuOperatorArgs = ""
         
         scn.CustomMenuPropExpand = False
         scn.CustomMenuPropSlider = False
         scn.CustomMenuPropToggle = False
+        scn.CustomMenuPropMenu = False
         scn.CustomMenuPropIconOnly = False
         scn.CustomMenuPropEvent = False
         scn.CustomMenuPropFullEvent = False
@@ -552,6 +731,7 @@ class SaveCustomItem(bpy.types.Operator):
         
         # regenerate custom item lists
         get_custom_item_list()
+        print(rem_item_list)
         
         return {'FINISHED'}
     
@@ -564,6 +744,32 @@ class SearchableOperatorListMenu(bpy.types.Operator):
     
     def invoke(self, context, event):
         fill_operator_list()
+        
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        
+        return {'FINISHED'}
+    
+    def execute(self, context):
+        context.scene.CustomMenuItemPath = self.op_enum
+        #bpy.ops.view3d.add_custom_item_xml.check(context)
+        
+        return{'FINISHED'}
+    
+class SearchablePropertyListMenu(bpy.types.Operator):
+    bl_label = "Searchable Property List Menu"
+    bl_idname = "view3d.search_prop_list_menu"
+    bl_property = "op_enum"
+    
+    op_enum = bpy.props.EnumProperty(items=get_property_list)
+    
+    def draw(self, context):
+        self.layout.scale_x = 100
+    
+    def invoke(self, context, event):
+        global prop_list
+        
+        create_property_list()
         
         wm = context.window_manager
         wm.invoke_search_popup(self)
@@ -614,11 +820,11 @@ def set_keybind(value):
         return
         
     if value == "menu":
-        modes = ['3D View', 'Timeline', 'Graph Editor', 'Dopesheet', 'NLA Editor',
-                 'Image', 'Sequencer', 'Clip', 'Node Editor', 'Logic Editor', 'Console']
+        modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
+             ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
         
         for mode in modes:
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            km = wm.keyconfigs.addon.keymaps.new(name=mode[0], space_type=mode[1])
             kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
             kmi.properties.name = 'VIEW3D_MT_custom_menu'
             addon_keymaps.append((km, kmi))
@@ -631,9 +837,16 @@ def register():
     read_xml()
     
     set_prop("EnumProperty", 
-                    "bpy.types.Scene.CustomMenuItemType",
-                    name = "",
-                    items=[('OP','Add An Operator', 'Operator'), ('SEP', 'Add A Separator', 'Separator'), ('LAB', 'Add A Label', 'Label'), ('MENU', 'Add A Menu', 'Menu'), ('PROP', 'Add A Property', 'Property'), ('REM', 'Remove An Item', 'Remove')])
+             "bpy.types.Scene.CustomMenuItemType",
+             name = "",
+             items=[('OP','Add An Operator', 'Operator'),
+                    ('SEP', 'Add A Separator', 'Separator'),
+                    ('LAB', 'Add A Label', 'Label'),
+                    ('MENU', 'Add A Menu', 'Menu'),
+                    ('PROP', 'Add A Property', 'Property'),
+                    ('REM', 'Remove An Item', 'Remove')
+                   ]
+            )
                     
     iconlist = bpy.types.UILayout.bl_rna.functions['prop'].parameters['icon'].\
                enum_items.keys()
@@ -643,63 +856,84 @@ def register():
             icons.append((icon, icon, icon, icon, int(value)))
         else:
             icons.append((icon, "", icon, icon, int(value)))
+            
     set_prop("EnumProperty", 
-                "bpy.types.Scene.CustomMenuItemIcon",
-                name = "Icon",
-                items = icons)
+             "bpy.types.Scene.CustomMenuItemIcon",
+             name = "Icon",
+             items = icons
+            )
+    
+    set_prop("BoolProperty", 
+             "bpy.types.Scene.CustomMenuPropMenu", 
+             default=False,
+             name="Menu"
+            )
     
     set_prop("StringProperty", 
-                    "bpy.types.Scene.CustomMenuItemName", 
-                    name="Name")
-    
-    bpy.types.Scene.CustomMenuItemPath = bpy.props.StringProperty(name="Path",
-                    default="__required__",
-                    update=update_args)
+             "bpy.types.Scene.CustomMenuItemName", 
+             name="Name"
+            )
+
+    set_prop("StringProperty",
+             "bpy.types.Scene.CustomMenuItemPath",
+             name="Path",
+             default="__required__",
+             update=update_args
+            )
                     
     set_prop("StringProperty", 
-                    "bpy.types.Scene.CustomMenuOperatorArgs", 
-                    name="Args")
+             "bpy.types.Scene.CustomMenuOperatorArgs", 
+             name="Args"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropExpand", 
-                    default=False,
-                    name="Expand")
+             "bpy.types.Scene.CustomMenuPropExpand", 
+             default=False,
+             name="Expand"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropSlider", 
-                    default=False, 
-                    name="Slider")
+             "bpy.types.Scene.CustomMenuPropSlider", 
+             default=False, 
+             name="Slider"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropToggle", 
-                    default=False, 
-                    name="Toggle")
+             "bpy.types.Scene.CustomMenuPropToggle", 
+             default=False, 
+             name="Toggle"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropIconOnly", 
-                    default=False, 
-                    name="IconOnly")
+             "bpy.types.Scene.CustomMenuPropIconOnly", 
+             default=False, 
+             name="IconOnly"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropEvent", 
-                    default=False, 
-                    name="Event")
+             "bpy.types.Scene.CustomMenuPropEvent", 
+             default=False, 
+             name="Event"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropFullEvent", 
-                    default=False, 
-                    name="FullEvent")
+             "bpy.types.Scene.CustomMenuPropFullEvent", 
+             default=False, 
+             name="FullEvent"
+            )
     
     set_prop("BoolProperty", 
-                    "bpy.types.Scene.CustomMenuPropEmboss", 
-                    default=True, 
-                    name="Emboss")
-    
+             "bpy.types.Scene.CustomMenuPropEmboss", 
+             default=True, 
+             name="Emboss"
+            )
+            
     # create the global hotkey
     Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
     setting = Aum_Settings.get("3DView - Custom Menu")
     set_keybind(setting.value)
     
 def unregister():
+    bpy.types.Scene.Custom_Items = "Not At All!"
     # remove keymaps when add-on is deactivated
     set_keybind("off")
