@@ -46,6 +46,7 @@ from . import manipulator_menu
 from . import mode_menu
 from . import pivot_menu
 from . import proportional_menu
+from . import rc_brush
 from . import selection_menu
 from . import shade_menu
 from . import snap_menu
@@ -66,6 +67,7 @@ addon_files = [
                mode_menu,
                pivot_menu,
                proportional_menu,
+               rc_brush,
                selection_menu,
                shade_menu,
                snap_menu,
