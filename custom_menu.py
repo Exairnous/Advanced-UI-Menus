@@ -128,7 +128,9 @@ def fill_operator_list():
         op_module = getattr(bpy.ops, op_module_name)
         for op_submodule_name in dir(op_module):
             op = getattr(op_module, op_submodule_name)
+            print("start")
             text = repr(op)
+            print("op = ", op, "\ntext = ", text)
             ent_op = text.split("\n")[1]
             op_path = ent_op[8:str.find(ent_op, "(")]
             if ent_op.startswith("bpy.ops.") and not "import." in ent_op:
@@ -804,6 +806,17 @@ class SearchableMenuListMenu(bpy.types.Operator):
         return{'FINISHED'}
         
         
+class WM_MT_button_context(bpy.types.Menu):
+    bl_label = "Add Viddyoze Tag"
+
+    def draw(self, context):
+        pass
+
+def menu_func(self, context):
+    layout = self.layout
+    layout.separator()
+    layout.label("Custom Right Click Menu Item")
+        
 ### ------------ New hotkeys and registration ------------ ###
 
 addon_keymaps = []
@@ -914,9 +927,13 @@ def register():
         kmi.properties.name = 'VIEW3D_MT_custom_menu'
         addon_keymaps.append((km, kmi))
     
+    bpy.types.WM_MT_button_context.append(menu_func)
+    
 def unregister():
     bpy.types.Scene.Custom_Items = "Not At All!"
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+    
+    bpy.types.WM_MT_button_context.remove(menu_func)
