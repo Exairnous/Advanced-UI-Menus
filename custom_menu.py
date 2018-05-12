@@ -808,31 +808,6 @@ class SearchableMenuListMenu(bpy.types.Operator):
 
 addon_keymaps = []
 
-def set_keybind(value):
-    wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu":
-        modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
-             ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
-        
-        for mode in modes:
-            km = wm.keyconfigs.addon.keymaps.new(name=mode[0], space_type=mode[1])
-            kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
-            kmi.properties.name = 'VIEW3D_MT_custom_menu'
-            addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-
 def register(): 
     read_xml()
     
@@ -929,11 +904,19 @@ def register():
             )
             
     # create the global hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("3DView - Custom Menu")
-    set_keybind(setting.value)
+    wm = bpy.context.window_manager
+    modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
+             ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
+    
+    for mode in modes:
+        km = wm.keyconfigs.addon.keymaps.new(name=mode[0], space_type=mode[1])
+        kmi = km.keymap_items.new('wm.call_menu', 'MIDDLEMOUSE', 'PRESS', alt=True)
+        kmi.properties.name = 'VIEW3D_MT_custom_menu'
+        addon_keymaps.append((km, kmi))
     
 def unregister():
     bpy.types.Scene.Custom_Items = "Not At All!"
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()

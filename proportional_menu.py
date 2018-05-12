@@ -126,19 +126,10 @@ class FalloffMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def set_keybind(value):
+def register():
+    # create the global menu hotkeys
     wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu": 
-        modes = {'Object Mode':'EMPTY',
+    modes = {'Object Mode':'EMPTY',
              'Mesh':'EMPTY',
              'Curve':'EMPTY',
              'Armature':'EMPTY',
@@ -151,27 +142,19 @@ def set_keybind(value):
              'UV Editor':'EMPTY',
              'Grease Pencil Stroke Edit Mode':'EMPTY',
              'Mask Editing':'EMPTY'}
-        
-        for mode, space in modes.items():
-            km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
-            kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
-            addon_keymaps.append((km, kmi))
     
-            kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
-            kmi.properties.name = 'VIEW3D_MT_falloff_menu'
-            addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-
-def register():
-    # create the global hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("3DView - Proportional Menu")
-    set_keybind(setting.value)
+    for mode, space in modes.items():
+        km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+        kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
+        addon_keymaps.append((km, kmi))
+    
+        kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
+        kmi.properties.name = 'VIEW3D_MT_falloff_menu'
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
