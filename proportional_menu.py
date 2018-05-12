@@ -9,15 +9,41 @@ class ProportionalModeOperator(bpy.types.Operator):
     last_mode = ['DISABLED', 'ENABLED']
 
     def init(self, context):
-        self.start_time = 0
+        if context.space_data.type == 'DOPESHEET_EDITOR':
+            if context.tool_settings.use_proportional_action == False:
+                context.tool_settings.use_proportional_action = True
+                
+            else:
+                context.tool_settings.use_proportional_action = False
+            
+            return {'FINISHED'}
 
+        if context.space_data.type == 'GRAPH_EDITOR':
+            if context.tool_settings.use_proportional_fcurve == False:
+                context.tool_settings.use_proportional_fcurve = True
+                
+            else:
+                context.tool_settings.use_proportional_fcurve = False
+            
+            return {'FINISHED'}
+            
+        if context.space_data.type == 'IMAGE_EDITOR':
+            if context.space_data.show_maskedit:
+                if context.tool_settings.use_proportional_edit_mask == False:
+                    context.tool_settings.use_proportional_edit_mask = True
+                
+                else:
+                    context.tool_settings.use_proportional_edit_mask = False
+                
+                return {'FINISHED'}
+                
         if get_mode() == 'OBJECT':
             if context.tool_settings.use_proportional_edit_objects == False:
                 context.tool_settings.use_proportional_edit_objects = True
                 
             else:
                 context.tool_settings.use_proportional_edit_objects = False
-                
+            
             return {'FINISHED'}
 
         # populate the list of last modes
@@ -44,7 +70,7 @@ class ProportionalModeOperator(bpy.types.Operator):
                 
             else:
                 context.tool_settings.proportional_edit = self.last_mode[1]
-                
+            
             return {'FINISHED'}
         
         return {'RUNNING_MODAL'}
@@ -63,29 +89,18 @@ class ProportionalEditingMenu(bpy.types.Menu):
 
     @classmethod
     def poll(self, context):
-        if get_mode() in ['EDIT', 'PARTICLE_EDIT']:
+        if get_mode() in [edit, particle_edit, gpencil_edit]:
             return True
         else:
             return False
 
-    def init(self):
-        modes = [["Disabled", 'DISABLED', "PROP_OFF"],
-                         ["Enabled", 'ENABLED', "PROP_ON"],
-                         ["Projected(2D)", 'PROJECTED', "PROP_ON"],
-                         ["Connected", 'CONNECTED', "PROP_CON"]]
-        
-        datapath = "tool_settings.proportional_edit"
-        
-        return modes, datapath
-
     def draw(self, context):
-        modes, datapath = self.init()
         menu = Menu(self)
 
         # add the items to the menu
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], datapath,
-                     icon=mode[2], disable=True)
+        for mode in context.tool_settings.bl_rna.properties['proportional_edit'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.proportional_edit",
+                     icon=mode.icon, disable=True)
 
 class FalloffMenu(bpy.types.Menu):
     bl_label = "Falloff Menu"
@@ -93,26 +108,18 @@ class FalloffMenu(bpy.types.Menu):
 
     @classmethod
     def poll(self, context):
-        if get_mode() in [object_mode, edit, particle_edit]:
+        if get_mode() in [object_mode, edit, particle_edit, gpencil_edit]:
             return True
         else:
             return False
 
     def draw(self, context):
         menu = Menu(self)
-
-        modes = [["Smooth", 'SMOOTH', "SMOOTHCURVE"],
-                         ["Sphere", 'SPHERE', "SPHERECURVE"],
-                         ["Root", 'ROOT', "ROOTCURVE"],
-                         ["Sharp", 'SHARP', "SHARPCURVE"],
-                         ["Linear", 'LINEAR', "LINCURVE"],
-                         ["Constant", 'CONSTANT', "NOCURVE"],
-                         ["Random", 'RANDOM', "RNDCURVE"]]
         
         # add the items to the menu
-        for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "tool_settings.proportional_edit_falloff",
-                     icon=mode[2], disable=True)
+        for mode in context.tool_settings.bl_rna.properties['proportional_edit_falloff'].enum_items:
+            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.proportional_edit_falloff",
+                     icon=mode.icon, disable=True)
 
         
 ### ------------ New hotkeys and registration ------------ ###
@@ -130,14 +137,29 @@ def set_keybind(value):
         print("invalid value")
         return
         
-    if value == "menu":   
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-        kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
-        addon_keymaps.append((km, kmi))
+    if value == "menu": 
+        modes = {'Object Mode':'EMPTY',
+             'Mesh':'EMPTY',
+             'Curve':'EMPTY',
+             'Armature':'EMPTY',
+             'Metaball':'EMPTY',
+             'Lattice':'EMPTY',
+             'Particle':'EMPTY',
+             'Object Non-modal':'EMPTY',
+             'Graph Editor':'GRAPH_EDITOR',
+             'Dopesheet':'DOPESHEET_EDITOR',
+             'UV Editor':'EMPTY',
+             'Grease Pencil Stroke Edit Mode':'EMPTY',
+             'Mask Editing':'EMPTY'}
+        
+        for mode, space in modes.items():
+            km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+            kmi = km.keymap_items.new('view3d.proportional_menu_operator', 'O', 'PRESS')
+            addon_keymaps.append((km, kmi))
     
-        kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
-        kmi.properties.name = 'VIEW3D_MT_falloff_menu'
-        addon_keymaps.append((km, kmi))
+            kmi = km.keymap_items.new('wm.call_menu', 'O', 'PRESS', shift=True)
+            kmi.properties.name = 'VIEW3D_MT_falloff_menu'
+            addon_keymaps.append((km, kmi))
         
     elif value == "pie":
         ### Pie Code Goes Here ###

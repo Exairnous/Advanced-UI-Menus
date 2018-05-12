@@ -14,11 +14,11 @@ class BrushCurveMenu(bpy.types.Menu):
     def draw(self, context):
         menu = Menu(self)
         curves = [["Smooth", "SMOOTH", "SMOOTHCURVE"],
-                         ["Sphere", "ROUND", "SPHERECURVE"],
-                         ["Root","ROOT", "ROOTCURVE"],
-                         ["Sharp", "SHARP", "SHARPCURVE"],
-                         ["Linear", "LINE", "LINCURVE"],
-                         ["Constant", "MAX", "NOCURVE"]]
+                  ["Sphere", "ROUND", "SPHERECURVE"],
+                  ["Root","ROOT", "ROOTCURVE"],
+                  ["Sharp", "SHARP", "SHARPCURVE"],
+                  ["Linear", "LINE", "LINCURVE"],
+                  ["Constant", "MAX", "NOCURVE"]]
 
         # add the top slider
         menu.add_item().operator(CurvePopup.bl_idname, icon="RNDCURVE")

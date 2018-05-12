@@ -20,8 +20,7 @@ class ViewMenu(bpy.types.Menu):
         
         # add the menu items
         for mode in view_modes:
-            prop = menu.add_item().operator(
-                "view3d.viewnumpad", mode[0])
+            prop = menu.add_item().operator("view3d.viewnumpad", mode[0])
             prop.type = mode[1]
             if mode[0] in ["Top", "Bottom", "Camera"]:
                 menu.add_item().separator()
@@ -36,8 +35,8 @@ class OtherViewMenu(bpy.types.Menu):
     def draw(self, context):
         menu = Menu(self)
         
-        #menu.add_item().label(text="Other")
-        #menu.add_item().separator()
+        menu.add_item().label(text="Other")
+        menu.add_item().separator()
 
         menu.add_item().operator("view3d.view_selected")
         menu.add_item().operator("view3d.view_persportho")
@@ -48,10 +47,6 @@ class OtherViewMenu(bpy.types.Menu):
 
         menu.add_item().prop(context.space_data, "lock_cursor", toggle=True)
         menu.add_item().prop(context.space_data, "lock_camera", toggle=True)
-
-        #menu.add_item().separator()
-
-        #menu.add_item().operator("view3d.set_layer_view_window", text="Set Layers", icon='RESTRICT_VIEW_OFF')
 
 ### ------------ New hotkeys and registration ------------ ###
 

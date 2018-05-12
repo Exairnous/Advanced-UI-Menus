@@ -1,46 +1,5 @@
 <root>
   <menu area="VIEW_3D" mode="OBJECT">
-    <item type="MENU">
-      <path>INFO_MT_file</path>
-      <name>none</name>
-      <icon>NONE</icon>
-    </item>
-    <item type="PROP">
-      <path>context.scene.render.resolution_percentage</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <expand>False</expand>
-      <slider>False</slider>
-      <toggle>False</toggle>
-      <icononly>False</icononly>
-      <event>False</event>
-      <fullevent>False</fullevent>
-      <emboss>True</emboss>
-    </item>
-    <item type="PROP">
-      <path>context.tool_settings.sculpt.constant_detail</path>
-      <name>Macguilicuty</name>
-      <icon>PREVIEW_RANGE</icon>
-      <expand>False</expand>
-      <slider>False</slider>
-      <toggle>False</toggle>
-      <icononly>False</icononly>
-      <event>False</event>
-      <fullevent>False</fullevent>
-      <emboss>True</emboss>
-    </item>
-    <item type="PROP">
-      <path>context.tool_settings.sculpt.detail_size</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <expand>False</expand>
-      <slider>True</slider>
-      <toggle>False</toggle>
-      <icononly>False</icononly>
-      <event>False</event>
-      <fullevent>False</fullevent>
-      <emboss>True</emboss>
-    </item>
     <item type="LAB">
       <name>General</name>
       <icon>NONE</icon>
@@ -50,6 +9,7 @@
       <path>object.join</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -57,20 +17,7 @@
       <path>transform.tosphere</path>
       <name>none</name>
       <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>transform.shear</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>transform.bend</path>
-      <name>none</name>
-      <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
@@ -78,14 +25,97 @@
       <path>transform.push_pull</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
     <item type="SEP" />
-    <item type="PROP">
-      <path>context.tool_settings.sculpt.detail_size</path>
+    <item type="LAB">
+      <name>Animation</name>
+      <icon>NONE</icon>
+    </item>
+    <item type="SEP" />
+    <item type="OP">
+      <path>anim.keyframe_insert_menu</path>
+      <name>Insert Keyframe</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>anim.keyframe_delete_v3d</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>action.clean</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>anim.keying_set_active_set</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+  </menu>
+  <menu area="VIEW_3D" mode="EDIT">
+    <item type="OP">
+      <path>mesh.subdivide</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>mesh.vertices_smooth</path>
+      <name>Smooth</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>mesh.vert_connect</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>mesh.edge_rotate</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>use_ccw</arg>
+      <arg_val>False</arg_val>
+    </item>
+    <item type="OP">
+      <path>mesh.bridge_edge_loops</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+  </menu>
+  <menu area="VIEW_3D" mode="SCULPT">
+    <item type="PROP">
+      <path>context.space_data.matcap_icon</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
       <expand>False</expand>
       <slider>False</slider>
       <toggle>False</toggle>
@@ -94,134 +124,75 @@
       <fullevent>False</fullevent>
       <emboss>True</emboss>
     </item>
-    <item type="LAB">
-      <name>Animation</name>
-      <icon>NONE</icon>
-    </item>
-    <item type="SEP" />
-    <item type="OP">
-      <path>anim.keyframe_insert_menu</path>
+    <item type="PROP">
+      <path>context.space_data.use_matcap</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.lens</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.region_3d.view_distance</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item />
+    <item type="OP">
+      <path>action.clickselect</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
     <item type="OP">
-      <path>anim.keyframe_delete_v3d</path>
+      <path>action.clean</path>
       <name>none</name>
       <icon>NONE</icon>
+      <menu>False</menu>
       <arg>none</arg>
       <arg_val>none</arg_val>
     </item>
-    <item type="OP">
-      <path>anim.keying_set_active_set</path>
+    <item type="PROP">
+      <path>context.space_data.camera.field.strength</path>
       <name>none</name>
       <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
     </item>
-    <item type="SEP" />
-    <item type="MENU">
-      <path>INFO_MT_add</path>
-      <name>none</name>
-      <icon>OBJECT_DATAMODE</icon>
-    </item>
-    <item type="MENU">
-      <path>VIEW3D_MT_select_object</path>
-      <name>none</name>
-      <icon>RESTRICT_SELECT_OFF</icon>
-    </item>
-  </menu>
-  <menu area="VIEW_3D" mode="EDIT">
-    <item type="OP">
-      <path>view3d.edit_mesh_extrude_move_normal</path>
-      <name>Extrude</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.subdivide</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.loopcut_slide</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.spin</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.bisect</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.vert_connect</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="SEP" />
-    <item type="OP">
-      <path>mesh.vertices_smooth</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>object.vertex_random</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>transform.edge_slide</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
-    </item>
-    <item type="OP">
-      <path>mesh.edge_rotate</path>
-      <name>none</name>
-      <icon>NONE</icon>
-      <arg>use_ccw</arg>
-      <arg_val>False</arg_val>
-    </item>
-    <item type="SEP" />
-    <item type="MENU">
-      <path>VIEW3D_MT_edit_mesh_vertices</path>
-      <name>none</name>
-      <icon>NONE</icon>
-    </item>
-    <item type="MENU">
-      <path>VIEW3D_MT_edit_mesh_edges</path>
-      <name>none</name>
-      <icon>NONE</icon>
-    </item>
-    <item type="MENU">
-      <path>VIEW3D_MT_edit_mesh_faces</path>
-      <name>none</name>
-      <icon>NONE</icon>
-    </item>
-  </menu>
-  <menu area="VIEW_3D" mode="SCULPT">
     <item type="MENU">
       <path>VIEW3D_MT_brush_favs</path>
       <name>none</name>
@@ -231,6 +202,7 @@
       <path>wm.context_set_value</path>
       <name>Flatten/Contrast</name>
       <icon>BRUSH_FLATTEN</icon>
+      <menu>False</menu>
       <arg>data_path;value</arg>
       <arg_val>"tool_settings.sculpt.brush";"bpy.data.brushes['Flatten/Contrast']"</arg_val>
     </item>
@@ -245,4 +217,74 @@
       <icon>NONE</icon>
     </item>
   </menu>
+  <menu area="PROPERTIES" />
+  <menu area="OUTLINER" />
+  <menu area="IMAGE_EDITOR" />
+  <menu area="TIMELINE" />
+  <menu area="GRAPH_EDITOR" />
+  <menu area="DOPESHEET_EDITOR" />
+  <menu area="NLA_EDITOR" />
+  <menu area="SEQUENCE_EDITOR" />
+  <menu area="CLIP_EDITOR" />
+  <menu area="NODE_EDITOR" />
+  <menu area="LOGIC_EDITOR" />
+  <menu area="CONSOLE">
+    <item type="OP">
+      <path>console.clear</path>
+      <name>none</name>
+      <icon>MATERIAL</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>console.delete</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>console.clear_line</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+  </menu>
+  <menu area="TEXT_EDITOR">
+    <item type="OP">
+      <path>text.find</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>text.comment</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>text.uncomment</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+  </menu>
+  <menu area="VIEW_3D" mode="GPENCIL_EDIT">
+    </menu>
+  <menu area="VIEW_3D" mode="TEXTURE_PAINT" />
+  <menu area="VIEW_3D" mode="VERTEX_PAINT" />
+  <menu area="VIEW_3D" mode="WEIGHT_PAINT" />
+  <menu area="VIEW_3D" mode="PARTICLE_EDIT" />
+  <menu area="VIEW_3D" mode="POSE" />
 </root>

@@ -1,47 +1,64 @@
 from .Utils.core import *
+        
+def get_layers(context):
+    # if the layer management addon is enabled name the layers with the layer names
+    try:
+        layernames = []
+        # if the name has "layer" in front of a number remove "layer" and leave the number
+        for x in range(20):
+            layer_name = context.scene.namedlayers.layers[x].name
+            if layer_name in ["Layer{}".format(x+1), "Layer0{}".format(x+1)]:
+                layernames.append("{0}".format(x+1))
+            else:
+                # replace blank layer names with a space so the button will be full length
+                layernames.append(layer_name if layer_name is not "" else " ")
 
-class SetLayerView(bpy.types.Operator):
-    # Visualize this Layer, Shift-Click to select multiple layers
+    # if not then name the layers with numbers
+    except:
+        layernames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]
     
-    tooltip = set_prop("StringProperty", 
-                    "bpy.types.Scene.layer_name", 
-                    name="layer_name",
-                    default="test")
-    
-    layer_num = set_prop("IntProperty", 
-                    "bpy.types.Scene.layer_num_view", 
-                    name="layer_num")
-    
-    bl_idname = "view3d.set_layer_view"
-    bl_label = "Set Layer View"
-    bl_description = "Layer Name ({})".format(tooltip[1]["name"])
-    
-    def invoke(self, context, event):
-        if event.shift:
-            # toggle the layer on/off
-            context.scene.layers[self.layer_num] = not context.scene.layers[self.layer_num]
-            bpy.types.Scene.layer_changed = True
-            print("tooltip = {}".format(self.tooltip))
-        else:
-            # create a boolian list of which layers on and off
-            layers = [False]*20
-            layers[self.layer_num] = True
-            
-            # apply the list to blender's layers
-            context.scene.layers = layers
+    return layernames
         
+def set_layer_func(self, context, event):
+    if event.shift:
+        # toggle the layer on/off
+        context.scene.layers[self.layer_num] = not context.scene.layers[self.layer_num]
         bpy.types.Scene.layer_changed = True
+    else:
+        # create a boolian list of which layers on and off
+        layers = [False]*20
+        layers[self.layer_num] = True
+            
+        # apply the list to blender's layers
+        context.scene.layers = layers
         
-        return {'FINISHED'}
+    bpy.types.Scene.layer_changed = True
+        
+    return {'FINISHED'}
     
+custom_ops = []
+        
+def add_set_layer_op(num, layer):
+    op_name = 'view3d.set_layer_view_'+str(num)
+    
+    nc = type(  'DynOpSetLayer_'+str(num),
+                (bpy.types.Operator, ),
+                {'bl_idname': op_name,
+                'bl_label': "Set Layer View",
+                'bl_description': "Visualize this Layer, Shift-Click to select multiple layers\nName: "+layer,
+                'layer_num': bpy.props.IntProperty(name="layer_num"),
+                'invoke': set_layer_func
+            })
+    custom_ops.append(nc)
+    bpy.utils.register_class(nc)
+
 class SetObjectLayer(bpy.types.Operator):
     '''Move objects to this Layer, Shift-Click to select multiple layers'''
     bl_idname = "view3d.set_object_layer"
     bl_label = "Move Object To Layers Operator"
     
-    layer_num = set_prop("IntProperty", 
-                    "bpy.types.Scene.layer_num_object", 
-                    name="layer_num")
+    layer_num = bpy.props.IntProperty(name="layer_num")
     
     def invoke(self, context, event):
         selected_objects = [object for object in context.scene.objects if object.select == True]
@@ -72,10 +89,12 @@ class SetObjectLayer(bpy.types.Operator):
         bpy.types.Scene.layer_changed = True
         
         return {'FINISHED'}
-
-class SetLayerViewWindow(bpy.types.Operator):
-    bl_label = "Set Visible Layers"
-    bl_idname = "view3d.set_layer_view_window"
+    
+class LayersWindow(bpy.types.Operator):
+    bl_label = "Layers"
+    bl_idname = "view3d.layers_window"
+    
+    current_space = None
 
     def check(self, context):
         if bpy.types.Scene.layer_changed:
@@ -85,122 +104,62 @@ class SetLayerViewWindow(bpy.types.Operator):
             return False
     
     def draw(self, context):
+        if context.space_data:
+            self.current_space = context.space_data
+        
         ui = Menu(self)
         
-        column_flow = ui.add_item("column_flow", columns=2)
-        #column_flow = ui.add_item()
+        column_flow = ui.add_item("column_flow", columns=2, align=True)
         
-        # if the layer management addon is enabled name the layers with the layer names
-        try:
-            layernames = []
-             # if the name has "layer" in front of a number remove "layer" and leave the number
-            for x in range(20):
-                if context.scene.namedlayers.layers[x].name in ["Layer{}".format(x+1), "Layer0{}".format(x+1)]:
-                    layernames.append("{0}".format(x+1))
-                else:
-                    layernames.append(context.scene.namedlayers.layers[x].name)
-
-        # if not then name the layers with numbers
-        except:
-            layernames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]
+        layernames = get_layers(context)
         
         # add the menu items
         for num in range(20):
-            #if num == 10:
-                #column_flow = ui.add_item()
+            op_name = 'view3d.set_layer_view_'+str(num)
+            
+            has_active = (context.object and context.object.layers[num])
+            is_layer_used = self.current_space.layers_used[num]
+            icon = ('LAYER_ACTIVE' if has_active else 'LAYER_USED') if is_layer_used else 'RADIOBUT_OFF'
+            
+            prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", "", icon=icon)
+            prop.layer_num = num
+            
             if num == context.scene.active_layer:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='FILE_TICK')
+                prop = ui.current_item.operator(op_name, layernames[num], icon='FILE_TICK')
                 
             elif context.scene.layers[num]:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='RESTRICT_VIEW_OFF')
+                prop = ui.current_item.operator(op_name, layernames[num], icon='RESTRICT_VIEW_OFF')
                 
             else:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_layer_view", layernames[num], icon='BLANK1')
+                prop = ui.current_item.operator(op_name, layernames[num], icon='BLANK1')
             
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             prop.layer_num = num
-            prop.tooltip = layernames[num]
+            
+            ui.current_item.separator()
+            
+            if num in [4, 14]:
+                ui.add_item(parent=column_flow).separator()
+                ui.add_item(parent=column_flow).separator()
         
-    def execute(self, context):
+    def invoke(self, context, event):
         wm = context.window_manager
+        
+        layernames = get_layers(context)
+        
+        for op in custom_ops:
+            bpy.utils.unregister_class(op)
+        
+        custom_ops.clear()
+        
+        
+        for num, layer in enumerate(layernames):
+            add_set_layer_op(num, layer)
+        
         return wm.invoke_props_dialog(self)
     
-class SetObjectLayerWindow(bpy.types.Operator):
-    bl_label = "Move Object to Layers"
-    bl_idname = "view3d.set_object_layer_window"
-
-    def check(self, context):
-        if bpy.types.Scene.layer_changed:
-            bpy.types.Scene.layer_changed = False
-            return True
-        else:
-            return False
-    
-    def draw(self, context):
-        ui = Menu(self)
-        
-        column_flow = ui.add_item("column_flow", columns=2)
-        
-        # if the layer management addon is enabled name the layers with the layer names
-        try:
-            layernames = []
-             # if the name has "layer" in front of a number remove "layer" and leave the number
-            for x in range(20):
-                if context.scene.namedlayers.layers[x].name in ["Layer{}".format(x+1), "Layer0{}".format(x+1)]:
-                    layernames.append("{0}".format(x+1))
-                else:
-                    layernames.append(context.scene.namedlayers.layers[x].name)
-
-        # if not then name the layers with numbers
-        except:
-            layernames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]
-        
-        # add the menu items
-        for num in range(20):
-            if context.scene.objects.active.layers[num]:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", layernames[num], icon='RESTRICT_VIEW_OFF')
-                
-            else:
-                prop = ui.add_item(parent=column_flow).operator("view3d.set_object_layer", layernames[num], icon='BLANK1')
-            
-            ui.current_item.operator_context = 'INVOKE_DEFAULT'
-            prop.layer_num = num
-        
     def execute(self, context):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self)
-    
-class LayersWindowOperator(bpy.types.Operator):
-    bl_label = "Layers Window Operator"
-    bl_idname = "view3d.layers_window_operator"
-
-    def modal(self, context, event):
-        if get_mode() == edit:
-            return {'CANCELLED'}
-        
-        current_time = time.time()
-        
-        # if key has been held for more than 0.3 seconds call the menu
-        if event.value == 'RELEASE' and current_time > self.start_time + 0.3:
-            bpy.ops.view3d.set_object_layer_window()
-            
-            return {'FINISHED'}
-        
-        # else toggle snap mode on/off
-        elif event.value == 'RELEASE' and current_time < self.start_time + 0.3:
-            bpy.ops.view3d.set_layer_view_window()
-                
-            return {'FINISHED'}
-        
-        return {'RUNNING_MODAL'}
-
-    def execute(self, context):
-        self.start_time = time.time()
-        context.window_manager.modal_handler_add(self)
-        
-        return {'RUNNING_MODAL'}
+        return {'FINISHED'}
     
 ### ------------ New hotkeys and registration ------------ ###
 
@@ -236,3 +195,6 @@ def register():
 def unregister():
     # remove keymaps when add-on is deactivated
     set_keybind("off")
+    
+    for op in custom_ops:
+        bpy.utils.unregister_class(op)

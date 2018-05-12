@@ -11,11 +11,11 @@ weight_paint = 'WEIGHT_PAINT'
 texture_paint = 'TEXTURE_PAINT'
 particle_edit = 'PARTICLE_EDIT'
 pose = 'POSE'
+gpencil_edit = 'GPENCIL_EDIT'
+
+PIW = '       '
 
 a_props = []
-
-def add_item(item):
-    exec("self.layout.row().{0}".format(item))
 
 class Menu():
     def __init__(self, menu):
@@ -23,36 +23,40 @@ class Menu():
         self.items = {}
         self.current_item = None
 
-    def add_item(self, ui_type="row", parent=None, **kwargs):
+    def add_item(self, ui_type="row", parent=None, name=None, **kwargs):
         # set the parent layout
         if parent:
             layout = parent
         else:
             layout = self.layout
             
+        # set unique identifier for new items
+        if not name:
+            name = len(self.items) + 1
+            
         # create and return a ui layout
         if ui_type == "row":
-            self.current_item = self.items[len(self.items) + 1] = layout.row(**kwargs)
+            self.current_item = self.items[name] = layout.row(**kwargs)
             
             return self.current_item
 
         elif ui_type == "column":
-            self.current_item = self.items[len(self.items) + 1] = layout.column(**kwargs)
+            self.current_item = self.items[name] = layout.column(**kwargs)
             
             return self.current_item
 
         elif ui_type == "column_flow":
-            self.current_item = self.items[len(self.items) + 1] = layout.column_flow(**kwargs)
+            self.current_item = self.items[name] = layout.column_flow(**kwargs)
             
             return self.current_item
 
         elif ui_type == "box":
-            self.current_item = self.items[len(self.items) + 1] = layout.box(**kwargs)
+            self.current_item = self.items[name] = layout.box(**kwargs)
             
             return self.current_item
 
         elif ui_type == "split":
-            self.current_item = self.items[len(self.items) + 1] = layout.split(**kwargs)
+            self.current_item = self.items[name] = layout.split(**kwargs)
             
             return self.current_item
         
@@ -86,12 +90,16 @@ def get_selected():
 
 
 def get_mode():
-    return bpy.context.object.mode
+    if bpy.context.gpencil_data and \
+    bpy.context.object.mode == object_mode and \
+    bpy.context.scene.grease_pencil.use_stroke_edit_mode:
+        return gpencil_edit
+    else:
+        return bpy.context.object.mode
 
-def menuprop(item, name, value, data_path, icon='NONE',
-                          disable=False, disable_icon=None,
-                          custom_disable_exp=None,
-                          method=None, path=False):
+def menuprop(item, name, value, data_path,
+             icon='NONE', disable=False, disable_icon=None,
+             custom_disable_exp=None, method=None, path=False):
     
     # disable the ui
     if disable:
@@ -136,6 +144,7 @@ def menuprop(item, name, value, data_path, icon='NONE',
     # sets the path to what is changed
     prop.data_path = data_path
 
+# used for global blender properties
 def set_prop(prop_type, path, **kwargs):
     kwstring = ""
     
@@ -143,6 +152,10 @@ def set_prop(prop_type, path, **kwargs):
     for k, v in kwargs.items():
         if type(v) is str:
             v = '"{}"'.format(v)
+        
+        if callable(v):
+            exec("from {0} import {1}".format(v.__module__, v.__name__))
+            v = v.__name__
             
         kwstring += "{0}={1}, ".format(k, v)
     
@@ -156,6 +169,7 @@ def set_prop(prop_type, path, **kwargs):
     
     return eval(path)
 
+# used for removing properties created with set_prop
 def del_props():
     for prop in a_props:
         exec("del {}".format(prop))
@@ -181,29 +195,9 @@ class SendReport(bpy.types.Operator):
         print(self.message)
         return {'FINISHED'}
     
-
-#def get_view_mode():
-#    view = bpy.context.space_data.region_3d.view_matrix
-#
-#    # check which view we are in and return a string telling us which it is
-#    if "{0:.1f}".format(view[0][0]) == "1.0" and "{0:.1f}".format(view[1][2]) == "1.0" and "{0:.1f}".format(view[2][1]) == "-1.0":
-#        return "FRONT"
-#
-#    elif "{0:.1f}".format(view[0][1]) == "1.0" and "{0:.1f}".format(view[1][2]) == "1.0" and "{0:.1f}".format(view[2][0]) == "1.0":
-#        return "RIGHT"
-#
-#    elif "{0:.1f}".format(view[0][0]) == "1.0" and "{0:.1f}".format(view[1][1]) == "1.0" and "{0:.1f}".format(view[2][2]) == "1.0":
-#        return "TOP"
-#
-#    elif "{0:.1f}".format(view[0][0]) == "-1.0" and "{0:.1f}".format(view[1][2]) == "1.0" and "{0:.1f}".format(view[2][1]) == "1.0":
-#        return "BACK"
-#
-#    elif "{0:.1f}".format(view[0][1]) == "-1.0" and "{0:.1f}".format(view[1][2]) == "1.0" and "{0:.1f}".format(view[2][0]) == "-1.0":
-#        return "LEFT"
-#
-#    elif "{0:.1f}".format(view[0][0]) == "1.0" and "{0:.1f}".format(view[1][1]) == "-1.0" and "{0:.1f}".format(view[2][2]) == "-1.0":
-#        return "BOTTOM"
-#
-#    else:
-#        return "N/A"
-    
+def send_report(message):
+    def report(scene):
+        bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
+        bpy.app.handlers.scene_update_pre.remove(report)
+        
+    bpy.app.handlers.scene_update_pre.append(report)
