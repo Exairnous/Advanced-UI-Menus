@@ -241,32 +241,6 @@ class BrushFav(bpy.types.PropertyGroup):
 
 ### ------------ New hotkeys and registration ------------ ###
 
-addon_keymaps = []
-
-def set_keybind(value):
-    wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu":
-        modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
-        
-        for mode in modes:
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
-            kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS')
-            kmi.properties.name = "VIEW3D_MT_brush_favs"
-            addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-
 def register():
     bpy.types.Scene.BrushFav = bpy.props.CollectionProperty(type=BrushFav)
     #my_item = bpy.context.scene.BrushFav.add()
@@ -283,11 +257,18 @@ def register():
     #my_item.icon = "NONE"
     
     # create the global menu hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("Paint - Brushes")
-    set_keybind(setting.value)
+    wm = bpy.context.window_manager
+    modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
+    
+    for mode in modes:
+        km = wm.keyconfigs.addon.keymaps.new(name=mode)
+        kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS')
+        kmi.properties.name = "VIEW3D_MT_brush_favs"
+        addon_keymaps.append((km, kmi))
     
 def unregister():
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 

@@ -33,7 +33,6 @@ bl_info = {
 import sys, os
 
 from .Utils.core import *
-from .Utils import preferences
 
 from . import brush_menu
 from . import brushes
@@ -56,7 +55,6 @@ from . import texture_menu
 from . import view_menu
 
 addon_files = [ 
-               preferences,
                brush_menu,
                brushes,
                curve_menu,

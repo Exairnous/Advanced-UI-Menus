@@ -136,32 +136,15 @@ class DisplayOptionsMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def set_keybind(value):
-    wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu":   
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-        kmi = km.keymap_items.new('view3d.shading_menu_operator', 'Z', 'PRESS')
-        addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-
 def register():
-    # create the global hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("3DView - Shade Menu")
-    set_keybind(setting.value)
+    # create the global menu hotkey
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
+    kmi = km.keymap_items.new('view3d.shading_menu_operator', 'Z', 'PRESS')
+    addon_keymaps.append((km, kmi))
 
 def unregister():
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()

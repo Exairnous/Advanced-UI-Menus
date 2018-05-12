@@ -54,33 +54,15 @@ class SymmetrizeMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def set_keybind(value):
-    wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu":   
-        km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
-        kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True)
-        kmi.properties.name = 'VIEW3D_MT_dyntopo'
-        addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-    
 def register():
-    # create the global menu hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("Paint - Dyntopo Menu")
-    set_keybind(setting.value)
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
+    kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True)
+    kmi.properties.name = 'VIEW3D_MT_dyntopo'
+    addon_keymaps.append((km, kmi))
 
 def unregister():
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()

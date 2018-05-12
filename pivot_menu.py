@@ -59,37 +59,20 @@ class PivotPointMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
-def set_keybind(value):
-    wm = bpy.context.window_manager
-    
-    if value in ("off", "menu", "pie"):
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    else:
-        print("invalid value")
-        return
-        
-    if value == "menu":
-        modes = {'Object Non-modal':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Image':'IMAGE_EDITOR'}
-
-        for mode, space in modes.items():
-            km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
-            kmi = km.keymap_items.new('wm.call_menu', 'PERIOD', 'PRESS')
-            kmi.properties.name = 'VIEW3D_MT_pivot_point'
-            addon_keymaps.append((km, kmi))
-        
-    elif value == "pie":
-        ### Pie Code Goes Here ###
-        pass
-
 def register():
-    # create the global hotkey
-    Aum_Settings = bpy.context.user_preferences.addons["Advanced_UI_Menus"].preferences.settings
-    setting = Aum_Settings.get("3DView - Manipulator Menu")
-    set_keybind(setting.value)
+    # create the global menu hotkey
+    wm = bpy.context.window_manager
+    modes = {'Object Non-modal':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Image':'IMAGE_EDITOR'}
+    
+    for mode, space in modes.items():
+        km = wm.keyconfigs.addon.keymaps.new(name=mode, space_type=space)
+        kmi = km.keymap_items.new('wm.call_menu', 'PERIOD', 'PRESS')
+        kmi.properties.name = 'VIEW3D_MT_pivot_point'
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():
     # remove keymaps when add-on is deactivated
-    set_keybind("off")
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
