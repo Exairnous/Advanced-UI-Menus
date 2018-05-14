@@ -1,16 +1,16 @@
 ![Advanced UI Menus Demo Picture](Demo_Picture_2018-05-13.png)  
 
-##Description:
+## Description:
 
   Menus to aid the user and increase the speed of interacting with blender's UI.  
 
-##Installation Instructions:
+## Installation Instructions:
 
   *  Download the script then unpack and copy the folder advanced_ui_menus into your addons folder.  
   * Open Blender and go to the addons tab in User Preferences.  
   * Enable the script.  
 
-##Shortcuts:
+## Shortcuts:
 
   * Brush menu = V (works in: Sculpt mode, Vertex Paint mode, Weight Paint mode, Texture Paint Mode, Particle Edit Mode)  
   * Curve menu = W (works in: Sculpt mode, Vertex Paint mode, Weight Paint mode, Texture Paint Mode)  
@@ -32,7 +32,7 @@
   * Texture menu = R (works in: Sculpt mode, Vertex Paint mode, Texture Paint Mode)  
   * View menu = Q  
 
-##Custom Menu Tutorial:
+## Custom Menu Tutorial:
 
   The Custom Menu is a menu that you can customize with Operators, Separators, Labels, Properties, and other Menus as you see fit. Custom Menus can be created for any mode in the 3D View as well as for other editors like the node editor, dopesheet, console, etc..
 
