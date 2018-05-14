@@ -241,6 +241,8 @@ class BrushFav(bpy.types.PropertyGroup):
 
 ### ------------ New hotkeys and registration ------------ ###
 
+addon_keymaps = []
+
 def register():
     bpy.types.Scene.BrushFav = bpy.props.CollectionProperty(type=BrushFav)
     #my_item = bpy.context.scene.BrushFav.add()

@@ -83,6 +83,7 @@ class BrushOptionsMenu(bpy.types.Menu):
         brush = context.tool_settings.sculpt.brush
         capabilities = brush.sculpt_capabilities
         
+        menu.add_item().menu("VIEW3D_MT_brush_favs")
         menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(brush.sculpt_tool))
         menu.add_item().separator()
         
@@ -131,6 +132,7 @@ class BrushOptionsMenu(bpy.types.Menu):
         #menu.add_item().prop(context.tool_settings.sculpt.brush, "use_front_face", toggle=True)
             
     def vw_paint(self, menu, context):
+        menu.add_item().menu("VIEW3D_MT_brush_favs")
         menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(context.tool_settings.vertex_paint.brush.vertex_tool))
         menu.add_item().separator()
         if get_mode() == weight_paint:
@@ -149,6 +151,7 @@ class BrushOptionsMenu(bpy.types.Menu):
             menu.add_item().label("Missing Data", icon='ERROR')
             menu.add_item().label("See Tool Shelf")
         else:
+            menu.add_item().menu("VIEW3D_MT_brush_favs")
             menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(toolsettings.brush.image_tool))
             
             menu.add_item().separator()
@@ -187,8 +190,10 @@ class BrushOptionsMenu(bpy.types.Menu):
     def particle(self, menu, context):
         if context.tool_settings.particle_edit.tool == 'NONE':
             menu.add_item().label("No Brush Selected")
+            menu.add_item().menu("VIEW3D_MT_brush_favs")
             menu.add_item().menu("VIEW3D_MT_brushes_menu", text="Select Brush")
         else:
+            menu.add_item().menu("VIEW3D_MT_brush_favs")
             menu.add_item().menu("VIEW3D_MT_brushes_menu")
             menu.add_item().menu(BrushRadiusMenu.bl_idname)
             if context.tool_settings.particle_edit.tool != 'ADD':
