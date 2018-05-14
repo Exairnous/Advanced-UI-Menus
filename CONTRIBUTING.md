@@ -10,7 +10,7 @@ Here are a few guidelines for contributing.
   
   * Spare a thought for comments; while they don't have to be on every line, try not to forget about them entirely.
   
-  * Generally just try to make things clear and it'll probably be fine.
+  * Try to make things clear and in the same general style and it'll probably be fine.
   
   * And finally, don't forget to test your changes.
 
