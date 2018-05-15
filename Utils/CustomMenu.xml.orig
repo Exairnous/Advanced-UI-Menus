@@ -125,6 +125,43 @@
       <emboss>True</emboss>
     </item>
     <item />
+<<<<<<< HEAD
+=======
+    <item type="OP">
+      <path>action.clickselect</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="OP">
+      <path>action.clean</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <arg>none</arg>
+      <arg_val>none</arg_val>
+    </item>
+    <item type="PROP">
+      <path>context.space_data.camera.field.strength</path>
+      <name>none</name>
+      <icon>NONE</icon>
+      <menu>False</menu>
+      <expand>False</expand>
+      <slider>False</slider>
+      <toggle>False</toggle>
+      <icononly>False</icononly>
+      <event>False</event>
+      <fullevent>False</fullevent>
+      <emboss>True</emboss>
+    </item>
+    <item type="MENU">
+      <path>VIEW3D_MT_brush_favs</path>
+      <name>none</name>
+      <icon>NONE</icon>
+    </item>
+>>>>>>> master
     <item type="OP">
       <path>wm.context_set_value</path>
       <name>Flatten/Contrast</name>
