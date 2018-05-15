@@ -26,7 +26,6 @@ def createAum_Settings():
      ("Edit - Extrude Menu", 7),
      ("Edit - Selection Menu", 13),
      ("Paint - Brush Options", 1),
-     ("Paint - Brushes", 2),
      ("Paint - Curve Menu", 3),
      ("Paint - Dyntopo Menu", 6),
      ("Paint - Stroke Menu", 16),

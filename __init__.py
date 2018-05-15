@@ -58,7 +58,6 @@ from . import view_menu
 addon_files = [ 
                preferences,
                brush_menu,
-               brushes,
                curve_menu,
                custom_menu,
                delete_menu,
