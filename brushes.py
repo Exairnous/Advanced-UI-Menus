@@ -101,31 +101,32 @@ class BrushesMenu(bpy.types.Menu):
                 if get_mode() == sculpt and item.use_paint_sculpt:
                     # if you are in sculpt mode and the brush is a sculpt brush add the brush to the menu
                     menuprop(menu.add_item(), item.name,
-                            'bpy.data.brushes["%s"]' % item.name,
-                            datapath,  icon=icon[item.sculpt_tool], 
-                            disable=True, custom_disable_exp=[item.name, current_brush],
-                            path=True)
+                             'bpy.data.brushes["%s"]' % item.name,
+                             datapath,  icon=icon[item.sculpt_tool], 
+                             disable=True, custom_disable_exp=[item.name, current_brush],
+                             path=True)
 
                 if get_mode() == vertex_paint and item.use_paint_vertex:
                     # if you are in vertex paint mode and the brush is a vertex paint brush add the brush to the menu
                     menuprop(menu.add_item(), item.name, 
-                            'bpy.data.brushes["%s"]' % item.name,
-                            datapath, icon=icon[item.vertex_tool],
-                            disable=True, custom_disable_exp=[item.name, current_brush],
-                            path=True)
+                             'bpy.data.brushes["%s"]' % item.name,
+                             datapath, icon=icon[item.vertex_tool],
+                             disable=True, custom_disable_exp=[item.name, current_brush],
+                             path=True)
 
                 if get_mode() == weight_paint and item.use_paint_weight:
                     # if you are in weight paint mode and the brush is a weight paint brush add the brush to the menu
                     menuprop(menu.add_item(), item.name,
-                            'bpy.data.brushes["%s"]' % item.name,
-                            datapath, icon=icon[item.vertex_tool],
-                            disable=True, custom_disable_exp=[item.name, current_brush],
-                            path=True)
+                             'bpy.data.brushes["%s"]' % item.name,
+                             datapath, icon=icon[item.vertex_tool],
+                             disable=True, custom_disable_exp=[item.name, current_brush],
+                             path=True)
 
                 if get_mode() == texture_paint and item.use_paint_image:
                     # if you are in texture paint mode and the brush is a texture paint brush add the brush to the menu
                     menuprop(menu.add_item(), item.name,
-                            'bpy.data.brushes["%s"]' % item.name,
-                            datapath, icon=icon[item.image_tool],
-                            disable=True, custom_disable_exp=[item.name, current_brush],
-                            path=True)
+                             'bpy.data.brushes["%s"]' % item.name,
+                             datapath, icon=icon[item.image_tool],
+                             disable=True, custom_disable_exp=[item.name, current_brush],
+                             path=True)
+                        
