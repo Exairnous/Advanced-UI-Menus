@@ -5,7 +5,7 @@ class ShadeModeOperator(bpy.types.Operator):
     bl_label = "Shading Operator"
     bl_idname = "view3d.shading_menu_operator"
 
-    last_mode = ['WIREFRAME']
+    last_mode = ['WIREFRAME', 'SOLID']
 
     def init(self, context):
         # populate the list of last modes
