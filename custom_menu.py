@@ -380,7 +380,10 @@ class CustomMenu(bpy.types.Menu):
                             
                             #print(args, " ", arg_vals)
                             for int, arg in enumerate(args):
-                                exec("op.{0} = {1}".format(arg, arg_vals[int]))
+                                if "(" not in arg and "(" not in arg_vals[int] and ")" not in arg and ")" not in arg_vals[int] and "\n" not in arg and "\n" not in arg_vals[int] and "\t" not in arg and "\t" not in arg_vals[int]:
+                                    exec("op.{0} = {1}".format(arg, arg_vals[int]))
+                                else:
+                                    raise
                     except:
                         errors.append("item ({0}) {1}".format(num, item[0].text))
                             

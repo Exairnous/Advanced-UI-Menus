@@ -10,8 +10,8 @@
       <name>none</name>
       <icon>NONE</icon>
       <menu>False</menu>
-      <arg>none</arg>
-      <arg_val>none</arg_val>
+      <arg>x</arg>
+      <arg_val>exec('print("Hello World!") \nfor x in range(10): \n \t print("dead")')</arg_val>
     </item>
     <item type="OP">
       <path>transform.tosphere</path>
