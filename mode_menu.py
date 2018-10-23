@@ -3,6 +3,7 @@ from .Utils.core import *
 class EditorModeOperator(bpy.types.Operator):
     bl_label = "Editor Mode Operator"
     bl_idname = "view3d.editor_mode_operator"
+    bl_options = {'REGISTER', 'UNDO'}
 
     last_mode = ['EDIT', 'OBJECT']
 
