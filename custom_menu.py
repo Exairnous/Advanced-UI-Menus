@@ -379,8 +379,13 @@ class CustomMenu(bpy.types.Menu):
                                 arg_vals = [item[5].text]
                             
                             #print(args, " ", arg_vals)
-                            for int, arg in enumerate(args):
-                                exec("op.{0} = {1}".format(arg, arg_vals[int]))
+                            forbidden_chars = ["(", ")", "\n", "\t"]
+                            for arg, arg_val in zip(args, arg_vals):
+                                # check for forbidden characters in both arg and arg_val
+                                if any([c in arg or c in arg_val for c in forbidden_chars]):
+                                    raise
+                                else:
+                                    exec("op.{0} = {1}".format(arg, arg_val))
                     except:
                         errors.append("item ({0}) {1}".format(num, item[0].text))
                             
