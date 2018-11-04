@@ -29,7 +29,7 @@ def get_menu(context):
     global root
     area = context.space_data.type
     
-    if context.object:
+    if context.object and context.object.type == 'MESH':
         mode = get_mode()
     else:
         mode = context.mode
