@@ -29,7 +29,7 @@ def get_menu(context):
     global root
     area = context.space_data.type
     
-    if context.object:
+    if context.object and context.object.type == 'MESH':
         mode = get_mode()
     else:
         mode = context.mode
@@ -910,7 +910,7 @@ def register():
             
     # create the global hotkey
     wm = bpy.context.window_manager
-    modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
+    modes = [['Object Mode', 'EMPTY'], ['Mesh', 'EMPTY'], ['Curve', 'EMPTY'], ['Armature', 'EMPTY'], ['Metaball', 'EMPTY'], ['Lattice', 'EMPTY'], ['Font', 'EMPTY'], ['Pose', 'EMPTY'], ['Sculpt', 'EMPTY'], ['Vertex Paint', 'EMPTY'], ['Weight Paint', 'EMPTY'], ['Image Paint', 'EMPTY'], ['Particle', 'EMPTY'], ['Grease Pencil', 'EMPTY'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
              ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
     
     for mode in modes:
