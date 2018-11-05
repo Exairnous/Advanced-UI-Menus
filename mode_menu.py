@@ -41,6 +41,11 @@ class EditorModeOperator(bpy.types.Operator):
         if not context.object:
             return {'FINISHED'}
         
+        # make sure the object is in a visible layer
+        if not any([object_layer & visible_layer for object_layer, visible_layer in
+        zip(bpy.context.object.layers[:], bpy.context.scene.layers[:])]):
+            return {'FINISHED'}
+        
         if context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
             if bpy.context.gpencil_data:
                 self.last_mode = ['GPENCIL_EDIT', 'OBJECT']
