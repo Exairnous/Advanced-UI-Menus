@@ -68,7 +68,7 @@ class TransformOrientationMenu(bpy.types.Menu):
     bl_label = "Transform Orientation"
     bl_idname = "VIEW3D_MT_transf_orient_menu"
     
-    hotkey = True
+    hotkey = False
     
     def draw(self, context):
         menu = Menu(self)
