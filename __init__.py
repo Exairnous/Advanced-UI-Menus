@@ -20,10 +20,10 @@
 """ Copyright 2011 GPL licence applies"""
 
 bl_info = {
-    "name": "Advanced UI Menus Stable Version",
+    "name": "Advanced UI Menus Development Version",
     "description": "Menus for advanced interaction with blender's UI",
     "author": "Ryan Inch",
-    "version": (1, "5b"),
+    "version": ("dev"),
     "blender": (2, 79),
     "location": "View3D - Multiple menus in multiple modes.",
     "warning": '',  # used for warning icon and text in addons panel

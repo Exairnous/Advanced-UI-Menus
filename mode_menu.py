@@ -3,6 +3,7 @@ from .Utils.core import *
 class EditorModeOperator(bpy.types.Operator):
     bl_label = "Editor Mode Operator"
     bl_idname = "view3d.editor_mode_operator"
+    bl_options = {'REGISTER', 'UNDO'}
 
     last_mode = ['EDIT', 'OBJECT']
 
@@ -38,6 +39,11 @@ class EditorModeOperator(bpy.types.Operator):
 
     def execute(self, context):
         if not context.object:
+            return {'FINISHED'}
+        
+        # make sure the object is in a visible layer
+        if not any([object_layer & visible_layer for object_layer, visible_layer in
+        zip(bpy.context.object.layers[:], bpy.context.scene.layers[:])]):
             return {'FINISHED'}
         
         if context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:

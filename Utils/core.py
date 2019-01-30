@@ -65,28 +65,19 @@ class Menu():
 
 
 def get_selected():
-    # get the number of verts from the information string on the info header
-    sel_verts_num = (e for e in bpy.context.scene.statistics().split(" | ")
-                                  if e.startswith("Verts:")).__next__()[6:].split("/")
+    # get a list of statistics from the info bar
+    stats = bpy.context.scene.statistics().split(" | ")
     
-    # turn the number of verts from a string to an int
-    sel_verts_num = int(sel_verts_num[0].replace(",",""))
-
-    # get the number of edges from the information string on the info header
-    sel_edges_num = (e for e in bpy.context.scene.statistics().split(" | ")
-                                    if e.startswith("Edges:")).__next__()[6:].split("/")
+    # get number of selected verts
+    sel_verts = int(stats[1].split(":")[1].split("/")[0])
     
-    # turn the number of edges from a string to an int
-    sel_edges_num = int(sel_edges_num[0].replace(",",""))
-
-    # get the number of faces from the information string on the info header
-    sel_faces_num = (e for e in bpy.context.scene.statistics().split(" | ")
-                                  if e.startswith("Faces:")).__next__()[6:].split("/")
+    # get number of selected edges
+    sel_edges = int(stats[2].split(":")[1].split("/")[0])
     
-    # turn the number of faces from a string to an int
-    sel_faces_num = int(sel_faces_num[0].replace(",",""))
+    # get number of selected faces
+    sel_faces = int(stats[3].split(":")[1].split("/")[0])
     
-    return sel_verts_num, sel_edges_num, sel_faces_num
+    return sel_verts, sel_edges, sel_faces
 
 
 def get_mode():

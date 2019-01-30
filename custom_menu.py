@@ -29,7 +29,7 @@ def get_menu(context):
     global root
     area = context.space_data.type
     
-    if context.object:
+    if context.object and context.object.type == 'MESH':
         mode = get_mode()
     else:
         mode = context.mode
@@ -379,8 +379,13 @@ class CustomMenu(bpy.types.Menu):
                                 arg_vals = [item[5].text]
                             
                             #print(args, " ", arg_vals)
-                            for int, arg in enumerate(args):
-                                exec("op.{0} = {1}".format(arg, arg_vals[int]))
+                            forbidden_chars = ["(", ")", "\n", "\t"]
+                            for arg, arg_val in zip(args, arg_vals):
+                                # check for forbidden characters in both arg and arg_val
+                                if any([c in arg or c in arg_val for c in forbidden_chars]):
+                                    raise
+                                else:
+                                    exec("op.{0} = {1}".format(arg, arg_val))
                     except:
                         errors.append("item ({0}) {1}".format(num, item[0].text))
                             
@@ -905,7 +910,7 @@ def register():
             
     # create the global hotkey
     wm = bpy.context.window_manager
-    modes = [['3D View', 'VIEW_3D'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
+    modes = [['Object Mode', 'EMPTY'], ['Mesh', 'EMPTY'], ['Curve', 'EMPTY'], ['Armature', 'EMPTY'], ['Metaball', 'EMPTY'], ['Lattice', 'EMPTY'], ['Font', 'EMPTY'], ['Pose', 'EMPTY'], ['Sculpt', 'EMPTY'], ['Vertex Paint', 'EMPTY'], ['Weight Paint', 'EMPTY'], ['Image Paint', 'EMPTY'], ['Particle', 'EMPTY'], ['Grease Pencil', 'EMPTY'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
              ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
     
     for mode in modes:
