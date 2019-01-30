@@ -34,6 +34,8 @@ class ExtrudeMenuOperator(bpy.types.Operator):
 addon_keymaps = []
 
 def register():
+    bpy.utils.register_class(ExtrudeMenuOperator)
+    
     # create the global hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
@@ -43,6 +45,8 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(ExtrudeMenuOperator)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

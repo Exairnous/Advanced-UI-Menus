@@ -139,6 +139,7 @@ class TextureMenu(bpy.types.Menu):
             prop = menu.add_item().operator("brush.stencil_reset_transform")
             prop.mask = True
 
+
 class Textures(bpy.types.Menu):
     bl_label = "Brush Texture"
     bl_idname = "VIEW3D_MT_texture_list"
@@ -186,7 +187,8 @@ class Textures(bpy.types.Menu):
                      disable_icon='RADIOBUT_ON',
                      custom_disable_exp=[item.name, current_texture],
                      path=True)
-            
+
+
 class TextureMapMode(bpy.types.Menu):
     bl_label = "Brush Mapping"
     bl_idname = "VIEW3D_MT_texture_map_mode"
@@ -226,7 +228,8 @@ class TextureMapMode(bpy.types.Menu):
                          icon='RADIOBUT_OFF',
                          disable=True,
                          disable_icon='RADIOBUT_ON')
-            
+
+
 class MaskTextures(bpy.types.Menu):
     bl_label = "Mask Texture"
     bl_idname = "VIEW3D_MT_mask_texture_list"
@@ -257,7 +260,8 @@ class MaskTextures(bpy.types.Menu):
                      disable_icon='RADIOBUT_ON',
                      custom_disable_exp=[item.name, current_texture],
                      path=True)
-            
+
+
 class MaskMapMode(bpy.types.Menu):
     bl_label = "Mask Mapping"
     bl_idname = "VIEW3D_MT_mask_map_mode"
@@ -276,7 +280,8 @@ class MaskMapMode(bpy.types.Menu):
                      icon='RADIOBUT_OFF',
                      disable=True, 
                      disable_icon='RADIOBUT_ON')
-                     
+
+
 class TextureAngleSource(bpy.types.Menu):
     bl_label = "Texture Angle Source"
     bl_idname = "VIEW3D_MT_texture_angle_source"
@@ -302,12 +307,25 @@ class TextureAngleSource(bpy.types.Menu):
                      icon='RADIOBUT_OFF',
                      disable=True, 
                      disable_icon='RADIOBUT_ON')
-    
+
+
 ### ------------ New hotkeys and registration ------------ ###
 
 addon_keymaps = []
 
+classes = (
+    TextureMenu,
+    Textures,
+    TextureMapMode,
+    MaskTextures,
+    MaskMapMode,
+    TextureAngleSource
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     wm = bpy.context.window_manager
     modes = ['Sculpt', 'Vertex Paint', 'Image Paint']
     
@@ -318,6 +336,9 @@ def register():
         addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

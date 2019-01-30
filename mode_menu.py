@@ -113,7 +113,15 @@ class EditorModeMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    EditorModeOperator,
+    EditorModeMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     # create the global hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
@@ -126,6 +134,9 @@ def register():
 
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

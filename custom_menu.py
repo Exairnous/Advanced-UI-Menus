@@ -813,7 +813,22 @@ class SearchableMenuListMenu(bpy.types.Operator):
 
 addon_keymaps = []
 
-def register(): 
+classes = (
+    AddItemListMenu,
+    RemItemListMenu,
+    ArgErrorListMenu,
+    CustomMenu,
+    CustomMenuEditor,
+    SaveCustomItem,
+    SearchableOperatorListMenu,
+    SearchablePropertyListMenu,
+    SearchableMenuListMenu
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     read_xml()
     
     set_prop("EnumProperty", 
@@ -910,8 +925,8 @@ def register():
             
     # create the global hotkey
     wm = bpy.context.window_manager
-    modes = [['Object Mode', 'EMPTY'], ['Mesh', 'EMPTY'], ['Curve', 'EMPTY'], ['Armature', 'EMPTY'], ['Metaball', 'EMPTY'], ['Lattice', 'EMPTY'], ['Font', 'EMPTY'], ['Pose', 'EMPTY'], ['Sculpt', 'EMPTY'], ['Vertex Paint', 'EMPTY'], ['Weight Paint', 'EMPTY'], ['Image Paint', 'EMPTY'], ['Particle', 'EMPTY'], ['Grease Pencil', 'EMPTY'], ['Timeline', 'TIMELINE'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
-             ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Logic Editor', 'LOGIC_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
+    modes = [['Object Mode', 'EMPTY'], ['Mesh', 'EMPTY'], ['Curve', 'EMPTY'], ['Armature', 'EMPTY'], ['Metaball', 'EMPTY'], ['Lattice', 'EMPTY'], ['Font', 'EMPTY'], ['Pose', 'EMPTY'], ['Sculpt', 'EMPTY'], ['Vertex Paint', 'EMPTY'], ['Weight Paint', 'EMPTY'], ['Image Paint', 'EMPTY'], ['Particle', 'EMPTY'], ['Grease Pencil', 'EMPTY'], ['Timeline', 'EMPTY'], ['Graph Editor', 'GRAPH_EDITOR'], ['Dopesheet', 'DOPESHEET_EDITOR'], ['NLA Editor', 'NLA_EDITOR'],
+             ['Image', 'IMAGE_EDITOR'], ['Sequencer', 'SEQUENCE_EDITOR'], ['Clip', 'CLIP_EDITOR'], ['Node Editor', 'NODE_EDITOR'], ['Console', 'CONSOLE'], ['Outliner', 'OUTLINER'], ['Property Editor', 'PROPERTIES'], ['Text', 'TEXT_EDITOR']]
     
     for mode in modes:
         km = wm.keyconfigs.addon.keymaps.new(name=mode[0], space_type=mode[1])
@@ -920,6 +935,9 @@ def register():
         addon_keymaps.append((km, kmi))
     
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     bpy.types.Scene.Custom_Items = "Not At All!"
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:

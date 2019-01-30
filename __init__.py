@@ -56,6 +56,7 @@ from . import view_menu
 
 addon_files = [ 
                brush_menu,
+               brushes,
                curve_menu,
                custom_menu,
                delete_menu,
@@ -76,9 +77,6 @@ addon_files = [
               ]
 
 def register():
-    # register all blender classes
-    bpy.utils.register_module(__name__)
-    
     # register all files
     for addon_file in addon_files:
         addon_file.register()
@@ -90,9 +88,6 @@ def unregister():
     
     # delete all the properties you have created
     del_props()
-    
-    # unregister all blender classes
-    bpy.utils.unregister_module(__name__)
     
 if __name__ == "__main__":
     register()

@@ -165,8 +165,15 @@ class LayersWindow(bpy.types.Operator):
 
 addon_keymaps = []
 
+classes = (
+    SetObjectLayer,
+    LayersWindow
+    )
+
 def register():
-                    
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     set_prop("BoolProperty", "bpy.types.Scene.layer_changed", name="layer_changed")
 
     # create the global menu hotkey
@@ -177,6 +184,9 @@ def register():
 
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

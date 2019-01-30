@@ -642,7 +642,29 @@ class ColorPickerPopup(bpy.types.Operator):
 
 addon_keymaps = []
 
+classes = (
+    BrushOptionsMenu,
+    BrushRadiusMenu,
+    BrushStrengthMenu,
+    DynDetailMenu,
+    DetailMethodMenu,
+    BrushModeMenu,
+    BrushAutosmoothMenu,
+    BrushWeightMenu,
+    ParticleCountMenu,
+    DirectionMenu,
+    BlurMode,
+    ParticleLengthMenu,
+    ParticlePuffMenu,
+    FlipColorsTex,
+    FlipColorsVert,
+    ColorPickerPopup
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     wm = bpy.context.window_manager
     modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']
     
@@ -653,6 +675,9 @@ def register():
         addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

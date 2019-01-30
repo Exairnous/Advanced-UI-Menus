@@ -58,7 +58,15 @@ class CurvePopup(bpy.types.Operator):
 
 addon_keymaps = []
 
+classes = (
+    BrushCurveMenu,
+    CurvePopup
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     wm = bpy.context.window_manager
     modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint']
     
@@ -69,6 +77,9 @@ def register():
         addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

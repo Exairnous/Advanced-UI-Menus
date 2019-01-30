@@ -107,6 +107,8 @@ class DeleteMenu(bpy.types.Menu):
 addon_keymaps = []
 
 def register():
+    bpy.utils.register_class(DeleteMenu)
+    
     # create the global menu hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
@@ -115,6 +117,8 @@ def register():
     addon_keymaps.append((km, kmi))
 
 def unregister():
+    bpy.utils.unregister_class(DeleteMenu)
+    
      # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

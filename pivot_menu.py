@@ -60,6 +60,8 @@ class PivotPointMenu(bpy.types.Menu):
 addon_keymaps = []
 
 def register():
+    bpy.utils.register_class(PivotPointMenu)
+    
     # create the global menu hotkey
     wm = bpy.context.window_manager
     modes = {'Object Non-modal':'EMPTY', 'Graph Editor':'GRAPH_EDITOR', 'Image':'IMAGE_EDITOR'}
@@ -72,6 +74,8 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(PivotPointMenu)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

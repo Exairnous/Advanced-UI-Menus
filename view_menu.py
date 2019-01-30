@@ -1,7 +1,5 @@
 from .Utils.core import *
 
-### ------------ Menus ------------ ###
-
 # adds a view manipulation menu
 class ViewMenu(bpy.types.Menu):
     bl_label = "View"
@@ -52,7 +50,15 @@ class OtherViewMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    ViewMenu,
+    OtherViewMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     # create the global menu hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
@@ -61,7 +67,10 @@ def register():
     addon_keymaps.append((km, kmi))
 
 
-def unregister():  
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

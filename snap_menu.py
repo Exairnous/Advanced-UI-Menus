@@ -87,8 +87,6 @@ class SnapModeMenu(bpy.types.Menu):
                 menu.add_item().prop(bpy.context.tool_settings, "use_snap_peel_object", toggle=True)
 
 
-
-
 class SnapTargetMenu(bpy.types.Menu):
     bl_label = "Snap Target"
     bl_idname = "VIEW3D_MT_snap_target_menu"
@@ -108,7 +106,16 @@ class SnapTargetMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    SnapMenuOperator,
+    SnapModeMenu,
+    SnapTargetMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     # create the global menu hotkey
     wm = bpy.context.window_manager
     modes = {'Object Non-modal':'EMPTY', 'Grease Pencil Stroke Edit Mode':'EMPTY', 'Node Editor':'NODE_EDITOR'}
@@ -120,6 +127,9 @@ def register():
 
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

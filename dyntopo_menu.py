@@ -54,7 +54,15 @@ class SymmetrizeMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    DynTopoMenu,
+    SymmetrizeMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
     kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True)
@@ -62,6 +70,9 @@ def register():
     addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

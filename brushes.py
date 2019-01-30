@@ -129,4 +129,10 @@ class BrushesMenu(bpy.types.Menu):
                              datapath, icon=icon[item.image_tool],
                              disable=True, custom_disable_exp=[item.name, current_brush],
                              path=True)
-                        
+
+
+def register():
+    bpy.utils.register_class(BrushesMenu)
+
+def unregister():
+    bpy.utils.unregister_class(BrushesMenu)

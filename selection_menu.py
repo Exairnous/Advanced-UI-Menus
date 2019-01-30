@@ -54,6 +54,8 @@ class SelectionModeMenu(bpy.types.Menu):
 addon_keymaps = []
 
 def register():
+    bpy.utils.register_class(SelectionModeMenu)
+    
     # create the global hotkey
     wm = bpy.context.window_manager
     modes = ['Mesh', 'Particle']
@@ -65,7 +67,8 @@ def register():
         addon_keymaps.append((km, kmi))
 
 def unregister():
-
+    bpy.utils.unregister_class(SelectionModeMenu)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

@@ -24,7 +24,8 @@ class MasterSymmetryMenu(bpy.types.Menu):
             menu.add_item().menu(SymmetryMenu.bl_idname)
             menu.add_item().menu(SymmetryRadialMenu.bl_idname)
             menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_feather", toggle=True)
-        
+
+
 class SymmetryMenu(bpy.types.Menu):
     bl_label = "Symmetry"
     bl_idname = "VIEW3D_MT_symmetry_menu"
@@ -38,7 +39,8 @@ class SymmetryMenu(bpy.types.Menu):
         menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_x", toggle=True)
         menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_y", toggle=True)
         menu.add_item().prop(context.tool_settings.sculpt, "use_symmetry_z", toggle=True)
-        
+
+
 class SymmetryRadialMenu(bpy.types.Menu):
     bl_label = "Radial"
     bl_idname = "VIEW3D_MT_symmetry_radial_menu"
@@ -50,12 +52,22 @@ class SymmetryRadialMenu(bpy.types.Menu):
         menu.add_item().separator()
         
         menu.add_item("column").prop(context.tool_settings.sculpt, "radial_symmetry", text="", slider=True)
-    
+
+
 ### ------------ New hotkeys and registration ------------ ###
 
 addon_keymaps = []
 
+classes = (
+    MasterSymmetryMenu,
+    SymmetryMenu,
+    SymmetryRadialMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     wm = bpy.context.window_manager
     
     modes = ['Sculpt', 'Image Paint']
@@ -67,6 +79,9 @@ def register():
         addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

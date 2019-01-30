@@ -136,7 +136,17 @@ class DisplayOptionsMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    ShadeModeOperator,
+    ShadeModeMenu,
+    MeshShadeMenu,
+    DisplayOptionsMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     # create the global menu hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
@@ -144,6 +154,9 @@ def register():
     addon_keymaps.append((km, kmi))
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)

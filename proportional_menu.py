@@ -126,7 +126,16 @@ class FalloffMenu(bpy.types.Menu):
 
 addon_keymaps = []
 
+classes = (
+    ProportionalModeOperator,
+    ProportionalEditingMenu,
+    FalloffMenu
+    )
+
 def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     # create the global menu hotkeys
     wm = bpy.context.window_manager
     modes = {'Object Mode':'EMPTY',
@@ -154,6 +163,9 @@ def register():
 
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    
     # remove keymaps when add-on is deactivated
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
