@@ -16,7 +16,7 @@ class DynTopoMenu(bpy.types.Menu):
         menu = Menu(self)
         
         if context.object.use_dynamic_topology_sculpting:
-            menu.add_item().operator("sculpt.dynamic_topology_toggle", "Disable Dynamic Topology")
+            menu.add_item().operator("sculpt.dynamic_topology_toggle", text="Disable Dynamic Topology")
             
             menu.add_item().separator()
             
@@ -29,7 +29,7 @@ class DynTopoMenu(bpy.types.Menu):
         else:
             menu.add_item()
             menu.current_item.operator_context = 'INVOKE_DEFAULT'
-            menu.current_item.operator("sculpt.dynamic_topology_toggle", "Enable Dynamic Topology")
+            menu.current_item.operator("sculpt.dynamic_topology_toggle", text="Enable Dynamic Topology")
 
             
 class SymmetrizeMenu(bpy.types.Menu):

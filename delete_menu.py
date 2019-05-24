@@ -47,18 +47,18 @@ class DeleteMenu(bpy.types.Menu):
             self.draw_faces(menu)
 
     def draw_verts(self, menu):
-        prop = menu.add_item().operator("mesh.delete", "Verts", icon='VERTEXSEL')
+        prop = menu.add_item().operator("mesh.delete", text="Verts", icon='VERTEXSEL')
         prop.type = 'VERT'
         
         menu.add_item().operator("mesh.dissolve_verts", icon='SNAP_VERTEX')
         menu.add_item().operator("mesh.dissolve_limited", icon='STICKY_UVS_LOC')
 
     def draw_edges(self, menu):
-        prop = menu.add_item().operator("mesh.delete", "Verts", icon='VERTEXSEL')
+        prop = menu.add_item().operator("mesh.delete", text="Verts", icon='VERTEXSEL')
         prop.type = 'VERT'
-        prop = menu.add_item().operator("mesh.delete", "Edges", icon='EDGESEL')
+        prop = menu.add_item().operator("mesh.delete", text="Edges", icon='EDGESEL')
         prop.type = 'EDGE'
-        prop = menu.add_item().operator("mesh.delete", "Only Edges & Faces", icon='SPACE2')
+        prop = menu.add_item().operator("mesh.delete", text="Only Edges & Faces", icon='HANDLETYPE_FREE_VEC')
         prop.type = 'EDGE_FACE'
 
         menu.add_item().separator()
@@ -72,19 +72,19 @@ class DeleteMenu(bpy.types.Menu):
 
         menu.add_item().separator()
 
-        menu.add_item().operator("mesh.delete_edgeloop", icon='BORDER_LASSO')
+        menu.add_item().operator("mesh.delete_edgeloop", icon='ORIENTATION_LOCAL')
         menu.add_item().operator("mesh.edge_collapse", icon='UV_EDGESEL')
 
     def draw_faces(self, menu):
-        prop = menu.add_item().operator("mesh.delete", "Verts", icon='VERTEXSEL')
+        prop = menu.add_item().operator("mesh.delete", text="Verts", icon='VERTEXSEL')
         prop.type = 'VERT'
-        prop = menu.add_item().operator("mesh.delete", "Edges", icon='EDGESEL')
+        prop = menu.add_item().operator("mesh.delete", text="Edges", icon='EDGESEL')
         prop.type = 'EDGE'
-        prop = menu.add_item().operator("mesh.delete", "Faces", icon='FACESEL')
+        prop = menu.add_item().operator("mesh.delete", text="Faces", icon='FACESEL')
         prop.type = 'FACE'
-        prop = menu.add_item().operator("mesh.delete", "Only Edges & Faces", icon='SPACE2')
+        prop = menu.add_item().operator("mesh.delete", text="Only Edges & Faces", icon='HANDLETYPE_FREE_VEC')
         prop.type = 'EDGE_FACE'
-        prop = menu.add_item().operator("mesh.delete", "Only Faces", icon='UV_FACESEL')
+        prop = menu.add_item().operator("mesh.delete", text="Only Faces", icon='UV_FACESEL')
         prop.type = 'ONLY_FACE'
 
         menu.add_item().separator()
@@ -99,7 +99,7 @@ class DeleteMenu(bpy.types.Menu):
 
         menu.add_item().separator()
 
-        menu.add_item().operator("mesh.delete_edgeloop", icon='BORDER_LASSO')
+        menu.add_item().operator("mesh.delete_edgeloop", icon='ORIENTATION_LOCAL')
         menu.add_item().operator("mesh.edge_collapse", icon='UV_EDGESEL')
         
 ### ------------ New hotkeys and registration ------------ ###

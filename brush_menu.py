@@ -146,8 +146,8 @@ class BrushOptionsMenu(bpy.types.Menu):
         toolsettings = context.tool_settings.image_paint
         
         if context.image_paint_object and not toolsettings.detect_data():
-            menu.add_item().label("Missing Data", icon='ERROR')
-            menu.add_item().label("See Tool Shelf")
+            menu.add_item().label(text="Missing Data", icon='ERROR')
+            menu.add_item().label(text="See Tool Shelf")
         else:
             menu.add_item().menu("VIEW3D_MT_brushes_menu", icon=get_current_brush_icon(toolsettings.brush.image_tool))
             
@@ -186,7 +186,7 @@ class BrushOptionsMenu(bpy.types.Menu):
 
     def particle(self, menu, context):
         if context.tool_settings.particle_edit.tool == 'NONE':
-            menu.add_item().label("No Brush Selected")
+            menu.add_item().label(text="No Brush Selected")
             menu.add_item().menu("VIEW3D_MT_brushes_menu", text="Select Brush")
         else:
             menu.add_item().menu("VIEW3D_MT_brushes_menu")
@@ -355,7 +355,7 @@ class DetailMethodMenu(bpy.types.Menu):
         refine_path = "tool_settings.sculpt.detail_refine_method"
         type_path = "tool_settings.sculpt.detail_type_method"
         
-        menu.add_item().label("Refine")
+        menu.add_item().label(text="Refine")
         menu.add_item().separator()
         
         # add the refine menu items
@@ -363,9 +363,9 @@ class DetailMethodMenu(bpy.types.Menu):
             menuprop(menu.add_item(), item.name, item.identifier, refine_path, disable=True, 
                      icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON')
         
-        menu.add_item().label("")
+        menu.add_item().label(text="")
         
-        menu.add_item().label("Type")
+        menu.add_item().label(text="Type")
         menu.add_item().separator()
         
         # add the type menu items

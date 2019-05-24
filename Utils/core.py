@@ -66,7 +66,7 @@ class Menu():
 
 def get_selected():
     # get a list of statistics from the info bar
-    stats = bpy.context.scene.statistics().split(" | ")
+    stats = bpy.context.scene.statistics(bpy.context.view_layer).split(" | ")
     
     # get number of selected verts
     sel_verts = int(stats[1].split(":")[1].split("/")[0])

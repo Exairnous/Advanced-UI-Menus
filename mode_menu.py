@@ -42,8 +42,7 @@ class EditorModeOperator(bpy.types.Operator):
             return {'FINISHED'}
         
         # make sure the object is in a visible layer
-        if not any([object_layer & visible_layer for object_layer, visible_layer in
-        zip(bpy.context.object.layers[:], bpy.context.scene.layers[:])]):
+        if bpy.context.object.visible_get() == False:
             return {'FINISHED'}
         
         if context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
@@ -101,7 +100,7 @@ class EditorModeMenu(bpy.types.Menu):
 
         # add the menu items
         for mode in modes:
-            prop = menu.add_item(name=mode[0]).operator("object.mode_set", mode[0], icon=mode[2])
+            prop = menu.add_item(name=mode[0]).operator("object.mode_set", text=mode[0], icon=mode[2])
             prop.mode = mode[1]
             
             # disable the rows that need it

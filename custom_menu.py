@@ -315,7 +315,7 @@ class ArgErrorListMenu(bpy.types.Menu):
     
     def draw(self, context):
         for entry in self.errlst:
-            self.layout.row().label(entry, icon='ERROR')
+            self.layout.row().label(text=entry, icon='ERROR')
 
 class CustomMenu(bpy.types.Menu):
     bl_label = "Custom Menu"
@@ -345,7 +345,7 @@ class CustomMenu(bpy.types.Menu):
             if item.get("type") == "SEP":
                 menu.add_item(parent=master_column).separator()
             elif item.get("type") == "LAB":
-                menu.add_item(parent=master_column).label(item[0].text, icon=item[1].text)
+                menu.add_item(parent=master_column).label(text=item[0].text, icon=item[1].text)
             elif item.get("type") == "OP":
                 op_row = menu.add_item(parent=master_column)
                 #print(op_row.operator_context)
@@ -365,7 +365,7 @@ class CustomMenu(bpy.types.Menu):
                 try:
                     eval("bpy.ops.{0}.poll()".format(item[0].text))
                 except:
-                    menu.add_item(parent=master_column).label("OP: "+item[0].text, icon='ERROR')
+                    menu.add_item(parent=master_column).label(text="OP: "+item[0].text, icon='ERROR')
                 
                 #print(item[3].text)
                 if item[3].text == "False":
@@ -399,7 +399,7 @@ class CustomMenu(bpy.types.Menu):
                 try:
                     eval("bpy.types."+item[0].text)
                 except:
-                    menu.add_item(parent=master_column).label("MENU: "+item[0].text, icon='ERROR')
+                    menu.add_item(parent=master_column).label(text="MENU: "+item[0].text, icon='ERROR')
             
             elif item.get("type") == "PROP":
                 path = item[0].text
@@ -418,7 +418,7 @@ class CustomMenu(bpy.types.Menu):
                         else:
                             menu.add_item(parent=master_column).prop(eval(path[:path.rfind(".")]), path[path.rfind(".")+1:], icon=item[2].text, expand=eval(item[4].text), slider=eval(item[5].text), toggle=eval(item[6].text), icon_only=eval(item[7].text), event=eval(item[8].text), full_event=eval(item[9].text), emboss=eval(item[10].text))
                 except:
-                    menu.add_item(parent=master_column).label("PROP: "+item[0].text, icon='ERROR')
+                    menu.add_item(parent=master_column).label(text="PROP: "+item[0].text, icon='ERROR')
                     
         menu.add_item(parent=master_column).separator()
 
@@ -462,7 +462,7 @@ class CustomMenuEditor(bpy.types.Operator):
         
         
         if scn.CustomMenuItemType == "OP":
-            ui.add_item().label("Path:")
+            ui.add_item().label(text="Path:")
             ui.current_item.prop(scn, "CustomMenuItemPath", icon_only=True)
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             ui.current_item.operator("view3d.search_op_list_menu", text="", icon="LONGDISPLAY")
@@ -471,29 +471,29 @@ class CustomMenuEditor(bpy.types.Operator):
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
             ui.add_item()
-            ui.current_item.label("Menu:")
+            ui.current_item.label(text="Menu:")
             ui.current_item.prop(scn, "CustomMenuPropMenu", text="")
-            ui.add_item().label("Insert After:")
+            ui.add_item().label(text="Insert After:")
             #ui.current_item.prop(scn, "CustomMenuItemList")
-            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
+            ui.current_item.menu(AddItemListMenu.bl_idname, text=item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "SEP":
-            ui.add_item().label("Insert After:")
+            ui.add_item().label(text="Insert After:")
             #ui.current_item.prop(scn, "CustomMenuItemList")
-            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
+            ui.current_item.menu(AddItemListMenu.bl_idname, text=item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "LAB":
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
-            ui.add_item().label("Insert After:")
+            ui.add_item().label(text="Insert After:")
             #ui.current_item.prop(scn, "CustomMenuItemList")
-            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
+            ui.current_item.menu(AddItemListMenu.bl_idname, text=item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "MENU":
-            ui.add_item().label("Path:")
+            ui.add_item().label(text="Path:")
             ui.current_item.prop(scn, "CustomMenuItemPath", icon_only=True)
             ui.current_item.operator_context = 'INVOKE_DEFAULT'
             ui.current_item.operator("view3d.search_menu_list_menu", text="", icon="LONGDISPLAY")
@@ -501,9 +501,9 @@ class CustomMenuEditor(bpy.types.Operator):
             #ui.add_item().prop(scn, "CustomMenuItemPath")
             ui.add_item().prop(scn, "CustomMenuItemName")
             ui.add_item().prop(scn, "CustomMenuItemIcon")
-            ui.add_item().label("Insert After:")
+            ui.add_item().label(text="Insert After:")
             #ui.current_item.prop(scn, "CustomMenuItemList")
-            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
+            ui.current_item.menu(AddItemListMenu.bl_idname, text=item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
             
         elif scn.CustomMenuItemType == "PROP":
@@ -524,16 +524,16 @@ class CustomMenuEditor(bpy.types.Operator):
                 ui.add_item()
                 ui.current_item.prop(scn, "CustomMenuPropEvent")
                 ui.current_item.prop(scn, "CustomMenuPropFullEvent")
-                ui.current_item.label("")
+                ui.current_item.label(text="")
             #ui.add_item().prop(scn, "CustomMenuItemList")
-            ui.add_item().label("Insert After:")
-            ui.current_item.menu(AddItemListMenu.bl_idname, item_list[int(scn.CustomMenuItemList)][1])
+            ui.add_item().label(text="Insert After:")
+            ui.current_item.menu(AddItemListMenu.bl_idname, text=item_list[int(scn.CustomMenuItemList)][1])
             ui.add_item().separator()
              
         elif scn.CustomMenuItemType == "REM":
-            ui.add_item().label("Remove Item:")
+            ui.add_item().label(text="Remove Item:")
             #ui.current_item.prop(scn, "CustomMenuItemRemList")
-            ui.current_item.menu(RemItemListMenu.bl_idname, rem_item_list[int(scn.CustomMenuItemRemList)][1])
+            ui.current_item.menu(RemItemListMenu.bl_idname, text=rem_item_list[int(scn.CustomMenuItemRemList)][1])
             ui.add_item().separator()
             
         if scn.CustomMenuItemType != "REM":
