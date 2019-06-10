@@ -9,8 +9,8 @@ class ShadeModeOperator(bpy.types.Operator):
 
     def init(self, context):
         # populate the list of last modes
-        if context.space_data.viewport_shade not in self.last_mode:
-            self.last_mode.append(context.space_data.viewport_shade)
+        if context.space_data.shading.type not in self.last_mode:
+            self.last_mode.append(context.space_data.shading.type)
         
         # keep the list to 2 items
         if len(self.last_mode) > 2:
@@ -27,11 +27,11 @@ class ShadeModeOperator(bpy.types.Operator):
         
         # else toggle between wireframe and your last used mode
         elif event.value == 'RELEASE' and current_time < self.start_time + 0.3:
-            if context.space_data.viewport_shade != self.last_mode[0]:
-                context.space_data.viewport_shade = self.last_mode[0]
+            if context.space_data.shading.type != self.last_mode[0]:
+                context.space_data.shading.type = self.last_mode[0]
                 
             else:
-                context.space_data.viewport_shade = self.last_mode[1]
+                context.space_data.shading.type = self.last_mode[1]
                 
             return {'FINISHED'}
         
@@ -52,28 +52,22 @@ class ShadeModeMenu(bpy.types.Menu):
     def init(self):
         renderer = bpy.context.scene.render.engine
 
-        if renderer == 'BLENDER_RENDER':
-            modes = [["Solid", 'SOLID', "SOLID"],
-                     ["Wireframe", 'WIREFRAME', "WIRE"],
-                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                     ["Rendered", 'RENDERED', "SMOOTH"],
-                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+        if renderer == 'BLENDER_EEVEE':
+            modes = [["Solid", 'SOLID', "SHADING_SOLID"],
+                     ["Wireframe", 'WIREFRAME', "SHADING_WIRE"],
+                     ["LookDev", 'MATERIAL', "SHADING_TEXTURE"],
+                     ["Rendered", 'RENDERED', "SHADING_RENDERED"]]
+            
+        elif renderer == 'BLENDER_WORKBENCH':
+            modes = [["Solid", 'SOLID', "SHADING_SOLID"],
+                     ["Wireframe", 'WIREFRAME', "SHADING_WIRE"],
+                     ["Rendered", 'RENDERED', "SHADING_RENDERED"]]
             
         elif renderer == 'CYCLES':
-            modes = [["Solid", 'SOLID', "SOLID"],
-                      ["Wireframe", 'WIREFRAME', "WIRE"],
-                      ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                      ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                      ["Rendered", 'RENDERED', "SMOOTH"],
-                      ["Bounding Box", 'BOUNDBOX', "BBOX"]]
-            
-        else:
-            modes = [["Solid", 'SOLID', "SOLID"],
-                     ["Wireframe", 'WIREFRAME', "WIRE"],
-                     ["Textured", 'TEXTURED', "TEXTURE_SHADED"],
-                     ["Material", 'MATERIAL', "MATERIAL_DATA"],
-                     ["Bounding Box", 'BOUNDBOX', "BBOX"]]
+            modes = [["Solid", 'SOLID', "SHADING_SOLID"],
+                     ["Wireframe", 'WIREFRAME', "SHADING_WIRE"],
+                     ["LookDev", 'MATERIAL', "SHADING_TEXTURE"],
+                     ["Rendered", 'RENDERED', "SHADING_RENDERED"]]
             
         return modes
 
@@ -83,7 +77,7 @@ class ShadeModeMenu(bpy.types.Menu):
 
         # add the items to the menu
         for mode in modes:
-            menuprop(menu.add_item(), mode[0], mode[1], "space_data.viewport_shade",
+            menuprop(menu.add_item(), mode[0], mode[1], "space_data.shading.type",
                      icon=mode[2], disable=True)
 
         # add a shading options menu if object can be shaded smooth/flat
@@ -112,8 +106,8 @@ class MeshShadeMenu(bpy.types.Menu):
             menu.add_item().operator("mesh.faces_shade_smooth", "Shade Smooth", icon="MESH_UVSPHERE")
             
         else:
-            menu.add_item().operator("object.shade_flat", "Shade Flat", icon="MESH_ICOSPHERE")
-            menu.add_item().operator("object.shade_smooth", "Shade Smooth", icon="MESH_UVSPHERE")
+            menu.add_item().operator("object.shade_flat", text="Shade Flat", icon="MESH_ICOSPHERE")
+            menu.add_item().operator("object.shade_smooth", text="Shade Smooth", icon="MESH_UVSPHERE")
 
 
 class DisplayOptionsMenu(bpy.types.Menu):
@@ -129,7 +123,7 @@ class DisplayOptionsMenu(bpy.types.Menu):
         menu.add_item().prop(context.object, 'show_name', toggle=True)
         menu.add_item().prop(context.object, 'show_axis', toggle=True)
         menu.add_item().prop(context.object, 'show_wire', toggle=True)
-        menu.add_item().prop(context.object, 'show_x_ray', toggle=True)
+        menu.add_item().prop(context.object, 'show_in_front', toggle=True)
         menu.add_item().prop(context.object, 'show_all_edges', toggle=True)
         
 ### ------------ New hotkeys and registration ------------ ###

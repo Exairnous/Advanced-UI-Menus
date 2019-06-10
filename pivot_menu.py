@@ -9,29 +9,36 @@ class PivotPointMenu(bpy.types.Menu):
         menu = Menu(self)
         # get set pivot modes based on spacetype
         if context.space_data.type == 'VIEW_3D':
-            pivot_modes = [["Median Point", "'MEDIAN_POINT'", "ROTATECENTER"], 
-                           ["3D Cursor", "'CURSOR'", "CURSOR"],
-                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
-                           ["Active Element", "'ACTIVE_ELEMENT'", "ROTACTIVE"],
-                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "ROTATE"]]
+            pivot_modes = [["Median Point", "'MEDIAN_POINT'", "PIVOT_MEDIAN"], 
+                           ["3D Cursor", "'CURSOR'", "PIVOT_CURSOR"],
+                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "PIVOT_INDIVIDUAL"],
+                           ["Active Element", "'ACTIVE_ELEMENT'", "PIVOT_ACTIVE"],
+                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "PIVOT_BOUNDBOX"]]
                            
         if context.space_data.type == 'GRAPH_EDITOR':
-            pivot_modes = [["2D Cursor", "'CURSOR'", "CURSOR"],
-                           ["Individual Centers", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
-                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "ROTATE"]]
+            pivot_modes = [["2D Cursor", "'CURSOR'", "PIVOT_CURSOR"],
+                           ["Individual Centers", "'INDIVIDUAL_ORIGINS'", "PIVOT_INDIVIDUAL"],
+                           ["Bounding Box Center", "'BOUNDING_BOX_CENTER'", "PIVOT_BOUNDBOX"]]
         
         if context.space_data.type == 'IMAGE_EDITOR':
-            pivot_modes = [["Median Point", "'MEDIAN'", "ROTATECENTER"], 
-                           ["2D Cursor", "'CURSOR'", "CURSOR"],
-                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "ROTATECOLLECTION"],
-                           ["Bounding Box Center", "'CENTER'", "ROTATE"]]
+            pivot_modes = [["Median Point", "'MEDIAN'", "PIVOT_MEDIAN"], 
+                           ["2D Cursor", "'CURSOR'", "PIVOT_CURSOR"],
+                           ["Individual Origins", "'INDIVIDUAL_ORIGINS'", "PIVOT_INDIVIDUAL"],
+                           ["Bounding Box Center", "'CENTER'", "PIVOT_BOUNDBOX"]]
             
-            # create menu
+        if context.space_data.type == 'VIEW_3D':
+            data_path = "tool_settings.transform_pivot_point"
+            current_pivot_point = context.tool_settings.transform_pivot_point
+        else:
+            data_path = "space_data.pivot_point"
+            current_pivot_point = context.space_data.pivot_point
+        
+        # create menu
         for mode in pivot_modes:
-            prop = menu.add_item().operator("wm.context_set_value", mode[0], icon=mode[2])
+            prop = menu.add_item().operator("wm.context_set_value", text=mode[0], icon=mode[2])
             prop.value = mode[1]
-            prop.data_path = "space_data.pivot_point"
-            if bpy.context.space_data.pivot_point == mode[1][1:-1]:
+            prop.data_path = data_path
+            if current_pivot_point == mode[1][1:-1]:
                 menu.current_item.enabled = False
 
         # if your in 3D View and in object or pose mode add the manip center points
@@ -39,21 +46,21 @@ class PivotPointMenu(bpy.types.Menu):
         if context.space_data.type == 'VIEW_3D':
             if get_mode() in [object_mode, pose]:
                 menu.add_item().separator()
-                if not bpy.context.space_data.use_pivot_point_align:
+                if not context.tool_settings.use_transform_pivot_point_align:
                     prop = menu.add_item().operator("wm.context_set_value",
-                                                    "Enable Manipulate center points",
-                                                    icon="ALIGN")
+                                                    text="Enable Manipulate center points",
+                                                    icon="CENTER_ONLY")
                 
                     prop.value = "True"
-                    prop.data_path = "space_data.use_pivot_point_align"
+                    prop.data_path = "tool_settings.use_transform_pivot_point_align"
                 
                 else:
                     prop = menu.add_item().operator("wm.context_set_value",
-                                                    "Disable Manipulate center points",
-                                                    icon="ALIGN")
+                                                    text="Disable Manipulate center points",
+                                                    icon="CENTER_ONLY")
                 
                     prop.value = "False"
-                    prop.data_path = "space_data.use_pivot_point_align"
+                    prop.data_path = "tool_settings.use_transform_pivot_point_align"
         
 ### ------------ New hotkeys and registration ------------ ###
 

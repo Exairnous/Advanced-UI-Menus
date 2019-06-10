@@ -11,7 +11,6 @@ weight_paint = 'WEIGHT_PAINT'
 texture_paint = 'TEXTURE_PAINT'
 particle_edit = 'PARTICLE_EDIT'
 pose = 'POSE'
-gpencil_edit = 'GPENCIL_EDIT'
 
 PIW = '       '
 
@@ -81,11 +80,6 @@ def get_selected():
 
 
 def get_mode():
-    if bpy.context.gpencil_data and \
-    bpy.context.object.mode == object_mode and \
-    bpy.context.scene.grease_pencil.use_stroke_edit_mode:
-        return gpencil_edit
-    else:
         return bpy.context.object.mode
 
 def menuprop(item, name, value, data_path,
@@ -192,3 +186,56 @@ def send_report(message):
         bpy.app.handlers.scene_update_pre.remove(report)
         
     bpy.app.handlers.scene_update_pre.append(report)
+
+
+
+
+class StickyKey():
+    def __init__():
+        self.start_time = time.time()
+    
+    def result(event):
+        current_time = time.time()
+
+        if event.value == 'RELEASE':
+            if current_time < start_time + 0.3:
+                return 'short'
+            else:
+                return 'long'
+    
+        return None
+
+
+
+class StickyKeyOperatorExample(bpy.types.Operator):
+    bl_label = "Sticky Key Operator Example"
+    bl_idname = "view3d.sticky_key_operator_example"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def modal(self, context, event):
+        sticky = self.stickykey.result()
+        
+        # short press action
+        if sticky == 'short':
+            bpy.ops.wm.call_menu(name=EditorModeMenu.bl_idname)
+        
+        # long press action
+        elif sticky == 'long':
+            if get_mode() != self.last_mode[0]:
+                bpy.ops.object.mode_set(mode=self.last_mode[0])
+                
+            else:
+                bpy.ops.object.mode_set(mode=self.last_mode[1])
+        
+        # key is still held down
+        else:
+            return {'RUNNING_MODAL'}
+        
+        
+        return {'FINISHED'}
+
+    def execute(self, context):
+        self.stickykey = StickyKey()
+        context.window_manager.modal_handler_add(self)
+            
+        return {'RUNNING_MODAL'}

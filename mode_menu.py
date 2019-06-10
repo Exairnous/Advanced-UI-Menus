@@ -7,7 +7,10 @@ class EditorModeOperator(bpy.types.Operator):
 
     last_mode = ['EDIT', 'OBJECT']
 
-    def init(self):
+    def init(self, obj):
+        # set edit mode string based on obj type
+        self.last_mode[0] = 'EDIT_GPENCIL' if obj.type == 'GPENCIL' else 'EDIT'
+        
         # populate the list of last modes
         if get_mode() not in self.last_mode:
             self.last_mode.append(get_mode())
@@ -38,20 +41,19 @@ class EditorModeOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if not context.object:
+        obj = context.object
+        
+        if not obj:
             return {'FINISHED'}
         
         # make sure the object is in a visible layer
-        if bpy.context.object.visible_get() == False:
+        if obj.visible_get() == False:
             return {'FINISHED'}
         
-        if context.object.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
-            if bpy.context.gpencil_data:
-                self.last_mode = ['GPENCIL_EDIT', 'OBJECT']
-            else:
-                return {'FINISHED'}
-
-        self.init()
+        if obj.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
+            return {'FINISHED'}
+        
+        self.init(obj)
         self.start_time = time.time()
         context.window_manager.modal_handler_add(self)
             
@@ -62,12 +64,11 @@ class EditorModeMenu(bpy.types.Menu):
     bl_label = "Editor Menu"
     bl_idname = "VIEW3D_MT_mode_menu"
 
-    def init(self):
-        ob_type = bpy.context.object.type
-        gpd = bpy.context.gpencil_data
+    def init(self, context):
+        obj = context.object
         self.mode = get_mode()
 
-        if ob_type == 'MESH':
+        if obj.type == 'MESH':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
                      ["Edit", edit, "EDITMODE_HLT"],
                      ["Sculpt", sculpt, "SCULPTMODE_HLT"],
@@ -75,27 +76,32 @@ class EditorModeMenu(bpy.types.Menu):
                      ["Weight Paint", weight_paint, "WPAINT_HLT"],
                      ["Texture Paint", texture_paint, "TPAINT_HLT"]]
 
-            if len(bpy.context.object.particle_systems.items()) > 0:
+            if len(obj.particle_systems.items()) > 0:
                 modes.append(["Particle Edit", particle_edit, "PARTICLEMODE"])
                 
-        elif ob_type == 'ARMATURE':
+        elif obj.type == 'ARMATURE':
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
                      ["Edit", edit, "EDITMODE_HLT"],
                      ["Pose", pose, "POSE_HLT"]]
+        
+        elif obj.type == 'GPENCIL':
+            modes = [["Object", 'OBJECT', "OBJECT_DATAMODE"],
+                     ["Edit", 'EDIT_GPENCIL', "EDITMODE_HLT"],
+                     ["Sculpt", 'SCULPT_GPENCIL', "SCULPTMODE_HLT"],
+                     ["Draw", 'PAINT_GPENCIL', "GREASEPENCIL"],
+                     ["Weight Paint", 'WEIGHT_GPENCIL', "WPAINT_HLT"]]
         
         else:
             modes = [["Object", object_mode, "OBJECT_DATAMODE"],
                      ["Edit", edit, "EDITMODE_HLT"]]
         
             # remove edit mode if object does not have it
-            if ob_type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]: del modes[1]
-            
-        if gpd: modes.append(["Edit Strokes", gpencil_edit, "GREASEPENCIL"])
+            if obj.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]: del modes[1]
             
         return modes
 
     def draw(self, context):
-        modes = self.init()
+        modes = self.init(context)
         menu = Menu(self)
 
         # add the menu items
