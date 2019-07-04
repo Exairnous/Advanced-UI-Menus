@@ -16,9 +16,9 @@
   * Curve menu = W (works in: Sculpt mode, Vertex Paint mode, Weight Paint mode, Texture Paint Mode)  
   * Custom menu = Alt-MiddleMouse  
   * Delete menu = X  
-  * Dyntopo menu = Ctrl-D - Tap for toggle(on/off), hold for menu  
+  * Dyntopo menu = Ctrl-D__
   * Layers window = M  
-  * Manipulator = Ctrl-Space - Tap for toggle(on/off), hold for menu  
+  * Manipulator = Alt-Space  
   * Mesh Selection menu = Ctrl-Tab  
   * Mesh Extrude = E - Tap for extrude, hold for menu  
   * Mode menu = Tab - Tap for toggle(last/edit), hold for menu  

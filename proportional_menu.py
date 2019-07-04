@@ -1,5 +1,73 @@
 from .Utils.core import *
 
+def get_prop_edit(context):
+    if not context.tool_settings.use_proportional_edit:
+        return 'DISABLED'
+    
+    if context.tool_settings.use_proportional_connected:
+        return 'CONNECTED'
+    
+    elif context.tool_settings.use_proportional_projected:
+        return 'PROJECTED'
+    
+    else:
+        return 'ENABLED'
+
+def toggle_prop_other(context):
+    editor = context.space_data.type
+    ts = context.tool_settings
+    
+    if editor == 'DOPESHEET_EDITOR':
+        ts.use_proportional_action = not ts.use_proportional_action
+        return
+
+    if editor == 'GRAPH_EDITOR':
+        ts.use_proportional_fcurve = not ts.use_proportional_fcurve
+        return
+            
+    if editor == 'IMAGE_EDITOR':
+        if context.space_data.show_maskedit:
+            ts.use_proportional_edit_mask = not ts.use_proportional_edit_mask  
+        
+        else:
+            ts.use_proportional_edit = not ts.use_proportional_edit
+        
+        return
+                
+    if get_mode() == 'OBJECT':
+        ts.use_proportional_edit_objects = not ts.use_proportional_edit_objects
+        return
+
+class SetPropEditOperator(bpy.types.Operator):
+    '''Set Proportional Edit Mode'''
+    bl_label = "Set Proportional Edit Operator"
+    bl_idname = "view3d.set_prop_edit_operator"
+    
+    mode: bpy.props.StringProperty()
+    
+    def execute(self, context):
+        if self.mode == 'ENABLED':
+            context.tool_settings.use_proportional_edit = True
+            context.tool_settings.use_proportional_connected = False
+            context.tool_settings.use_proportional_projected = False
+        
+        elif self.mode == 'CONNECTED':
+            context.tool_settings.use_proportional_edit = True
+            context.tool_settings.use_proportional_connected = True
+            context.tool_settings.use_proportional_projected = False
+        
+        elif self.mode == 'PROJECTED':
+            context.tool_settings.use_proportional_edit = True
+            context.tool_settings.use_proportional_connected = False
+            context.tool_settings.use_proportional_projected = True
+        
+        elif self.mode == 'DISABLED':
+            context.tool_settings.use_proportional_edit = False
+        
+        else:
+            print("Proportional Edit Mode Not Supported")
+        
+        return {'FINISHED'}
 
 # adds a proportional mode menu
 class ProportionalModeOperator(bpy.types.Operator):
@@ -8,47 +76,11 @@ class ProportionalModeOperator(bpy.types.Operator):
 
     last_mode = ['DISABLED', 'ENABLED']
 
-    def init(self, context):
-        if context.space_data.type == 'DOPESHEET_EDITOR':
-            if context.tool_settings.use_proportional_action == False:
-                context.tool_settings.use_proportional_action = True
-                
-            else:
-                context.tool_settings.use_proportional_action = False
-            
-            return {'FINISHED'}
-
-        if context.space_data.type == 'GRAPH_EDITOR':
-            if context.tool_settings.use_proportional_fcurve == False:
-                context.tool_settings.use_proportional_fcurve = True
-                
-            else:
-                context.tool_settings.use_proportional_fcurve = False
-            
-            return {'FINISHED'}
-            
-        if context.space_data.type == 'IMAGE_EDITOR':
-            if context.space_data.show_maskedit:
-                if context.tool_settings.use_proportional_edit_mask == False:
-                    context.tool_settings.use_proportional_edit_mask = True
-                
-                else:
-                    context.tool_settings.use_proportional_edit_mask = False
-                
-                return {'FINISHED'}
-                
-        if get_mode() == 'OBJECT':
-            if context.tool_settings.use_proportional_edit_objects == False:
-                context.tool_settings.use_proportional_edit_objects = True
-                
-            else:
-                context.tool_settings.use_proportional_edit_objects = False
-            
-            return {'FINISHED'}
-
+    def update_last_mode(self, context):
         # populate the list of last modes
-        if context.tool_settings.proportional_edit not in self.last_mode:
-            self.last_mode.append(context.tool_settings.proportional_edit)
+        prop_edit = get_prop_edit(context)
+        if prop_edit not in self.last_mode:
+            self.last_mode.append(prop_edit)
             
         # keep the list to 2 items
         if len(self.last_mode) > 2:
@@ -56,6 +88,10 @@ class ProportionalModeOperator(bpy.types.Operator):
 
     def modal(self, context, event):
         current_time = time.time()
+        
+        if event.value == 'RELEASE' and not (get_mode() == 'EDIT' and context.space_data.type == 'VIEW_3D'):
+            toggle_prop_other(context)
+            return {'FINISHED'}
         
         # if key has been held for more than 0.3 seconds call the menu
         if event.value == 'RELEASE' and current_time > self.start_time + 0.3:
@@ -65,18 +101,20 @@ class ProportionalModeOperator(bpy.types.Operator):
         
         # else toggle between off and your last used mode
         elif event.value == 'RELEASE' and current_time < self.start_time + 0.3:
-            if context.tool_settings.proportional_edit != self.last_mode[0]:
-                context.tool_settings.proportional_edit = self.last_mode[0]
+            if get_prop_edit(context) != self.last_mode[0]:
+                bpy.ops.view3d.set_prop_edit_operator(mode=self.last_mode[0])
                 
             else:
-                context.tool_settings.proportional_edit = self.last_mode[1]
+                bpy.ops.view3d.set_prop_edit_operator(mode=self.last_mode[1])
             
             return {'FINISHED'}
         
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        self.init(context)
+        if get_mode() == 'EDIT':
+            self.update_last_mode(context)
+            
         self.start_time = time.time()
         context.window_manager.modal_handler_add(self)
         
@@ -84,7 +122,7 @@ class ProportionalModeOperator(bpy.types.Operator):
 
 
 class ProportionalEditingMenu(bpy.types.Menu):
-    bl_label = "Proportional"
+    bl_label = "Proportional Edit Mode"
     bl_idname = "VIEW3D_MT_proportional_menu"
 
     @classmethod
@@ -96,11 +134,28 @@ class ProportionalEditingMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-
+        
+        # get current prop mode
+        prop_edit = get_prop_edit(context)
+        
+        
         # add the items to the menu
-        for mode in context.tool_settings.bl_rna.properties['proportional_edit'].enum_items:
-            menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.proportional_edit",
-                     icon=mode.icon, disable=True)
+        menu.add_item().operator("view3d.set_prop_edit_operator", text="Disabled", icon='PROP_OFF').mode = 'DISABLED'
+        if prop_edit == 'DISABLED':
+            menu.current_item.enabled = False
+        
+        menu.add_item().operator("view3d.set_prop_edit_operator", text="Enabled (Standard)", icon='PROP_ON').mode = 'ENABLED'
+        if prop_edit == 'ENABLED':
+            menu.current_item.enabled = False
+        
+        menu.add_item().operator("view3d.set_prop_edit_operator", text="Connected", icon='PROP_CON').mode = 'CONNECTED'
+        if prop_edit == 'CONNECTED':
+            menu.current_item.enabled = False
+        
+        menu.add_item().operator("view3d.set_prop_edit_operator", text="Projected (2D)", icon='PROP_PROJECTED').mode = 'PROJECTED'
+        if prop_edit == 'PROJECTED':
+            menu.current_item.enabled = False
+        
 
 class FalloffMenu(bpy.types.Menu):
     bl_label = "Falloff Menu"
@@ -127,6 +182,7 @@ class FalloffMenu(bpy.types.Menu):
 addon_keymaps = []
 
 classes = (
+    SetPropEditOperator,
     ProportionalModeOperator,
     ProportionalEditingMenu,
     FalloffMenu

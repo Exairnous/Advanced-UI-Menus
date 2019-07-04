@@ -17,10 +17,10 @@ class SelectionModeMenu(bpy.types.Menu):
             modes = [["Vertex Select", (True, False, False), 'VERTEXSEL'],
                      ["Edge Select", (False, True, False), 'EDGESEL'],
                      ["Face Select", (False, False, True), 'FACESEL'],
-                     ["Vertex & Edge Select", (True, True, False), 'EDIT'],
+                     ["Vertex & Edge Select", (True, True, False), 'MOD_SIMPLIFY'],
                      ["Vertex & Face Select", (True, False, True), 'EDITMODE_HLT'],
-                     ["Edge & Face Select", (False, True, True), 'SPACE2'],
-                     ["Vertex, Edge & Face Select", (True, True, True), 'OBJECT_DATAMODE']]
+                     ["Edge & Face Select", (False, True, True), 'MOD_SOLIDIFY'],
+                     ["Vertex, Edge & Face Select", (True, True, True), 'MOD_MESHDEFORM']]
             
             datapath = "tool_settings.mesh_select_mode[0:3]"
             
@@ -47,7 +47,7 @@ class SelectionModeMenu(bpy.types.Menu):
             if num in [2, 6, 7]:
                 menu.add_item().separator()
 
-        menu.add_item().prop(context.space_data, "use_occlude_geometry", icon='ORTHO', toggle=True)
+        menu.add_item().prop(context.space_data.shading, "show_xray", icon='XRAY', toggle=True)
         
 ### ------------ New hotkeys and registration ------------ ###
 

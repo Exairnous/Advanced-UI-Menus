@@ -52,7 +52,7 @@ class StrokeOptionsMenu(bpy.types.Menu):
         
         menu.add_item().separator()
 
-        if stroke_method == space:
+        if stroke_method in [space, line]:
             menu.add_item().prop(brush, "spacing", text=PIW+"Spacing", slider=True)
 
         elif stroke_method == airbrush:

@@ -11,6 +11,7 @@ weight_paint = 'WEIGHT_PAINT'
 texture_paint = 'TEXTURE_PAINT'
 particle_edit = 'PARTICLE_EDIT'
 pose = 'POSE'
+gpencil_edit = 'EDIT_GPENCIL'
 
 PIW = '       '
 
