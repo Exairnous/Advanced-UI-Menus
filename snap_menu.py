@@ -46,7 +46,8 @@ class SnapModeMenu(bpy.types.Menu):
 
     def draw(self, context):
         menu = Menu(self)
-        snap_element = bpy.context.tool_settings.snap_element
+        snap_elements = context.tool_settings.snap_elements
+        snap_node_element = context.tool_settings.snap_node_element
         
         # menu for node editor
         if context.space_data.type == 'NODE_EDITOR':
@@ -56,7 +57,7 @@ class SnapModeMenu(bpy.types.Menu):
                 menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.snap_node_element",
                          icon=mode.icon, disable=True)
                 
-            if snap_element != "INCREMENT":
+            if snap_node_element != "GRID":
                 menu.add_item().separator()
                 menu.add_item().menu(SnapTargetMenu.bl_idname)
         
@@ -64,27 +65,27 @@ class SnapModeMenu(bpy.types.Menu):
         if context.space_data.type == 'VIEW_3D':
 
             # add the menu items
-            for mode in context.tool_settings.bl_rna.properties['snap_element'].enum_items:
-                menuprop(menu.add_item(), mode.name, mode.identifier, "tool_settings.snap_element",
+            for mode in context.tool_settings.bl_rna.properties['snap_elements'].enum_items:
+                menuprop(menu.add_item(), mode.name, {mode.identifier}, "tool_settings.snap_elements",
                          icon=mode.icon, disable=True)
 
-            if snap_element != "INCREMENT":
+            if snap_elements != {"INCREMENT"}:
                 menu.add_item().separator()
                 menu.add_item().menu(SnapTargetMenu.bl_idname)
                 
             menu.add_item().separator()
 
-            if snap_element == "INCREMENT":
-                menu.add_item().prop(bpy.context.tool_settings, "use_snap_grid_absolute", toggle=True)
+            if snap_elements == {"INCREMENT"}:
+                menu.add_item().prop(context.tool_settings, "use_snap_grid_absolute", toggle=True)
 
-            if snap_element not in ["INCREMENT", "VOLUME"]:
-                menu.add_item().prop(bpy.context.tool_settings, "use_snap_align_rotation", toggle=True)
+            if snap_elements != {"INCREMENT"}:
+                menu.add_item().prop(context.tool_settings, "use_snap_align_rotation", toggle=True)
 
-            if snap_element == "FACE":
-                menu.add_item().prop(bpy.context.tool_settings, "use_snap_project", toggle=True)
+            if snap_elements == {"FACE"}:
+                menu.add_item().prop(context.tool_settings, "use_snap_project", toggle=True)
 
-            if snap_element == "VOLUME":
-                menu.add_item().prop(bpy.context.tool_settings, "use_snap_peel_object", toggle=True)
+            if snap_elements == {"VOLUME"}:
+                menu.add_item().prop(context.tool_settings, "use_snap_peel_object", toggle=True)
 
 
 class SnapTargetMenu(bpy.types.Menu):

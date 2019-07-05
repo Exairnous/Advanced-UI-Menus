@@ -7,7 +7,8 @@ class TextureMenu(bpy.types.Menu):
     
     @classmethod
     def poll(self, context):
-        if get_mode() in [sculpt, vertex_paint, texture_paint]:
+        #TODO support image editor
+        if context.space_data.type == 'VIEW_3D' and get_mode() in [sculpt, vertex_paint, texture_paint]:
             return True
         else:
             return False

@@ -6,7 +6,8 @@ class BrushCurveMenu(bpy.types.Menu):
     
     @classmethod
     def poll(self, context):
-        if get_mode() in [sculpt, vertex_paint, weight_paint, texture_paint, particle_edit]:
+        #TODO support image editor
+        if context.space_data.type == 'VIEW_3D' and get_mode() in [sculpt, vertex_paint, weight_paint, texture_paint, particle_edit]:
             return True
         else:
             return False

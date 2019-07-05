@@ -13,16 +13,17 @@ class ViewMenu(bpy.types.Menu):
                       ["Top", "TOP"],
                       ["Back", "BACK"],
                       ["Left", "LEFT"],
-                      ["Bottom", "BOTTOM"],
-                      ["Camera", "CAMERA"]]
+                      ["Bottom", "BOTTOM"]]
         
         # add the menu items
         for mode in view_modes:
-            prop = menu.add_item().operator("view3d.viewnumpad", mode[0])
-            prop.type = mode[1]
-            if mode[0] in ["Top", "Bottom", "Camera"]:
+            menu.add_item().operator("view3d.view_axis", text=mode[0]).type = mode[1]
+            if mode[0] in ["Top", "Bottom"]:
                 menu.add_item().separator()
-
+        
+        menu.add_item().operator("view3d.view_camera", text="Camera")
+        menu.add_item().separator()
+        
         menu.add_item().menu(OtherViewMenu.bl_idname)
 
 
