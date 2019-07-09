@@ -161,6 +161,7 @@ class CMNewCollectionOperator(bpy.types.Operator):
                 laycol["parent"]["ptr"].collection.children.link(new_collection)
         else:
             scn.collection.children.link(new_collection)
+            scn.CMListIndex = 0
         
         update_property_group(context)
         
@@ -176,7 +177,8 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
     
     def execute(self, context):
         collection = layer_collections[self.collection_name]["ptr"].collection
-        laycol_parent = layer_collections[self.collection_name]["parent"]
+        laycol = layer_collections[self.collection_name]
+        laycol_parent = laycol["parent"]
         
         if laycol_parent == None:
             parent_collection_id = 0
@@ -185,16 +187,42 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
             parent_collection_id = laycol_parent["id"]
             laycol_parent_ptr = laycol_parent["ptr"]
         
-        orig_selected_objs = context.selected_objects
-        orig_active_obj = context.active_object
+        orig_parent_hide_select = False
+        orig_parent_exclude = False
+        orig_parent_hide_viewport = False
+        
+        
+        collection.hide_select = False
+        laycol["ptr"].exclude = False
+        laycol["ptr"].hide_viewport = False
+        
+        
+        if laycol_parent_ptr.collection.hide_select:
+            orig_parent_hide_select = True
+        
+        if laycol_parent_ptr.exclude:
+            orig_parent_exclude = True
+        
+        if laycol_parent_ptr.hide_viewport:
+            orig_parent_hide_viewport = True
+            
+        laycol_parent_ptr.collection.hide_select = False
+        laycol_parent_ptr.exclude = False
+        laycol_parent_ptr.hide_viewport = False
         
         if collection.objects:
+            orig_selected_objs = context.selected_objects
+            orig_active_obj = context.active_object
+        
+                
             bpy.ops.object.select_same_collection(collection=collection.name)
-            try:
-                bpy.ops.object.link_to_collection(collection_index=parent_collection_id)
-                bpy.ops.collection.objects_remove(collection=collection.name)
-            except:
-                pass
+            context.view_layer.objects.active = context.selected_objects[0]
+            
+            #try:
+            bpy.ops.object.link_to_collection(collection_index=parent_collection_id)
+            bpy.ops.collection.objects_remove(collection=collection.name)
+            #except:
+                #pass
             
             bpy.ops.object.select_all(action='DESELECT')
             
@@ -202,9 +230,14 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
                 obj.select_set(True)
             context.view_layer.objects.active = orig_active_obj
         
+        
         if collection.children:
             for item in collection.children:
                 laycol_parent_ptr.collection.children.link(item)
+        
+        laycol_parent_ptr.collection.hide_select = orig_parent_hide_select
+        laycol_parent_ptr.exclude = orig_parent_exclude
+        laycol_parent_ptr.hide_viewport = orig_parent_hide_viewport
         
         bpy.data.collections.remove(collection)
         
@@ -287,17 +320,17 @@ class CM_UL_items(bpy.types.UIList):
         row.prop(collection, "name", text="", expand=True)
         row.label()
         
-        row1 = row.row()
-        row1.operator_context = 'INVOKE_DEFAULT'
+        rowset = row.row()
+        rowset.operator_context = 'INVOKE_DEFAULT'
             
         if len(context.selected_objects) > 0 and context.active_object:
             if context.active_object.name in collection.objects:
-                prop = row1.operator("view3d.set_collection", text="", icon='SNAP_VOLUME', emboss=False)
+                prop = rowset.operator("view3d.set_collection", text="", icon='SNAP_VOLUME', emboss=False)
             else:
-                prop = row1.operator("view3d.set_collection", text="", icon='MESH_CUBE', emboss=False)
+                prop = rowset.operator("view3d.set_collection", text="", icon='MESH_CUBE', emboss=False)
         else:
-            row1.enabled = False
-            prop = row1.operator("view3d.set_collection", text="", icon='MESH_CUBE', emboss=False)
+            rowset.enabled = False
+            prop = rowset.operator("view3d.set_collection", text="", icon='MESH_CUBE', emboss=False)
             
             
             
