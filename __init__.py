@@ -36,12 +36,13 @@ from .Utils.core import *
 
 from . import brush_menu
 from . import brushes
+from . import collection_manager
 from . import curve_menu
 from . import custom_menu
 from . import delete_menu
 from . import dyntopo_menu
 from . import extrude_menu
-from . import layers_window
+#from . import layers_window
 from . import manipulator_menu
 from . import mode_menu
 from . import pivot_menu
@@ -54,15 +55,17 @@ from . import symmetry_menu
 from . import texture_menu
 from . import view_menu
 
-addon_files = [ 
+addon_files = [
+               Utils.core,
                brush_menu,
                brushes,
+               collection_manager,
                curve_menu,
                custom_menu,
                delete_menu,
                dyntopo_menu,
                extrude_menu,
-               layers_window,
+               #layers_window,
                manipulator_menu,
                mode_menu,
                pivot_menu,

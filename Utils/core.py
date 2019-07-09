@@ -166,15 +166,48 @@ class SendReport(bpy.types.Operator):
     bl_label = "Send Report"
     bl_idname = "view3d.send_report"
     
-    message = bpy.props.StringProperty()
+    message: bpy.props.StringProperty()
     
     def draw(self, context):
-        self.layout.label("Error", icon='ERROR')
-        self.layout.label(self.message)
+        layout = self.layout
+        
+        first = True
+        string = ""
+        
+        for num, char in enumerate(self.message):
+            if char == "\n":
+                if first:
+                    layout.row().label(text=string, icon='ERROR')
+                    first = False
+                else:
+                    layout.row().label(text=string, icon='BLANK1')
+                    
+                string = ""
+                continue
+            
+            string = string + char
+        
+        if first:
+            layout.row().label(text=string, icon='ERROR')
+        else:
+            layout.row().label(text=string, icon='BLANK1')
     
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_popup(self, width=400, height=200)
+        
+        max_len = 0
+        length = 0
+        
+        for char in self.message:
+            if char == "\n":
+                if length > max_len:
+                    max_len = length
+                length = 0
+            else:
+                length += 1
+            
+        
+        return wm.invoke_popup(self, width=(max_len*6), height=200)
     
     def execute(self, context):
         self.report({'INFO'}, self.message)
@@ -182,11 +215,11 @@ class SendReport(bpy.types.Operator):
         return {'FINISHED'}
     
 def send_report(message):
-    def report(scene):
-        bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
-        bpy.app.handlers.scene_update_pre.remove(report)
-        
-    bpy.app.handlers.scene_update_pre.append(report)
+    bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
+    def report():
+        bpy.ops.view3d.send_report(message=message)
+
+    #bpy.app.timers.register(report, first_interval=1)
 
 
 
@@ -240,3 +273,15 @@ class StickyKeyOperatorExample(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
             
         return {'RUNNING_MODAL'}
+
+classes = (
+    SendReport,
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
