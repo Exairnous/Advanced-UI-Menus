@@ -205,9 +205,11 @@ class SendReport(bpy.types.Operator):
                 length = 0
             else:
                 length += 1
-            
         
-        return wm.invoke_popup(self, width=(max_len*6), height=200)
+        if length > max_len:
+            max_len = length
+
+        return wm.invoke_popup(self, width=(30 + (max_len*5.5)))
     
     def execute(self, context):
         self.report({'INFO'}, self.message)
@@ -215,11 +217,13 @@ class SendReport(bpy.types.Operator):
         return {'FINISHED'}
     
 def send_report(message):
-    bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
+    #bpy.ops.view3d.send_report('INVOKE_DEFAULT', message=message)
     def report():
-        bpy.ops.view3d.send_report(message=message)
+        window = bpy.context.window_manager.windows[0]
+        ctx = {'window': window, 'screen': window.screen, }
+        bpy.ops.view3d.send_report(ctx, 'INVOKE_DEFAULT', message=message)
 
-    #bpy.app.timers.register(report, first_interval=1)
+    bpy.app.timers.register(report)
 
 
 
