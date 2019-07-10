@@ -129,13 +129,16 @@ def fill_operator_list():
         for op_submodule_name in dir(op_module):
             op = getattr(op_module, op_submodule_name)
             text = repr(op)
-            ent_op = text.split("\n")[1]
+            #ent_op = text.split("\n")[1]
+            ent_op = text
             op_path = ent_op[8:str.find(ent_op, "(")]
             if ent_op.startswith("bpy.ops.") and not "import." in ent_op:
                 try:
-                    op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
-                    op_name = op.bl_rna.name
-                    operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                    #op = eval("{0}.get_rna()".format(ent_op[:str.find(ent_op, "(")]))
+                    #op_name = op.bl_rna.name
+                    #op_name = eval("{0}.idname_py()".format(ent_op[:str.find(ent_op, "(")]))
+                    #operators.append((op_path, op_path.split(".")[0].upper() + " - " + op_name, op_path))
+                    operators.append((op_path, op_path, op_path))
                 except:
                     print("\nError could not parse operator: {0}\n".format(ent_op[:str.find(ent_op, "(")]))
 
@@ -151,9 +154,9 @@ def create_property_list():
     
     prop_list.clear()
     fill_property_list()
-    print(len(prop_list))
+    #print(len(prop_list))
     prop_list = sorted(prop_list, key=lambda prop: prop[1])
-    print(len(prop_list))
+    #print(len(prop_list))
 
 def fill_property_list(loc="bpy.context", prev_property_name=""):
     global prop_list
@@ -185,12 +188,14 @@ def fill_property_list(loc="bpy.context", prev_property_name=""):
                'int' in propstr or 'pointer' in propstr or \
                'str' in propstr:
                    prop_path = loc[4:]+'.'+property_name
-                   prop_list.append((prop_path, prop_cat+' - '+prev_property_name+'.'+property_name, prop_path))
+                   #prop_list.append((prop_path, prop_cat+' - '+prev_property_name+'.'+property_name, prop_path))
+                   prop_list.append((prop_path, prop_path[8:], prop_path))
                    #print(prop_cat+' - '+property_name+' ', loc+'.'+property_name)
             else:
-                if not '__' in property_name and not 'NoneType' in propstr and not 'func' in propstr and not 'Vector' in propstr and not 'Matrix' in propstr and not 'Color' in propstr and not 'rna' in property_name and not 'children' in property_name and not 'owner' in property_name:
+                if not '__' in property_name and not 'NoneType' in propstr and not 'func' in propstr and not 'Vector' in propstr and not 'Matrix' in propstr and not 'Color' in propstr and not 'rna' in property_name and not 'children' in property_name and not 'owner' in property_name and not 'original' in property_name and not 'depsgraph.view_layer' in loc:
                     #print(property_name)
                     #print(propstr)
+                    #print(loc)
                     fill_property_list(loc+'.'+property_name, property_name)
                 #print(dir(prop))
                 
@@ -209,9 +214,10 @@ def fill_menu_list():
         try:
             module_type = "{}".format(eval("bpy.types.{}.__bases__".format(module_name)))
             if "Menu" in module_type:
-                label = eval("bpy.types.{}.bl_label".format(module_name))
-                name = module_name.split("_")[0] + " - " + label if label != "" else module_name
-                menus.append((module_name, name, module_name))
+                #label = eval("bpy.types.{}.bl_label".format(module_name))
+                #name = module_name.split("_")[0] + " - " + label if label != "" else module_name.split("_")[0] + " - " + module_name
+                #menus.append((module_name, name, module_name))
+                menus.append((module_name, module_name, module_name))
         except:
             pass
 
@@ -441,6 +447,7 @@ class CustomMenu(bpy.types.Menu):
             #context.window_manager.popup_menu(errmsg(self, context, errors), title=error_str, icon='ERROR')
         
 class CustomMenuEditor(bpy.types.Operator):
+    '''Open custom menu editor'''
     bl_label = "Custom Menu Editor"
     bl_idname = "view3d.custom_menu_editor"
     bl_options = {'REGISTER'}
@@ -558,6 +565,7 @@ class CustomMenuEditor(bpy.types.Operator):
         return {'FINISHED'}
     
 class SaveCustomItem(bpy.types.Operator):
+    '''Apply proposed modification to the menu'''
     bl_label = "Add Item"
     bl_idname = "view3d.save_custom_item"
     bl_options = {'REGISTER'}
@@ -575,7 +583,7 @@ class SaveCustomItem(bpy.types.Operator):
         
         if scn.CustomMenuItemType == "OP":
             try:
-                op_inst = eval("bpy.ops.{0}.get_instance".format(scn.CustomMenuItemPath))
+                op_inst = eval("bpy.ops.{0}.get_rna_type()".format(scn.CustomMenuItemPath))
             except:
                 bpy.ops.view3d.send_report('INVOKE_DEFAULT', \
                 message="Invalid Path: {0}".format(scn.CustomMenuItemPath))
@@ -741,11 +749,12 @@ class SaveCustomItem(bpy.types.Operator):
         return {'FINISHED'}
     
 class SearchableOperatorListMenu(bpy.types.Operator):
+    '''List all operators in blender'''
     bl_label = "Searchable Operator List Menu"
     bl_idname = "view3d.search_op_list_menu"
     bl_property = "op_enum"
     
-    op_enum = bpy.props.EnumProperty(items=get_operator_list)
+    op_enum: bpy.props.EnumProperty(items=get_operator_list)
     
     def invoke(self, context, event):
         fill_operator_list()
@@ -762,11 +771,12 @@ class SearchableOperatorListMenu(bpy.types.Operator):
         return{'FINISHED'}
     
 class SearchablePropertyListMenu(bpy.types.Operator):
+    '''List all properties in blender'''
     bl_label = "Searchable Property List Menu"
     bl_idname = "view3d.search_prop_list_menu"
     bl_property = "op_enum"
     
-    op_enum = bpy.props.EnumProperty(items=get_property_list)
+    op_enum: bpy.props.EnumProperty(items=get_property_list)
     
     def draw(self, context):
         self.layout.scale_x = 100
@@ -788,11 +798,12 @@ class SearchablePropertyListMenu(bpy.types.Operator):
         return{'FINISHED'}
     
 class SearchableMenuListMenu(bpy.types.Operator):
+    '''List all menus in blender'''
     bl_label = "Searchable Menu List Menu"
     bl_idname = "view3d.search_menu_list_menu"
     bl_property = "op_enum"
     
-    op_enum = bpy.props.EnumProperty(items=get_menu_list)
+    op_enum: bpy.props.EnumProperty(items=get_menu_list)
     
     def invoke(self, context, event):
         fill_menu_list()
