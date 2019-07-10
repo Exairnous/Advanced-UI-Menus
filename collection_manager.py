@@ -72,7 +72,7 @@ def create_property_group(context, tree):
                 create_property_group(context, item["children"])
 
 class ExpandAllOperator(bpy.types.Operator):
-    '''Expand/Retract all collections'''
+    '''Expand/Collapse all collections'''
     bl_label = "Expand All Items"
     bl_idname = "view3d.expand_all_items"
     
@@ -91,7 +91,7 @@ class ExpandAllOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 class ExpandSublevelOperator(bpy.types.Operator):
-    '''Expand/Retract sublevel. Shift-Click to expand/retract all sublevels'''
+    '''Expand/Collapse sublevel. Shift-Click to expand/collapse all sublevels'''
     bl_label = "Expand Sublevel Items"
     bl_idname = "view3d.expand_sublevel"
     
@@ -138,6 +138,91 @@ class ExpandSublevelOperator(bpy.types.Operator):
         
         return {'FINISHED'}
             
+
+
+class CMExcludeOperator(bpy.types.Operator):
+    '''Exclude collection. Shift-Click to isolate collection'''
+    bl_label = "Exclude Collection"
+    bl_idname = "view3d.exclude_collection"
+    
+    name: bpy.props.StringProperty()
+    
+    def invoke(self, context, event):
+        laycol = layer_collections[self.name]["ptr"]
+        
+        if event.shift:
+            active_layer_collections = [x for x in layer_collections.values() \
+                                          if x["ptr"].exclude == False]
+            
+            if len(active_layer_collections) == 1 and active_layer_collections[0]["ptr"].name == self.name:
+                for item in layer_collections.values():
+                    item["ptr"].exclude = False
+            
+            else:
+                for item in layer_collections.values():
+                    if item["ptr"].name != laycol.name:
+                        item["ptr"].exclude = True
+                laycol.exclude = False
+                
+                laycol_iter = [laycol.children]
+                while len(laycol_iter) > 0:
+                    new_laycol_iter = []
+                    for item in laycol_iter:
+                        for laycolx in item:
+                            laycolx.exclude = True
+                            if len(laycolx.children) > 0:
+                                new_laycol_iter.append(laycolx.children)
+                    
+                    laycol_iter = new_laycol_iter
+                            
+        
+        else:
+            laycol.exclude = not laycol.exclude
+        
+        update_property_group(context)
+        
+        return {'FINISHED'}
+            
+
+class CMHideOperator(bpy.types.Operator):
+    '''Hide collection. Shift-Click to isolate collection chain'''
+    bl_label = "Hide Collection"
+    bl_idname = "view3d.hide_collection"
+    
+    name: bpy.props.StringProperty()
+    
+    def invoke(self, context, event):
+        laycol = layer_collections[self.name]["ptr"]
+        
+        if event.shift:
+            active_layer_collections = [x for x in layer_collections.values() \
+                                          if x["ptr"].hide_viewport == False]
+            
+            layerchain = []
+            laycol_iter = layer_collections[self.name]
+            while laycol_iter["id"] != 0:
+                    layerchain.append(laycol_iter)
+                    laycol_iter = laycol_iter["parent"]
+            
+            if layerchain[::-1] == active_layer_collections:
+                for item in layer_collections.values():
+                    item["ptr"].hide_viewport = False
+            
+            else:
+                for item in layer_collections.values():
+                    item["ptr"].hide_viewport = True
+                laycol.hide_viewport = False
+                
+                laycol_iter = layer_collections[self.name]
+                while laycol_iter["id"] != 0:
+                    laycol_iter["ptr"].hide_viewport = False
+                    laycol_iter = laycol_iter["parent"]
+        
+        else:
+            laycol.hide_viewport = not laycol.hide_viewport
+        
+        return {'FINISHED'}
+
 
 class CMNewCollectionOperator(bpy.types.Operator):
     '''Add New Collection'''
@@ -338,9 +423,19 @@ class CM_UL_items(bpy.types.UIList):
         prop.collection_name = collection.name
         
         
-        row.prop(laycol, "exclude", text="", emboss=False)
+        #row.prop(laycol, "exclude", text="", emboss=False)
+        if laycol.exclude:
+            row.operator("view3d.exclude_collection", text="", icon='CHECKBOX_DEHLT', emboss=False).name = collection.name
+        else:
+            row.operator("view3d.exclude_collection", text="", icon='CHECKBOX_HLT', emboss=False).name = collection.name
+            
+        
         row.prop(collection, "hide_select", icon='RESTRICT_SELECT_OFF', icon_only=True, emboss=False)
-        row.prop(laycol, "hide_viewport", icon='HIDE_OFF', icon_only=True, emboss=False)
+        
+        if laycol.hide_viewport:
+            row.operator("view3d.hide_collection", text="", icon='HIDE_ON', emboss=False).name = collection.name
+        else:
+            row.operator("view3d.hide_collection", text="", icon='HIDE_OFF', emboss=False).name = collection.name
         
         row.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = collection.name
 
@@ -362,7 +457,7 @@ class CollectionManager(bpy.types.Operator):
         row1.alignment = 'LEFT'
         
         if len(expanded) > 0:
-            row1.operator("view3d.expand_all_items", text="Retract All Items")
+            row1.operator("view3d.expand_all_items", text="Collapse All Items")
         else:
             row1.operator("view3d.expand_all_items", text="Expand All Items")
         
@@ -403,6 +498,8 @@ addon_keymaps = []
 classes = (
     ExpandAllOperator,
     ExpandSublevelOperator,
+    CMExcludeOperator,
+    CMHideOperator,
     CMNewCollectionOperator,
     CMRemoveCollectionOperator,
     CMSetCollectionOperator,
