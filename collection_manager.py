@@ -401,7 +401,7 @@ class CM_UL_items(bpy.types.UIList):
         else:
             row.label(icon='BLANK1')
         
-        row.label(icon='IMAGE_PLANE')
+        row.label(icon='GROUP')
         row.prop(collection, "name", text="", expand=True)
         row.label()
         
