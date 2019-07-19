@@ -63,7 +63,7 @@ def register():
     # create the global menu hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-    kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
+    kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS', alt=True)
     kmi.properties.name = 'VIEW3D_MT_view_menu'
     addon_keymaps.append((km, kmi))
 

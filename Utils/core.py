@@ -13,6 +13,7 @@ particle_edit = 'PARTICLE_EDIT'
 pose = 'POSE'
 gpencil_edit = 'EDIT_GPENCIL'
 
+# Property Icon Width
 PIW = '       '
 
 a_props = []
