@@ -30,35 +30,64 @@ bl_info = {
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Advanced_UI_Menus_Full",
     "category": "User Interface"}
 
-import sys, os
 
+if "bpy" in locals():
+    import importlib
+    
+    #importlib.reload(brush_menu)
+    #importlib.reload(brushes)
+    importlib.reload(collection_manager)
+    importlib.reload(curve_menu)
+    importlib.reload(custom_menu)
+    importlib.reload(delete_menu)
+    importlib.reload(dyntopo_menu)
+    importlib.reload(extrude_menu)
+    #importlib.reload(layers_window)
+    importlib.reload(manipulator_menu)
+    importlib.reload(mode_menu)
+    importlib.reload(paint_options)
+    importlib.reload(pivot_menu)
+    importlib.reload(proportional_menu)
+    importlib.reload(selection_menu)
+    importlib.reload(shade_menu)
+    importlib.reload(snap_menu)
+    importlib.reload(stroke_menu)
+    importlib.reload(symmetry_menu)
+    importlib.reload(texture_menu)
+    importlib.reload(view_menu)
+
+else:
+    #from . import brush_menu
+    #from . import brushes
+    from . import collection_manager
+    from . import curve_menu
+    from . import custom_menu
+    from . import delete_menu
+    from . import dyntopo_menu
+    from . import extrude_menu
+    #from . import layers_window
+    from . import manipulator_menu
+    from . import mode_menu
+    from . import paint_options
+    from . import pivot_menu
+    from . import proportional_menu
+    from . import selection_menu
+    from . import shade_menu
+    from . import snap_menu
+    from . import stroke_menu
+    from . import symmetry_menu
+    from . import texture_menu
+    from . import view_menu
+
+
+import sys, os
 from .Utils.core import *
 
-from . import brush_menu
-from . import brushes
-from . import collection_manager
-from . import curve_menu
-from . import custom_menu
-from . import delete_menu
-from . import dyntopo_menu
-from . import extrude_menu
-#from . import layers_window
-from . import manipulator_menu
-from . import mode_menu
-from . import pivot_menu
-from . import proportional_menu
-from . import selection_menu
-from . import shade_menu
-from . import snap_menu
-from . import stroke_menu
-from . import symmetry_menu
-from . import texture_menu
-from . import view_menu
 
 addon_files = [
                Utils.core,
-               brush_menu,
-               brushes,
+               #brush_menu,
+               #brushes,
                collection_manager,
                curve_menu,
                custom_menu,
@@ -68,6 +97,7 @@ addon_files = [
                #layers_window,
                manipulator_menu,
                mode_menu,
+               paint_options,
                pivot_menu,
                proportional_menu,
                selection_menu,
