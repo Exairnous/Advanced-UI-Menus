@@ -17,7 +17,7 @@
   * Custom menu = Alt-MiddleMouse  
   * Delete menu = X  
   * Dyntopo menu = Ctrl-D__
-  * Layers window = M  
+  * Collection Manager = M  
   * Manipulator = Alt-Space  
   * Mesh Selection menu = Ctrl-Tab  
   * Mesh Extrude = E - Tap for extrude, hold for menu  
@@ -30,7 +30,7 @@
   * Stroke menu = E (works in: Sculpt mode, Vertex Paint mode, Weight Paint mode, Texture Paint Mode)  
   * Symmetry menu = Alt-S (works in: Sculpt mode, Texture Paint Mode)  
   * Texture menu = R (works in: Sculpt mode, Vertex Paint mode, Texture Paint Mode)  
-  * View menu = Q  
+  * View menu = Alt-Q  
 
 ## Custom Menu Tutorial:
 
