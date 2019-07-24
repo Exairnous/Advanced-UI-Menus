@@ -5,6 +5,7 @@
   Menus to aid the user and increase the speed of interacting with blender's UI.  
 
 ## Installation Instructions:
+  **If you download from GitHub make sure the addon folder's name does not have any dashes in it - use underscores instead**
 
   *  Download the script then unpack and copy the folder advanced_ui_menus into your addons folder.  
   * Open Blender and go to the addons tab in User Preferences.  
@@ -16,7 +17,7 @@
   * Curve menu = W (works in: Sculpt mode, Vertex Paint mode, Weight Paint mode, Texture Paint Mode)  
   * Custom menu = Alt-MiddleMouse  
   * Delete menu = X  
-  * Dyntopo menu = Ctrl-D__
+  * Dyntopo menu = Ctrl-D  
   * Collection Manager = M  
   * Manipulator = Alt-Space  
   * Mesh Selection menu = Ctrl-Tab  
