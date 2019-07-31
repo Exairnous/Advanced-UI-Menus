@@ -77,8 +77,11 @@ class SnapModeMenu(bpy.types.Menu):
 
             if snap_elements == {"INCREMENT"}:
                 menu.add_item().prop(context.tool_settings, "use_snap_grid_absolute", toggle=True)
-
-            if snap_elements != {"INCREMENT"}:
+            
+            if snap_elements != {"INCREMENT"} and get_mode() == edit:
+                menu.add_item().prop(context.tool_settings, "use_snap_self", toggle=True)
+            
+            if snap_elements != {"INCREMENT"} and get_mode() != gpencil_edit:
                 menu.add_item().prop(context.tool_settings, "use_snap_align_rotation", toggle=True)
 
             if snap_elements == {"FACE"}:
