@@ -89,7 +89,7 @@ class ProportionalModeOperator(bpy.types.Operator):
     def modal(self, context, event):
         current_time = time.time()
         
-        if event.value == 'RELEASE' and not (get_mode() == 'EDIT' and context.space_data.type == 'VIEW_3D'):
+        if event.value == 'RELEASE' and not (get_mode() in ['EDIT', 'PARTICLE_EDIT', 'EDIT_GPENCIL'] and context.space_data.type == 'VIEW_3D'):
             toggle_prop_other(context)
             return {'FINISHED'}
         
@@ -112,7 +112,7 @@ class ProportionalModeOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if get_mode() == 'EDIT':
+        if get_mode() in ['EDIT', 'PARTICLE_EDIT', 'EDIT_GPENCIL']:
             self.update_last_mode(context)
             
         self.start_time = time.time()
