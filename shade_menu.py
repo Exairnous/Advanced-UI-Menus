@@ -82,6 +82,8 @@ class ShadeModeMenu(bpy.types.Menu):
         
         menu.add_item().separator()
         
+        menu.add_item().menu(DisplayOptionsMenu.bl_idname)
+        
         # add a shading options menu if object can be shaded smooth/flat
         if context.object and context.object.type in ['MESH', 'CURVE', 'SURFACE']:
             if context.object.use_dynamic_topology_sculpting:
@@ -89,9 +91,7 @@ class ShadeModeMenu(bpy.types.Menu):
             else:
                 if not (context.object.type == 'SURFACE' and get_mode() == 'EDIT'):
                     menu.add_item().menu(MeshShadeMenu.bl_idname)
-
-        if context.object:
-            menu.add_item().menu(DisplayOptionsMenu.bl_idname)
+        
 
 class MeshShadeMenu(bpy.types.Menu):
     bl_label = "Object Shading"
@@ -125,18 +125,22 @@ class DisplayOptionsMenu(bpy.types.Menu):
         
         menu.add_item().label(text="Display Options")
         menu.add_item().separator()
+        
+        menu.add_item().prop(context.space_data.overlay, 'show_overlays')
+        
+        if context.object:
+            menu.add_item().separator()
 
-        menu.add_item().prop(context.object, 'show_name', toggle=True)
-        menu.add_item().prop(context.object, 'show_axis', toggle=True)
-        
-        print(context.object.type)
-        if context.object.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
-            menu.add_item().prop(context.object, 'show_wire', toggle=True)
-        
-        menu.add_item().prop(context.object, 'show_in_front', toggle=True)
-        
-        if context.object.type == 'MESH':
-            menu.add_item().prop(context.object, 'show_all_edges', toggle=True)
+            menu.add_item().prop(context.object, 'show_name', toggle=True)
+            menu.add_item().prop(context.object, 'show_axis', toggle=True)
+            
+            if context.object.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
+                menu.add_item().prop(context.object, 'show_wire', toggle=True)
+            
+            menu.add_item().prop(context.object, 'show_in_front', toggle=True)
+            
+            if context.object.type == 'MESH':
+                menu.add_item().prop(context.object, 'show_all_edges', toggle=True)
         
 ### ------------ New hotkeys and registration ------------ ###
 
