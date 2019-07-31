@@ -70,13 +70,13 @@ def get_selected():
     stats = bpy.context.scene.statistics(bpy.context.view_layer).split(" | ")
     
     # get number of selected verts
-    sel_verts = int(stats[1].split(":")[1].split("/")[0])
+    sel_verts = int(stats[1].split(":")[1].split("/")[0].replace(",",""))
     
     # get number of selected edges
-    sel_edges = int(stats[2].split(":")[1].split("/")[0])
+    sel_edges = int(stats[2].split(":")[1].split("/")[0].replace(",",""))
     
     # get number of selected faces
-    sel_faces = int(stats[3].split(":")[1].split("/")[0])
+    sel_faces = int(stats[3].split(":")[1].split("/")[0].replace(",",""))
     
     return sel_verts, sel_edges, sel_faces
 
