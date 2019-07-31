@@ -34,7 +34,7 @@ class DeleteMenu(bpy.types.Menu):
         selected = self.init()
 
         if selected == "none":
-            menu.add_item().label("Nothing to Delete")
+            menu.add_item().label(text="Nothing to Delete")
             return
         
         elif selected == "verts":
