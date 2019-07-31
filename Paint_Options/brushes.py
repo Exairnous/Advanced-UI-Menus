@@ -1,7 +1,7 @@
 from ..Utils.core import *
 from .common import *
 
-custom_menus = []
+preset_menus = []
 
 def add_preset_menu(tool_mode, tool):
     id_name = 'VIEW3D_MT_tool_presets_menu_'+tool_mode+'_'+tool
@@ -14,8 +14,8 @@ def add_preset_menu(tool_mode, tool):
                 'draw': draw_func
             })
     
-    if nc not in custom_menus:
-        custom_menus.append(nc)
+    if nc not in preset_menus:
+        preset_menus.append(nc)
         bpy.utils.register_class(nc)
         
 

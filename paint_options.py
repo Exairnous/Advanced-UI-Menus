@@ -164,10 +164,13 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     
-    for menu in custom_menus:
+    # remove brush management from toolshelf
+    bpy.types.VIEW3D_PT_tools_brush.remove(brush_management)
+    
+    for menu in preset_menus:
         bpy.utils.unregister_class(menu)
     
-    custom_menus.clear()
+    preset_menus.clear()
     
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
