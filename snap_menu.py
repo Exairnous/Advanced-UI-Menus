@@ -1,4 +1,5 @@
 from .Utils.core import *
+from .Paint_Options.common import brush_modes
 
 # adds a shading mode menu
 class SnapMenuOperator(bpy.types.Operator):
@@ -9,6 +10,13 @@ class SnapMenuOperator(bpy.types.Operator):
     def poll(self, context):
         if get_mode() in [object_mode, edit, particle_edit, gpencil_edit]:
             return True
+        
+        elif get_mode() in [sculpt, vertex_paint, weight_paint, texture_paint]:
+            stroke_method = getattr(context.tool_settings, brush_modes[get_mode()]).brush.stroke_method
+            
+            if stroke_method == 'CURVE':
+                return True
+        
         else:
             return False
 
@@ -72,7 +80,7 @@ class SnapModeMenu(bpy.types.Menu):
             if snap_elements != {"INCREMENT"}:
                 menu.add_item().separator()
                 menu.add_item().menu(SnapTargetMenu.bl_idname)
-                
+            
             menu.add_item().separator()
 
             if snap_elements == {"INCREMENT"}:
@@ -81,7 +89,7 @@ class SnapModeMenu(bpy.types.Menu):
             if snap_elements != {"INCREMENT"} and get_mode() == edit:
                 menu.add_item().prop(context.tool_settings, "use_snap_self", toggle=True)
             
-            if snap_elements != {"INCREMENT"} and get_mode() != gpencil_edit:
+            if snap_elements != {"INCREMENT"} and get_mode() not in [gpencil_edit, sculpt, vertex_paint, texture_paint]:
                 menu.add_item().prop(context.tool_settings, "use_snap_align_rotation", toggle=True)
 
             if snap_elements == {"FACE"}:
