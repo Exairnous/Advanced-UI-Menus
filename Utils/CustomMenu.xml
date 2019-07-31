@@ -134,9 +134,9 @@
       <arg_val>"tool_settings.sculpt.brush";"bpy.data.brushes['Flatten/Contrast']"</arg_val>
     </item>
     <item type="MENU">
-      <path>VIEW3D_MT_brushes_menu</path>
+      <path>VIEW3D_MT_tools_menu</path>
       <name>none</name>
-      <icon>BRUSH_DATA</icon>
+      <icon>NONE</icon>
     </item>
     <item type="MENU">
       <path>VIEW3D_MT_dyn_detail</path>
@@ -214,4 +214,8 @@
   <menu area="VIEW_3D" mode="WEIGHT_PAINT" />
   <menu area="VIEW_3D" mode="PARTICLE_EDIT" />
   <menu area="VIEW_3D" mode="POSE" />
+  <menu area="VIEW_3D" mode="EDIT_GPENCIL" />
+  <menu area="VIEW_3D" mode="SCULPT_GPENCIL" />
+  <menu area="VIEW_3D" mode="PAINT_GPENCIL" />
+  <menu area="VIEW_3D" mode="WEIGHT_GPENCIL" />
 </root>
