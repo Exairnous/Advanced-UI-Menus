@@ -50,7 +50,7 @@ class EditorModeOperator(bpy.types.Operator):
         if obj.visible_get() == False:
             return {'FINISHED'}
         
-        if obj.type in ["EMPTY", "SPEAKER", "CAMERA", "LAMP"]:
+        if obj.type in ["EMPTY", "SPEAKER", "CAMERA", "LIGHT", "LIGHT_PROBE"]:
             return {'FINISHED'}
         
         self.init(obj)
