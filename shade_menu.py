@@ -79,17 +79,19 @@ class ShadeModeMenu(bpy.types.Menu):
         for mode in modes:
             menuprop(menu.add_item(), mode[0], mode[1], "space_data.shading.type",
                      icon=mode[2], disable=True)
-
+        
+        menu.add_item().separator()
+        
         # add a shading options menu if object can be shaded smooth/flat
-        if bpy.context.object and bpy.context.object.type in ['MESH', 'CURVE', 'SURFACE']:
-            menu.add_item().separator()
+        if context.object and context.object.type in ['MESH', 'CURVE', 'SURFACE']:
             if context.object.use_dynamic_topology_sculpting:
                 menu.add_item().prop(context.tool_settings.sculpt, "use_smooth_shading", toggle=True)
             else:
-                menu.add_item().menu(MeshShadeMenu.bl_idname)
+                if not (context.object.type == 'SURFACE' and get_mode() == 'EDIT'):
+                    menu.add_item().menu(MeshShadeMenu.bl_idname)
 
-            if get_mode() != 'EDIT':
-                menu.add_item().menu(DisplayOptionsMenu.bl_idname)
+        if context.object:
+            menu.add_item().menu(DisplayOptionsMenu.bl_idname)
 
 class MeshShadeMenu(bpy.types.Menu):
     bl_label = "Object Shading"
@@ -101,10 +103,14 @@ class MeshShadeMenu(bpy.types.Menu):
         menu.add_item().label(text="Object Shading")
         menu.add_item().separator()
         
-        if bpy.context.mode == 'EDIT_MESH':
-            menu.add_item().operator("mesh.faces_shade_flat", "Shade Flat", icon="MESH_ICOSPHERE")
-            menu.add_item().operator("mesh.faces_shade_smooth", "Shade Smooth", icon="MESH_UVSPHERE")
-            
+        if context.mode == 'EDIT_MESH':
+            menu.add_item().operator("mesh.faces_shade_flat", text="Shade Flat", icon="MESH_ICOSPHERE")
+            menu.add_item().operator("mesh.faces_shade_smooth", text="Shade Smooth", icon="MESH_UVSPHERE")
+        
+        elif context.mode == 'EDIT_CURVE':
+            menu.add_item().operator("curve.shade_flat", text="Shade Flat", icon="MESH_ICOSPHERE")
+            menu.add_item().operator("curve.shade_smooth", text="Shade Smooth", icon="MESH_UVSPHERE")
+        
         else:
             menu.add_item().operator("object.shade_flat", text="Shade Flat", icon="MESH_ICOSPHERE")
             menu.add_item().operator("object.shade_smooth", text="Shade Smooth", icon="MESH_UVSPHERE")
@@ -122,9 +128,15 @@ class DisplayOptionsMenu(bpy.types.Menu):
 
         menu.add_item().prop(context.object, 'show_name', toggle=True)
         menu.add_item().prop(context.object, 'show_axis', toggle=True)
-        menu.add_item().prop(context.object, 'show_wire', toggle=True)
+        
+        print(context.object.type)
+        if context.object.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
+            menu.add_item().prop(context.object, 'show_wire', toggle=True)
+        
         menu.add_item().prop(context.object, 'show_in_front', toggle=True)
-        menu.add_item().prop(context.object, 'show_all_edges', toggle=True)
+        
+        if context.object.type == 'MESH':
+            menu.add_item().prop(context.object, 'show_all_edges', toggle=True)
         
 ### ------------ New hotkeys and registration ------------ ###
 
