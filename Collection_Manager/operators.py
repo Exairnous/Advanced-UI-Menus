@@ -294,7 +294,12 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
         # remove collection and update tree view
         bpy.data.collections.remove(collection)
         
+        
         update_property_group(context)
+        
+        if len(context.scene.CMListCollection) == context.scene.CMListIndex:
+            context.scene.CMListIndex = len(context.scene.CMListCollection) - 1
+            update_property_group(context)
         
         
         return {'FINISHED'}
