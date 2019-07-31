@@ -41,6 +41,64 @@ class PaintOptionsMenu(bpy.types.Menu):
         
         elif mode == grease_pencil:
             draw_grease_pencil(menu, context)
+
+class RemoveBrush(bpy.types.Operator):
+    '''Permanently removes brush'''
+    bl_label = "Delete Brush"
+    bl_idname = "view3d.delete_brush"
+    
+    def execute(self, context):
+        old_space_type = context.area.type
+        context.area.type = 'VIEW_3D'
+        space_type = context.space_data.type
+        cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
+        tool = cls._tool_active_from_context(context, space_type).idname.split('.')[1].upper().replace(' ', '_')
+        
+        context.area.type = old_space_type
+        
+        brush_list = []
+        for brush in bpy.data.brushes:
+            if get_mode() == sculpt and brush.use_paint_sculpt:
+                if brush.sculpt_tool == tool:
+                    brush_list.append(brush.name)
+            
+            if get_mode() == vertex_paint and brush.use_paint_vertex:
+                if brush.vertex_tool == tool:
+                    brush_list.append(brush.name)
+            
+            if get_mode() == weight_paint and brush.use_paint_weight:
+                if brush.weight_tool == tool:
+                    brush_list.append(brush.name)
+            
+            if get_mode() == texture_paint and brush.use_paint_image:
+                if brush.image_tool == tool:
+                    brush_list.append(brush.name)
+        
+        
+        brush = get_active_brush(context)
+        index = brush_list.index(brush.name)
+        
+        bpy.data.brushes.remove(brush)
+        
+        try:
+            new_brush_name = brush_list[index-1] if index > 0 else brush_list[index+1]
+        except:
+            return {'FINISHED'}
+        
+        set_active_brush(context, bpy.data.brushes[new_brush_name])
+                    
+        
+        return {'FINISHED'}
+
+
+def brush_management(self, context):
+    layout = self.layout
+    
+    layout.row().separator()
+    
+    row = layout.row()
+    row.operator("brush.add")
+    row.operator("view3d.delete_brush")
             
 
 ### ------------ New hotkeys and registration ------------ ###
@@ -65,7 +123,8 @@ classes = (
     FlipColorsVert,
     ColorPickerPopup,
     NewMaskImage,
-    ToolsMenu
+    ToolsMenu,
+    RemoveBrush
     )
 
 @persistent
@@ -86,6 +145,9 @@ def register_preset_menus(dummy):
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+    
+    # add brush management to toolshelf
+    bpy.types.VIEW3D_PT_tools_brush.append(brush_management)
     
     bpy.app.handlers.depsgraph_update_pre.append(register_preset_menus)
     

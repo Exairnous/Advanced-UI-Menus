@@ -68,6 +68,19 @@ def get_tool_icon(context, icon_str):
     
     return icon
 
+brush_modes = {
+    'SCULPT':'sculpt',
+    'VERTEX_PAINT':'vertex_paint',
+    'WEIGHT_PAINT':'weight_paint',
+    'TEXTURE_PAINT':'image_paint'
+        }
+
+def get_active_brush(context):
+    return getattr(context.tool_settings, brush_modes[get_mode()]).brush
+
+def set_active_brush(context, brush):
+    getattr(context.tool_settings, brush_modes[get_mode()]).brush = brush
+
 class BrushRadiusMenu(bpy.types.Menu):
     bl_label = "Radius"
     bl_idname = "VIEW3D_MT_brush_radius_menu"
