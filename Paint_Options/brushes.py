@@ -111,15 +111,6 @@ class ToolsMenu(bpy.types.Menu):
         space_type = context.space_data.type
         cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
         
-        #print(cls)
-        #print(dir(cls))
-        #print(cls._tools)
-        #print([x for x in cls.tools_from_context(context)])
-        #print(cls._tool_active_from_context(context, space_type))
-        #print(cls._tool_get_active(context, space_type, get_mode()))
-        #print(cls._tool_active_from_context(context, space_type).idname)
-        #print([x for x in cls._tools_flatten(cls.tools_all())])
-        
         column = self.layout.column_flow(columns=2)
         
         index = 0
