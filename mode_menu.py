@@ -1,8 +1,8 @@
 from .Utils.core import *
 
 class EditorModeOperator(bpy.types.Operator):
-    bl_label = "Editor Mode Operator"
-    bl_idname = "view3d.editor_mode_operator"
+    bl_label = "Mode Switch Operator"
+    bl_idname = "view3d.mode_switch_operator"
     bl_options = {'REGISTER', 'UNDO'}
 
     last_mode = ['EDIT', 'OBJECT']
@@ -61,7 +61,7 @@ class EditorModeOperator(bpy.types.Operator):
 
 
 class EditorModeMenu(bpy.types.Menu):
-    bl_label = "Editor Menu"
+    bl_label = "Mode Switch"
     bl_idname = "VIEW3D_MT_mode_menu"
 
     def init(self, context):
@@ -130,11 +130,11 @@ def register():
     # create the global hotkey
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-    kmi = km.keymap_items.new('view3d.editor_mode_operator', 'TAB', 'PRESS')
+    kmi = km.keymap_items.new('view3d.mode_switch_operator', 'TAB', 'PRESS')
     addon_keymaps.append((km, kmi))
     
     km = wm.keyconfigs.addon.keymaps.new(name='Grease Pencil Stroke Edit Mode')
-    kmi = km.keymap_items.new('view3d.editor_mode_operator', 'TAB', 'PRESS')
+    kmi = km.keymap_items.new('view3d.mode_switch_operator', 'TAB', 'PRESS')
     addon_keymaps.append((km, kmi))
 
 

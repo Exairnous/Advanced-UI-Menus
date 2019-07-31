@@ -2,7 +2,7 @@ from .Utils.core import *
 
 
 class SelectionModeMenu(bpy.types.Menu):
-    bl_label = "Select Mode"
+    bl_label = "Selection Mode"
     bl_idname = "VIEW3D_MT_selection_menu"
 
     @classmethod
