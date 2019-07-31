@@ -1,4 +1,4 @@
-![Advanced UI Menus Demo Picture](Demo_Picture_2018-05-13.png)  
+![Advanced UI Menus Demo Picture](Demo_Picture_2019-07-31.png)  
 
 ## Description:
 
