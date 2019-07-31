@@ -99,7 +99,7 @@ class DeleteMenu(bpy.types.Menu):
 
         menu.add_item().separator()
 
-        menu.add_item().operator("mesh.delete_edgeloop", icon='ORIENTATION_LOCAL')
+        menu.add_item().operator("mesh.delete_edgeloop", icon='ORIENTATION_GIMBAL')
         menu.add_item().operator("mesh.edge_collapse", icon='UV_EDGESEL')
         
 ### ------------ New hotkeys and registration ------------ ###
