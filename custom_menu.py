@@ -285,7 +285,7 @@ def get_arg_list(argstring):
     return kwargdic
     
 def get_arg_string(op_path):
-    op_inst = eval("bpy.ops.{0}.get_instance".format(op_path))
+    op_inst = eval("bpy.ops.{0}.get_rna_type".format(op_path))
     op_string = str(op_inst)
     op_string = op_string[op_string.find("bpy.ops"):]
     opkwarg_string = op_string[op_string.find("(")+1:op_string.find(")", -1)-1]          
