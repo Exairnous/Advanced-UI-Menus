@@ -127,20 +127,16 @@ classes = (
     RemoveBrush
     )
 
-@persistent
-def register_preset_menus(dummy):
-        
+
+def register_preset_menus():
         cls = ToolSelectPanelHelper._tool_class_from_space_type('VIEW_3D')
-        
+        all_tools = dict([x for x in cls.tools_all()])
         
         for obj_mode, tool_mode in {'SCULPT':'SCULPT', 'VERTEX_PAINT':'PAINT_VERTEX', 'WEIGHT_PAINT':'PAINT_WEIGHT', 'TEXTURE_PAINT':'PAINT_TEXTURE'}.items():
-            for tool in cls._tools_flatten(cls.tools_from_context(bpy.context, tool_mode)):
-                if not tool or tool.idname.split(".")[0] != "builtin_brush":
-                    continue
-
+            
+            for tool in all_tools[tool_mode][0](bpy.context):
                 add_preset_menu(obj_mode, tool.data_block)
-        
-        bpy.app.handlers.depsgraph_update_pre.remove(register_preset_menus)
+
 
 def register():
     for cls in classes:
@@ -149,7 +145,7 @@ def register():
     # add brush management to toolshelf
     bpy.types.VIEW3D_PT_tools_brush.append(brush_management)
     
-    bpy.app.handlers.depsgraph_update_pre.append(register_preset_menus)
+    register_preset_menus()
     
     wm = bpy.context.window_manager
     modes = ['Sculpt', 'Vertex Paint', 'Weight Paint', 'Image Paint', 'Particle']

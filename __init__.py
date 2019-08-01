@@ -34,15 +34,12 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     
-    #importlib.reload(brush_menu)
-    #importlib.reload(brushes)
     importlib.reload(collection_manager)
     importlib.reload(curve_menu)
     importlib.reload(custom_menu)
     importlib.reload(delete_menu)
     importlib.reload(dyntopo_menu)
     importlib.reload(extrude_menu)
-    #importlib.reload(layers_window)
     importlib.reload(manipulator_menu)
     importlib.reload(mode_menu)
     importlib.reload(paint_options)
@@ -57,15 +54,12 @@ if "bpy" in locals():
     importlib.reload(view_menu)
 
 else:
-    #from . import brush_menu
-    #from . import brushes
     from . import collection_manager
     from . import curve_menu
     from . import custom_menu
     from . import delete_menu
     from . import dyntopo_menu
     from . import extrude_menu
-    #from . import layers_window
     from . import manipulator_menu
     from . import mode_menu
     from . import paint_options
@@ -86,15 +80,12 @@ from .Utils.core import *
 
 addon_files = [
                Utils.core,
-               #brush_menu,
-               #brushes,
                collection_manager,
                curve_menu,
                custom_menu,
                delete_menu,
                dyntopo_menu,
                extrude_menu,
-               #layers_window,
                manipulator_menu,
                mode_menu,
                paint_options,
