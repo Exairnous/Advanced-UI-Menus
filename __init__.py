@@ -27,7 +27,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D - Multiple menus in multiple modes.",
     "warning": '',  # used for warning icon and text in addons panel
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Advanced_UI_Menus_Full",
+    "wiki_url": "https://blenderartists.org/t/addon-advanced-ui-menus/592865",
     "category": "User Interface"}
 
 
